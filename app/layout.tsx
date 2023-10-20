@@ -23,15 +23,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <main className="w-full min-h-screen flex flex-col">
-          <Navbar />
-          <section className="w-full h-full flex-1 flex">
-            <LeftSidebar />
-            <article className="flex-[4] flex justify-center items-center bg-slate-100 h-full">
-              {children}
-            </article>
-            <RightSideBar />
-          </section>
+        <main className="flex flex-col w-full min-h-screen bg-slate-50">
+          {children}
         </main>
       </body>
     </html>
