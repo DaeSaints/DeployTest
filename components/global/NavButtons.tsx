@@ -40,13 +40,16 @@ const NavButtons = () => {
             <Button
               key={nav.label}
               variant={"ghost"}
-              className={`w-10 h-10 p-2 rounded-full group ${
+              className={`w-10 h-10 p-2 rounded-full group relative ${
                 isActive ? "bg-white" : "hover:bg-primary/50"
               }`}
               onClick={() => {
                 router.replace(nav.href);
               }}
             >
+              {isActive && (
+                <div className="absolute -left-4 w-[4px] h-full bg-white transition animate-in"></div>
+              )}
               {nav.label === "dashboard" && (
                 <LayoutGrid className={iconClassName} />
               )}
