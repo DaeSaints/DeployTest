@@ -1,4 +1,4 @@
-import MessagesComponent from "@/components/pages/messages/messages-component";
+import NewMessagesComponent from "@/components/pages/messages/new-messages-component";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 
@@ -12,7 +12,7 @@ const page = () => {
           </div>
         }
       >
-        <MessagesComponent />
+        <NewMessagesComponent />
       </Suspense>
     </>
   );

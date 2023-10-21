@@ -25,8 +25,10 @@ const NavButtons = () => {
   ];
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="flex items-center justify-center w-12 h-12 p-1 text-4xl font-bold text-white rounded-full bg-main-300">
-        U
+      <div className="w-full h-20">
+        <div className="flex items-center justify-center w-12 h-12 p-1 text-4xl font-bold text-white rounded-full bg-main-300">
+          U
+        </div>
       </div>
       {NavLinks.map((nav) => {
         const isActive =

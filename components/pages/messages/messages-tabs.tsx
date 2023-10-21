@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PenBox } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Tabs = "All Messages" | "Parent" | "General Manager" | "Customer Support";
 type TabMessagesType = { label: Tabs; value: number };
@@ -14,6 +15,7 @@ const MessageTabs = () => {
     { label: "General Manager", value: 1 },
     { label: "Customer Support", value: 6 },
   ];
+  const router = useRouter();
   return (
     <article className="flex flex-col w-[14rem] py-2 bg-main-700/90 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)] ">
       <header className="flex items-center justify-between w-full h-24 px-6 pt-4 pb-6">
@@ -21,6 +23,9 @@ const MessageTabs = () => {
         <Button
           variant={"ghost"}
           className="w-6 h-6 p-1 text-white rounded-full"
+          onClick={() => {
+            router.push("/messages/new");
+          }}
         >
           <PenBox className="w-full h-full" />
         </Button>
