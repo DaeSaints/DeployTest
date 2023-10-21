@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
 import React from "react";
 
 const SingleChat = () => {
@@ -13,9 +11,6 @@ const SingleChat = () => {
         <div className="flex flex-col items-center justify-center flex-1 w-full p-1 overflow-hidden text-white">
           <div className="flex items-center justify-between w-full">
             <span className="font-medium">Matt Thimpson</span>
-            <Button variant={"ghost"} className="w-6 h-6 p-1 rounded-full">
-              <MoreHorizontal className="w-full h-full" />
-            </Button>
           </div>
           <div className="flex items-center justify-between w-full">
             <p className="line-clamp-1 max-w-[11.5rem] overflow-hidden text-left text-xs text-slate-300">

@@ -4,7 +4,7 @@ import SingleChat from "./single-chat";
 const ChatsDrawer = () => {
   return (
     <>
-      {Array(4)
+      {Array(8)
         .fill([])
         .map((_, index) => {
           return <SingleChat key={index} />;

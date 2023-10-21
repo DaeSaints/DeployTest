@@ -18,7 +18,7 @@ const TooltipButton = ({
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>
-          <p>{tooltip}</p>
+          <p className="capitalize">{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
