@@ -9,8 +9,8 @@ import {
   MessagesSquareIcon,
   Settings,
 } from "lucide-react";
-import TooltipDisplay from "./TooltipDisplay";
 import { usePathname, useRouter } from "next/navigation";
+import TooltipButton from "./TooltipButton";
 
 const NavButtons = () => {
   const pathname = usePathname();
@@ -33,10 +33,10 @@ const NavButtons = () => {
           (pathname.includes(nav.href) && nav.href.length > 1) ||
           pathname === nav.href;
         const iconClassName = `w-full h-full transition text-slate-400  ${
-          isActive ? "text-white" : "group-hover:text-white"
+          isActive ? "text-black" : "group-hover:text-white"
         }`;
         return (
-          <TooltipDisplay tooltip={nav.label}>
+          <TooltipButton tooltip={nav.label}>
             <Button
               key={nav.label}
               variant={"ghost"}
@@ -69,7 +69,7 @@ const NavButtons = () => {
                 <Settings className={iconClassName} />
               )}
             </Button>
-          </TooltipDisplay>
+          </TooltipButton>
         );
       })}
     </div>

@@ -1,6 +1,4 @@
 import React from "react";
-
-// UI
 import {
   Tooltip,
   TooltipContent,
@@ -8,23 +6,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const TooltipDisplay = ({
-  children,
+const TooltipButton = ({
   tooltip,
+  children,
 }: {
-  children: React.ReactNode;
   tooltip: string;
+  children: React.ReactNode;
 }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>
-          <p className="capitalize">{tooltip}</p>
+          <p>{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 };
 
-export default TooltipDisplay;
+export default TooltipButton;
