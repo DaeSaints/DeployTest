@@ -1,6 +1,9 @@
 import Image from "next/image";
 import React from "react";
 
+// UI
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 const SingleMessage = ({
   side,
   image,
@@ -36,9 +39,11 @@ const SingleMessage = ({
       } h-fit`}
     >
       <div className="flex flex-col items-center justify-start w-16 h-full gap-2 pt-4">
-        <div className="relative w-8 h-8 overflow-hidden bg-black rounded-full">
-          {image && <Image src={image} alt="Pic" fill />}
-        </div>
+        <Avatar>
+          <AvatarImage src={image} />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+
         <span className={`text-xs text-center`}>{formattedDate}</span>
       </div>
 

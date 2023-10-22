@@ -24,7 +24,7 @@ const MessagesDrawer = () => {
       <main className="flex flex-col flex-1 w-full h-full">
         <div className="flex items-center justify-center flex-1 w-full overflow-hidden">
           <ScrollArea className="w-full h-[36rem]">
-            <div className="flex flex-col w-full h-full gap-3">
+            <div className="flex flex-col w-full h-full">
               <ChatsDrawer />
             </div>
           </ScrollArea>
