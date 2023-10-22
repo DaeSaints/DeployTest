@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 // UI
 import { Button } from "@/components/ui/button";
-import { SendIcon } from "lucide-react";
+import { Image, SendIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SingleMessage from "./single-message";
@@ -16,8 +16,23 @@ const MessagesComponent = () => {
     date: Date;
     sender: string;
   };
-  const userId = "123";
+  const [imageUpload, setImageUpload] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const today = new Date();
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setImageUpload(file);
+    }
+  };
+
+  // TEMP VALUES
+  const userId = "123";
   const templateData: MessageType[] = [
     {
       _id: "0",
@@ -116,7 +131,27 @@ const MessagesComponent = () => {
           </ScrollArea>
         </div>
         <form className="flex items-center w-full gap-2 px-2 pt-2">
-          <Input variant={"transparent"} placeholder="Send a message" />
+          <Button
+            onClick={handleButtonClick}
+            type="button"
+            variant={"ghost"}
+            className="w-10 h-10 p-1 rounded-md hover:bg-white"
+          >
+            <Image className="w-full h-full" />
+            <Input
+              type="file"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+          </Button>
+          {imageUpload ? (
+            <div className="w-full">{imageUpload.name}</div>
+          ) : (
+            <>
+              <Input variant={"transparent"} placeholder="Send a message" />
+            </>
+          )}
           <Button className="w-10 h-10 p-2 rounded-md">
             <SendIcon className="w-full h-full" />
           </Button>
