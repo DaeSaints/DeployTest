@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // UI
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ const MessagesComponent = () => {
   };
   const [imageUpload, setImageUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const MessagesEndRef = useRef<HTMLDivElement>(null);
   const today = new Date();
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -30,6 +31,13 @@ const MessagesComponent = () => {
       setImageUpload(file);
     }
   };
+  useEffect(() => {
+    if (MessagesEndRef.current) {
+      MessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    return () => {};
+  }, []);
 
   // TEMP VALUES
   const userId = "123";
@@ -128,6 +136,7 @@ const MessagesComponent = () => {
                 );
               })}
             </div>
+            <div ref={MessagesEndRef} />
           </ScrollArea>
         </div>
         <form className="flex items-center w-full gap-2 px-2 pt-2">
