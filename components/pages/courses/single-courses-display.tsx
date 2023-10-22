@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Clock,
   Link2Icon,
+  PenBox,
   Plus,
   User,
   Users2,
@@ -122,6 +123,10 @@ const CourseDisplay = () => {
                         >
                           <Plus className="w-4 h-4 mr-2" />
                           <span className="">Add Material</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer hover:bg-slate-100">
+                          <PenBox className="w-4 h-4 mr-2" />
+                          <span className="">Edit Zoom</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer hover:bg-slate-100">
                           <XCircle className="w-4 h-4 mr-2" />

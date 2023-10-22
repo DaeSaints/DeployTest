@@ -7,7 +7,7 @@ import React from "react";
 const CoursesAttendance = () => {
   return (
     <div className="flex flex-col w-full max-w-xs p-4 text-white rounded-lg shadow-lg bg-main-700">
-      <header className="flex gap-1 pt-2 pb-4 border-b">
+      <header className="flex items-center justify-start gap-1 pt-2 pb-4 border-b">
         <span className="text-5xl font-semibold">28</span>
         <div className="flex flex-col">
           <span className="">Wed</span>

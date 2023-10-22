@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 // UI
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -35,9 +36,11 @@ const Modal = ({
         </DialogHeader>
         {children}
         <DialogFooter className="mt-2 sm:justify-start">
-          <Button type="button" onClick={handleSubmit}>
-            Submit
-          </Button>
+          <DialogClose asChild>
+            <Button type="button" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

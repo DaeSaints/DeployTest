@@ -4,16 +4,14 @@ import { Button } from "@/components/ui/button";
 import { PenBox } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type Tabs = "All Messages" | "Parent" | "General Manager" | "Customer Support";
+type Tabs = "All Messages" | "Unread";
 type TabMessagesType = { label: Tabs; value: number };
 
 const MessageTabs = () => {
   const [selectedTab, setSelectedTab] = useState<Tabs>("All Messages");
   const MESSAGES_TABS: TabMessagesType[] = [
-    { label: "All Messages", value: 0 },
-    { label: "Parent", value: 2 },
-    { label: "General Manager", value: 1 },
-    { label: "Customer Support", value: 6 },
+    { label: "All Messages", value: 10 },
+    { label: "Unread", value: 2 },
   ];
   const router = useRouter();
   return (
