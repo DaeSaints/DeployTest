@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Book,
   ChevronDown,
@@ -61,9 +62,21 @@ const CourseDisplay = () => {
                           </div>
                           <div className="flex items-center justify-start gap-4">
                             <Users2 className="w-5 h-5" />
-                            <div className="flex -space-x-2">
-                              <div className="bg-black rounded-full w-7 h-7 outline outline-white"></div>
-                              <div className="bg-black rounded-full w-7 h-7 outline outline-white"></div>
+                            <div className="flex -space-x-4">
+                              <Avatar className="w-7 h-7 outline outline-white">
+                                <AvatarImage src="" />
+                                <AvatarFallback className="bg-main-100">
+                                  KM
+                                </AvatarFallback>
+                              </Avatar>
+                              <Avatar className="w-7 h-7 outline outline-white">
+                                <AvatarImage src="https://images.pexels.com/photos/3988680/pexels-photo-3988680.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
+                                <AvatarFallback>CN</AvatarFallback>
+                              </Avatar>
+                              <Avatar className="w-7 h-7 outline outline-white">
+                                <AvatarImage src="https://images.pexels.com/photos/4229083/pexels-photo-4229083.jpeg?auto=compress&cs=tinysrgb&w=1600" />
+                                <AvatarFallback>CN</AvatarFallback>
+                              </Avatar>
                             </div>
                           </div>
                         </div>

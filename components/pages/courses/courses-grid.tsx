@@ -1,6 +1,7 @@
 "use client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Book, Loader2, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -16,11 +17,11 @@ const CoursesSelection = () => {
   }, []);
 
   return (
-    <ScrollArea className="w-full h-[32rem]">
-      <div className="grid flex-1 w-full grid-flow-row grid-cols-4 gap-4 p-4 bg-slate-200">
+    <ScrollArea className="w-full h-[32rem] bg-slate-200">
+      <div className="grid flex-1 w-full grid-flow-row grid-cols-4 gap-4 p-4">
         {isLoading ? (
           <>
-            {Array(8)
+            {Array(2)
               .fill([])
               .map((_, index) => {
                 return (
@@ -53,7 +54,7 @@ const CoursesSelection = () => {
           </>
         ) : (
           <>
-            {Array(10)
+            {Array(2)
               .fill([])
               .map((_, index) => {
                 return (
@@ -62,8 +63,17 @@ const CoursesSelection = () => {
                     key={index}
                     className="w-full h-[14rem] bg-white rounded-lg shadow-md flex flex-col relative overflow-hidden cursor-pointer group hover:opacity-70 transition"
                   >
-                    <div className="flex-[8] w-full bg-main-300 py-3 px-4">
-                      <span className="text-lg font-semibold text-white drop-shadow-md">
+                    <div className="flex-[13] w-full bg-main-300 py-3 px-4 relative overflow-hidden">
+                      <Image
+                        fill
+                        style={{ objectFit: "cover" }}
+                        className="brightness-75"
+                        alt="Elephant"
+                        src={
+                          "https://images.pexels.com/photos/8363771/pexels-photo-8363771.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                        }
+                      />
+                      <span className="text-lg font-bold text-white drop-shadow-lg">
                         Elephant Class
                       </span>
                     </div>
