@@ -3,7 +3,7 @@ import React from "react";
 // UI
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const SingleMessage = ({
+const MiniSingleMessage = ({
   side,
   image,
   date,
@@ -34,10 +34,10 @@ const SingleMessage = ({
   return (
     <div
       className={`items-start gap-2 justify-start w-full ${
-        side === "Other" ? "pr-16 flex" : "pl-16 flex flex-row-reverse"
+        side === "Other" ? "pr-10 flex" : "pl-10 flex flex-row-reverse"
       } h-fit`}
     >
-      <div className="flex flex-col items-center justify-start w-16 h-full gap-2 pt-4">
+      <div className="flex flex-col items-center justify-start w-10 h-full gap-2">
         <Avatar>
           <AvatarImage src={image} />
           <AvatarFallback>CN</AvatarFallback>
@@ -48,7 +48,7 @@ const SingleMessage = ({
 
       <div
         className={`flex flex-1 ${
-          side === "Other" ? "pr-16 flex" : "pl-16 flex flex-row-reverse"
+          side === "Other" ? "pr-10 flex" : "pl-10 flex flex-row-reverse"
         }`}
       >
         <div className="max-w-full pl-2">
@@ -65,4 +65,4 @@ const SingleMessage = ({
   );
 };
 
-export default SingleMessage;
+export default MiniSingleMessage;
