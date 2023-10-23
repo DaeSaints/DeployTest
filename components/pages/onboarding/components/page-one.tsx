@@ -6,9 +6,11 @@ import ProgressPage from "./progressbar";
 const PageOne = ({
   page,
   totalPages,
+  onNameChange,
 }: {
   page: number;
   totalPages: number;
+  onNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
     <>
@@ -28,6 +30,7 @@ const PageOne = ({
             id="name"
             className="p-3 text-2xl h-fit"
             placeholder="Enter your username"
+            onChange={onNameChange}
           />
         </div>
       </div>
