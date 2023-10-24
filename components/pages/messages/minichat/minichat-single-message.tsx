@@ -2,6 +2,7 @@ import React from "react";
 
 // UI
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import TooltipButton from "@/components/global/TooltipButton";
 
 const MiniSingleMessage = ({
   side,
@@ -16,20 +17,20 @@ const MiniSingleMessage = ({
   today: Date;
   content: string;
 }) => {
-  const formattedDate =
-    date.toDateString() === today.toDateString()
-      ? date.toLocaleString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : date
-          .toLocaleString("en-US", {
-            day: "numeric",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          .replace(/\s/g, " ");
+  // const formattedDate =
+  //   date.toDateString() === today.toDateString()
+  //     ? date.toLocaleString("en-US", {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       })
+  //     : date
+  //         .toLocaleString("en-US", {
+  //           day: "numeric",
+  //           month: "short",
+  //           hour: "2-digit",
+  //           minute: "2-digit",
+  //         })
+  //         .replace(/\s/g, " ");
 
   return (
     <div
@@ -38,12 +39,12 @@ const MiniSingleMessage = ({
       } h-fit`}
     >
       <div className="flex flex-col items-center justify-start w-10 h-full gap-2">
-        <Avatar>
-          <AvatarImage src={image} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-
-        <span className={`text-xs text-center`}>{formattedDate}</span>
+        <TooltipButton tooltip={""}>
+          <Avatar>
+            <AvatarImage src={image} />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </TooltipButton>
       </div>
 
       <div
