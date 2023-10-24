@@ -1,10 +1,12 @@
 "use client";
-import React, { ChangeEvent } from "react";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import { Label } from "@/components/ui/label";
 import ProgressPage from "./progressbar";
 import { User } from "lucide-react";
 import Image from "next/image";
+import { UploadButton } from "@/lib/uploadthing";
+import { fetchUpload } from "@/utils/fetchUpload";
+
 const PageThree = ({
   page,
   totalPages,
@@ -14,22 +16,8 @@ const PageThree = ({
   page: number;
   totalPages: number;
   selectedImageOrig: string | undefined;
-  handlerPageThree: (img: string | undefined) => void;
+  handlerPageThree: (img: string | undefined, url: string) => void;
 }) => {
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        handlerPageThree(result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      // Display an error message or handle the case when a non-image file is selected.
-    }
-  };
   return (
     <>
       <div className="flex flex-col w-full">
@@ -44,13 +32,19 @@ const PageThree = ({
             <Label htmlFor="profile-pic" className="text-xl font-medium">
               Profile Picture
             </Label>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              id="profile-pic"
-              className="p-3 text-2xl h-fit"
-              placeholder="Enter your Password"
+            <UploadButton
+              className="border border-dash"
+              endpoint="profileImage"
+              onClientUploadComplete={async (res) => {
+                if (res) {
+                  const fetchedImage = await fetchUpload(res[0].url);
+
+                  handlerPageThree(fetchedImage as string, res[0].url);
+                }
+              }}
+              onUploadError={(error: Error) => {
+                alert(`ERROR! ${error.message}`);
+              }}
             />
           </div>
         </div>

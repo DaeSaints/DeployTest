@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   },
   password: String,
   image: String,
+  profileURL: String,
   role: {
     type: String,
     enum: [

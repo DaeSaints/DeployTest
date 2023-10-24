@@ -72,7 +72,7 @@ const MiniChatSendMessage = ({
       onSubmit={handleSendMessage}
       className="flex items-center w-full h-16 gap-2 px-2 justify-evenly"
     >
-      <Button
+      {/* <Button
         onClick={handleButtonClick}
         type="button"
         variant={"outline"}
@@ -85,7 +85,7 @@ const MiniChatSendMessage = ({
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-      </Button>
+      </Button> */}
       {imageUpload ? (
         <div className="w-full">{imageUpload.name}</div>
       ) : (

@@ -4,14 +4,18 @@ import { Button } from "@/components/ui/button";
 import PageOne from "./components/page-one";
 import PageTwo from "./components/page-two";
 import PageThree from "./components/page-three";
+import { addProfilePicture } from "@/lib/actions/user.action";
 
 const OnboardingComponent = () => {
   const totalPages = 3;
   const [page, setPage] = useState<number>(1);
-  const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
+  const [profileURL, setProfileURL] = useState<string>("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordsMatch, setPasswordsMatch] =  useState(true);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
   const [confirmPasswordValid, setConfirmPasswordValid] = useState(true);
   const [userName, setUserName] = useState("");
@@ -21,8 +25,10 @@ const OnboardingComponent = () => {
     setPassword(newPassword);
     setPasswordValid(newPassword.length >= 8);
   };
-  
-  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleConfirmPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newConfirmPassword = event.target.value;
     setConfirmPassword(newConfirmPassword);
     setConfirmPasswordValid(newConfirmPassword.length >= 8);
@@ -33,28 +39,43 @@ const OnboardingComponent = () => {
     setUserName(event.target.value);
   };
 
-  function handlerPageThree(img: string | undefined) {
+  function handlerPageThree(img: string | undefined, url: string) {
     setSelectedImage(img);
+    setProfileURL(url);
   }
 
-  function handlerFinish() {
-    console.log("finish");
+  async function handlerFinish() {
+    const res = await addProfilePicture({
+      _id: "65176d6b9ce0272c671d6583",
+      profileURL,
+    });
+    if (res.message) alert(res.message);
   }
 
   const isContinueDisabledOnName = page === 1 && userName.trim() === "";
-  const isContinueDisabledOnPassword = page === 2 && (!passwordsMatch || !passwordValid);
+  const isContinueDisabledOnPassword =
+    page === 2 && (!passwordsMatch || !passwordValid);
 
   return (
     <>
-      {page === 1 && <PageOne page={page} totalPages={totalPages} onNameChange={handlerNameChange} />}
-      {page === 2 && <PageTwo
+      {page === 1 && (
+        <PageOne
+          page={page}
+          totalPages={totalPages}
+          onNameChange={handlerNameChange}
+        />
+      )}
+      {page === 2 && (
+        <PageTwo
           page={page}
           totalPages={totalPages}
           onPasswordChange={handlePasswordChange}
           onConfirmPasswordChange={handleConfirmPasswordChange}
           passwordsMatch={passwordsMatch}
-          passwordValid={passwordValid} 
-          confirmPasswordValid={confirmPasswordValid}/>}
+          passwordValid={passwordValid}
+          confirmPasswordValid={confirmPasswordValid}
+        />
+      )}
       {page === 3 && (
         <PageThree
           page={page}
@@ -90,7 +111,10 @@ const OnboardingComponent = () => {
                 setPage((prev) => prev + 1);
               }
             }}
-            disabled={(page === 1 && isContinueDisabledOnName) || (page === 2 && isContinueDisabledOnPassword)}
+            disabled={
+              (page === 1 && isContinueDisabledOnName) ||
+              (page === 2 && isContinueDisabledOnPassword)
+            }
           >
             Continue
           </Button>
