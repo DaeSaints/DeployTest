@@ -15,10 +15,18 @@ import { ChatType } from "@/lib/interfaces/chat.interface";
 import { useQuery } from "@tanstack/react-query";
 import { fetchMessages } from "@/lib/actions/message.action";
 import { MessageType } from "@/lib/interfaces/message.interface";
+import MiniChatNewBox from "./minichat-new";
 
 const OpenMiniChat = ({ close }: { close: () => void }) => {
   const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
+  const [toggleNewChat, setToggleNewChat] = useState<boolean>(false);
+
+  function handleNewChat() {
+    setToggleNewChat(true);
+    if (selectedChat) setSelectedChat(null);
+  }
   function handleSelectChat(chatSelected: ChatType | null) {
+    if (toggleNewChat) setToggleNewChat(false);
     setSelectedChat(chatSelected);
   }
   const userId = "65176d6b9ce0272c671d6583";
@@ -73,25 +81,33 @@ const OpenMiniChat = ({ close }: { close: () => void }) => {
       </header>
       <main className="flex flex-1 w-full h-full overflow-hidden">
         <MiniChatDrawer
+          toggleNewChat={toggleNewChat}
+          handleNewChat={handleNewChat}
           selectedChat={selectedChat}
           handleSelectChat={handleSelectChat}
         />
-        {!selectedChat ? (
-          <section className="flex flex-col items-center justify-center flex-1 w-full bg-slate-200">
-            <span className="text-xl font-semibold">No Chat Selected</span>
-          </section>
+        {toggleNewChat ? (
+          <MiniChatNewBox />
         ) : (
           <>
-            {messages ? (
-              <MiniChatMessages
-                chat={selectedChat}
-                userId={userId}
-                initialMessages={messages as MessageType[]}
-              />
+            {!selectedChat ? (
+              <section className="flex flex-col items-center justify-center flex-1 w-full bg-slate-200">
+                <span className="text-xl font-semibold">No Chat Selected</span>
+              </section>
             ) : (
-              <div className="flex items-center justify-center flex-1 w-full">
-                <Loader2 className="w-6 h-6 animate-spin" />
-              </div>
+              <>
+                {messages ? (
+                  <MiniChatMessages
+                    chat={selectedChat}
+                    userId={userId}
+                    initialMessages={messages as MessageType[]}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center flex-1 w-full">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

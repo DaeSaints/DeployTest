@@ -13,9 +13,11 @@ import axios from "axios";
 const MiniChatSendMessage = ({
   chatId,
   senderId,
+  disabled = false,
 }: {
   chatId: string;
   senderId: string;
+  disabled?: boolean;
 }) => {
   const [imageUpload, setImageUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -96,6 +98,7 @@ const MiniChatSendMessage = ({
             className="flex-1 h-9"
             variant={"transparent"}
             placeholder="Send a message"
+            disabled={disabled}
           />
         </>
       )}

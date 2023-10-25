@@ -140,7 +140,7 @@ const MessagesComponent = () => {
           </ScrollArea>
         </div>
         <form className="flex items-center w-full gap-2 px-2 pt-2">
-          <Button
+          {/* <Button
             onClick={handleButtonClick}
             type="button"
             variant={"ghost"}
@@ -153,7 +153,7 @@ const MessagesComponent = () => {
               ref={fileInputRef}
               onChange={handleFileChange}
             />
-          </Button>
+          </Button> */}
           {imageUpload ? (
             <div className="w-full">{imageUpload.name}</div>
           ) : (

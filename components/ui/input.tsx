@@ -10,7 +10,7 @@ const inputVariants = cva(
         default:
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-950 focus-visible:ring-offset-2",
         transparent:
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2 focus-visible:ring-none ring-none",
       },
     },
     defaultVariants: {

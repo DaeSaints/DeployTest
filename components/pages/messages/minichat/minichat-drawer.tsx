@@ -5,7 +5,7 @@ import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MiniChatSingleChat from "./minichat-single-chat";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, PenBoxIcon, Search } from "lucide-react";
 
 // BACKEND
 import { fetchChats } from "@/lib/actions/chat.action";
@@ -14,13 +14,19 @@ import { UserRolesType, UserType } from "@/lib/interfaces/user.interface";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { ChatType } from "@/lib/interfaces/chat.interface";
 import { pusherClient } from "@/lib/pusher";
+import { Button } from "@/components/ui/button";
+import MiniChatNewChat from "./minichat-new-chat";
 
 const MiniChatDrawer = ({
+  toggleNewChat,
   selectedChat,
+  handleNewChat,
   handleSelectChat,
 }: {
+  toggleNewChat: boolean;
   selectedChat: ChatType | null;
   handleSelectChat: (temp: ChatType | null) => void;
+  handleNewChat: () => void;
 }) => {
   const userId = "65176d6b9ce0272c671d6583";
 
@@ -47,12 +53,18 @@ const MiniChatDrawer = ({
     };
   }, []);
 
-  console.log(data);
-
   return (
     <div className="w-[17rem] h-full flex flex-col">
-      <div className="relative flex items-center justify-between w-full px-2 border-b h-14">
-        <Search className="absolute w-5 h-5 -translate-y-1/2 bottom-2 left-2" />
+      <div className="relative flex items-center justify-between w-full gap-2 px-2 border-b h-14">
+        <Button
+          type="button"
+          className="w-8 h-8 p-1"
+          variant={"ghost"}
+          onClick={handleNewChat}
+        >
+          <PenBoxIcon className="w-full h-full" />
+        </Button>
+        <Search className="absolute w-5 h-5 -translate-y-1/2 bottom-2 left-12" />
         <Input
           variant={"transparent"}
           placeholder="Search..."
@@ -68,6 +80,7 @@ const MiniChatDrawer = ({
           <>
             <div className="flex">
               <ul className="flex-col flex-1 border-r">
+                {toggleNewChat && <MiniChatNewChat />}
                 {data?.map((chat) => {
                   const _id = chat._id as string;
                   const active = selectedChat?._id === _id;
