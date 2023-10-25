@@ -123,7 +123,9 @@ export async function fetchSingleUserById({ _id }: { _id: string }) {
       throw new Error("User not Found");
     }
 
-    return single;
+    const plainData = { ...single, _id: single._id.toString() };
+
+    return plainData;
   } catch (error) {
     throw new Error(`Error in fetching single user`);
   }
@@ -172,7 +174,7 @@ export async function addProfilePicture({
   try {
     const user = await Parent.findByIdAndUpdate(
       { _id },
-      { profileURL, name, password},
+      { profileURL, name, password },
       { new: true }
     );
 

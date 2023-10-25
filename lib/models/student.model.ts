@@ -6,6 +6,9 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profileURL: {
+      type: String,
+    },
     age: {
       type: Number,
       required: true,

@@ -23,8 +23,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import TooltipButton from "./TooltipButton";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { UserType } from "@/lib/interfaces/user.interface";
 
-const NavButtons = () => {
+const NavButtons = ({ user }: { user: ParentType | UserType }) => {
   const pathname = usePathname();
   const router = useRouter();
   const NavLinks = [
@@ -35,14 +37,17 @@ const NavButtons = () => {
     { label: "transactions", href: "/transactions" },
     { label: "settings", href: "/settings" },
   ];
+  function isParent(user: ParentType | UserType): user is ParentType {
+    return (user as ParentType).children !== undefined;
+  }
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <div className="w-full h-20 pt-4">
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full">
             <Avatar className="w-12 h-12">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={user?.profileURL || ""} alt="@shadcn" />
+              <AvatarFallback>{user.name[0]}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -52,41 +57,36 @@ const NavButtons = () => {
           >
             <DropdownMenuLabel className="flex items-center justify-start">
               <div className="flex flex-col">
-                <span className="font-semibold">kielo@gmail.com</span>
-                <span className="font-normal text-slate-600">Parent</span>
+                <span className="font-semibold">{user.email}</span>
+                <span className="font-normal text-slate-600">
+                  {!isParent(user) ? user.role : "Parent"}
+                </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex items-center justify-start cursor-pointer">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://images.pexels.com/photos/4298629/pexels-photo-4298629.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>AM</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="font-semibold capitalize">Brent Mercado</span>
-                <span className="font-normal text-slate-600">
-                  K2 - Elephant Class
-                </span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex items-center justify-start cursor-pointer">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://images.pexels.com/photos/5119214/pexels-photo-5119214.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>KM</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="font-semibold capitalize">Klark Mercado</span>
-                <span className="font-normal text-slate-600">
-                  N1 - Unenrolled
-                </span>
-              </div>
-            </DropdownMenuItem>
+            {isParent(user) &&
+              user.children?.map((child) => {
+                return (
+                  <React.Fragment key={child._id}>
+                    <DropdownMenuItem className="flex items-center justify-start transition cursor-pointer hover:bg-slate-200">
+                      <Avatar className="mr-4">
+                        <AvatarImage src="" />
+                        <AvatarFallback>{child.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="font-semibold capitalize">
+                          {child.name}
+                        </span>
+                        <span className="font-normal text-slate-600">
+                          {child.status === "Not Paid"
+                            ? "Not Paid"
+                            : `${child.enrolledClass?.ageGroup} - ${child.enrolledClass?.class} Class`}
+                        </span>
+                      </div>
+                    </DropdownMenuItem>
+                  </React.Fragment>
+                );
+              })}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
