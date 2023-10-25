@@ -5,13 +5,17 @@ import PageOne from "./components/page-one";
 import PageTwo from "./components/page-two";
 import PageThree from "./components/page-three";
 import { addProfilePicture } from "@/lib/actions/user.action";
+import { useToast } from "@/components/ui/use-toast";
 
 const OnboardingComponent = () => {
+  const { toast } = useToast();
+
   const totalPages = 3;
   const [page, setPage] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
+
   const [profileURL, setProfileURL] = useState<string>("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -49,7 +53,13 @@ const OnboardingComponent = () => {
       _id: "65176d6b9ce0272c671d6583",
       profileURL,
     });
-    if (res.message) alert(res.message);
+    if (res.message) {
+      toast({
+        variant: "success",
+        title: "Successfully Onboarded",
+        description: "Welcome to Umonics LMS",
+      });
+    }
   }
 
   const isContinueDisabledOnName = page === 1 && userName.trim() === "";
