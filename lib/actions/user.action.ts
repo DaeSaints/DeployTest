@@ -139,16 +139,20 @@ export async function updateUserRoleByID({
 export async function addProfilePicture({
   _id,
   profileURL,
+  name,
+  password,
 }: {
   _id: string;
   profileURL: string;
+  name: string;
+  password: string;
 }) {
   connectDB();
 
   try {
-    const user = await User.findByIdAndUpdate(
+    const user = await Parent.findByIdAndUpdate(
       { _id },
-      { profileURL },
+      { profileURL, name, password},
       { new: true }
     );
 
