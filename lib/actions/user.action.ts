@@ -1,6 +1,7 @@
 "use server";
 
 import connectDB from "../mongodb";
+import bcrypt from "bcrypt";
 import { UserRolesType, UserType } from "../interfaces/user.interface";
 import User from "../models/user.model";
 import Parent from "../models/parent.model";
@@ -73,17 +74,17 @@ export async function fetchUsersSearch(
     // if(role === "Parent")
 
     // PARENTS
-    // const parentsQuery = Parent.find({
-    //   email: { $regex: search, $options: "i" },
-    //   _id: { $ne: userId },
-    // })
-    //   .sort({ createdAt: "desc" })
-    //   .lean()
-    //   .limit(2)
-    //   .select("_id name email photoURL")
-    //   .exec();
+    const parentsQuery = Parent.find({
+      email: { $regex: search, $options: "i" },
+      _id: { $ne: userId },
+    })
+      .sort({ createdAt: "desc" })
+      .lean()
+      .limit(2)
+      .select("_id name email photoURL")
+      .exec();
 
-    // const parentsData = await parentsQuery;
+    const parentsData = await parentsQuery;
 
     const usersPlainData: UserType[] = usersData.map((d: any) => {
       return {
@@ -92,14 +93,14 @@ export async function fetchUsersSearch(
       };
     });
 
-    // const parentsPlainData: ParentType[] = parentsData.map((d: any) => {
-    //   return {
-    //     ...d,
-    //     _id: d._id?.toString(),
-    //   };
-    // });
+    const parentsPlainData: ParentType[] = parentsData.map((d: any) => {
+      return {
+        ...d,
+        _id: d._id?.toString(),
+      };
+    });
 
-    // const combinedData = [...usersPlainData, ...parentsPlainData];
+    const combinedData = [...usersPlainData, ...parentsPlainData];
 
     return { users: usersPlainData };
   } catch (error: any) {
@@ -170,18 +171,21 @@ export async function addProfilePicture({
   connectDB();
 
   try {
-    const user = await Parent.findByIdAndUpdate(
-      { _id },
-      { profileURL, name, password},
-      { new: true }
-    );
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const parent = await Parent.findById(_id);
 
-    if (!user) {
-      console.log("No User Found");
-      throw new Error("No User Found");
+    if (!parent) {
+      console.log("No Parent Found");
+      throw new Error("No Parent Found");
     }
 
-    return { message: "Update Profile Successfully", data: user };
+    parent.profileURL = profileURL;
+    parent.name = name;
+    parent.password = hashedPassword;
+
+    const updatedParent = await parent.save();
+
+    return { message: "Update Profile Successfully", data: updatedParent };
   } catch (error: any) {
     throw new Error(`Failed to Update Profile: ${error.message}`);
   }
