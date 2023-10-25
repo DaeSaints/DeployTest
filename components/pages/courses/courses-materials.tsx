@@ -44,9 +44,11 @@ const CoursesMaterials = () => {
                   <Trash className="w-full h-full" />
                 </Button>
               </DialogBox>
-              <span className="cursor-pointer hover:underline line-clamp-1">
-                kioelopasdhjsv.jpg
-              </span>
+              <a href="https://utfs.io/f/2a94c615-44e9-4094-9c61-b35dfed7d3a0-jti16f.jpg" target="_blank">
+                <span className="cursor-pointer hover:underline line-clamp-1">
+                  kioelopasdhjsv.jpg
+                </span>
+              </a>
               <span className="text-sm cursor-default">(Notes)</span>
             </li>
             <Modal
