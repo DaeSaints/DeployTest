@@ -8,12 +8,18 @@ import Modal from "@/components/modals/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DialogBox from "@/components/modals/dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const CoursesMaterials = () => {
+  const { toast } = useToast();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   function handleSubmitNewMaterial() {}
   function handleDeleteMaterial() {
     setIsDelete(false);
+    toast({
+      title: "Successfully Deleted",
+      description: "Material kioelopasdhjsv.jpg",
+    });
   }
   return (
     <div className="flex flex-col w-full max-w-xs p-4 text-white rounded-lg shadow-lg bg-main-700">
