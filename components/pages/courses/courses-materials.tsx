@@ -1,15 +1,20 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 // UI
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LucideStickyNote, PlusSquare, Trash } from "lucide-react";
+import { PlusSquare, Trash } from "lucide-react";
 import Modal from "@/components/modals/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import DialogBox from "@/components/modals/dialog";
 
 const CoursesMaterials = () => {
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   function handleSubmitNewMaterial() {}
+  function handleDeleteMaterial() {
+    setIsDelete(false);
+  }
   return (
     <div className="flex flex-col w-full max-w-xs p-4 text-white rounded-lg shadow-lg bg-main-700">
       <header className="flex items-center justify-start gap-1 pt-2 pb-4 border-b">
@@ -23,9 +28,16 @@ const CoursesMaterials = () => {
         <ScrollArea className="w-full h-[20rem] p-2">
           <ul className="flex flex-col w-full h-full gap-2">
             <li className="flex items-center justify-start gap-2 px-4 py-2 text-sm transition rounded-full hover:bg-slate-50 hover:text-black">
-              <Button variant={"ghost"} className="p-1 rounded-full w-7 h-7">
-                <Trash className="w-full h-full" />
-              </Button>
+              <DialogBox
+                title="Are you sure you want to delete this material"
+                description="Deleting this material can't be undone"
+                onCancel={() => setIsDelete(false)}
+                onSubmit={handleDeleteMaterial}
+              >
+                <Button variant={"ghost"} className="p-1 rounded-full w-7 h-7">
+                  <Trash className="w-full h-full" />
+                </Button>
+              </DialogBox>
               <span className="cursor-pointer hover:underline line-clamp-1">
                 kioelopasdhjsv.jpg
               </span>

@@ -1,5 +1,5 @@
 import SingleCourseComponent from "@/components/pages/courses/single-course-component";
-import { PageProps } from "@/lib/interface/page-props.interface";
+import { PageProps } from "@/lib/interfaces/page.props";
 import React from "react";
 
 const page = ({ params, searchParams }: PageProps) => {

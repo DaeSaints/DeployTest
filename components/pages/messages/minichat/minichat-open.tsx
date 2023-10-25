@@ -12,7 +12,7 @@ import MiniChatDrawer from "./minichat-drawer";
 import { ChatType } from "@/lib/interfaces/chat.interface";
 
 // BACKEND
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchMessages } from "@/lib/actions/message.action";
 import { MessageType } from "@/lib/interfaces/message.interface";
 

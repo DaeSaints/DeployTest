@@ -7,7 +7,7 @@ export default function Home() {
         <div className="flex flex-col items-start justify-center gap-4 text-5xl font-bold text-left text-white">
           <h1 className="drop-shadow-md">Knowles</h1>
           <h1 className="drop-shadow-md">Training</h1>
-          <h1 className="drop-shadow-md">Institue</h1>
+          <h1 className="drop-shadow-md">Institute</h1>
         </div>
       </article>
       <article className="relative flex items-center justify-center flex-1 py-8 shadow-inner">

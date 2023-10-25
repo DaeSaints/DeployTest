@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 // UI
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -46,6 +46,8 @@ const MiniChatDrawer = ({
       pusherClient.unsubscribe(userId);
     };
   }, []);
+
+  console.log(data);
 
   return (
     <div className="w-[17rem] h-full flex flex-col">
