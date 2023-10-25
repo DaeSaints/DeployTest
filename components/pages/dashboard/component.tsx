@@ -9,7 +9,7 @@ const DashboardComponent = ({ user }: { user: UserType }) => {
   return (
     <div>
       {user?.profileURL}{" "}
-      <Image src={image} alt="profile pic" width={300} height={300} />
+      {/* <Image src={image} alt="profile pic" width={300} height={300} /> */}
     </div>
   );
 };

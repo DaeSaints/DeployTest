@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, PenBoxIcon, Search } from "lucide-react";
 
 // BACKEND
-import { searchChats, searchChatsAll } from "@/lib/actions/chat.action";
+import { searchChatsAll } from "@/lib/actions/chat.action";
 import { useQuery } from "@tanstack/react-query";
 import { UserRolesType, UserType } from "@/lib/interfaces/user.interface";
 import { ParentType } from "@/lib/interfaces/parent.interface";
@@ -17,6 +17,7 @@ import { pusherClient } from "@/lib/pusher";
 import { Button } from "@/components/ui/button";
 import MiniChatNewChat from "./minichat-new-chat";
 import useDebounce from "@/lib/hooks/useDebounce";
+import { userId } from "@/utils/constants";
 
 const MiniChatDrawer = ({
   toggleNewChat,
@@ -29,12 +30,12 @@ const MiniChatDrawer = ({
   handleSelectChat: (temp: ChatType | null) => void;
   handleNewChat: () => void;
 }) => {
-  const userId = "65176d6b9ce0272c671d6583";
+
   const [searchInput, setSearchInput] = useState<string>("");
   const debouncedSearch = useDebounce(searchInput, 500);
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: [`minichat-${userId}:chats`, debouncedSearch],
+    queryKey: [`minichat:chats`, debouncedSearch],
     queryFn: async () => {
       const { chats } = await searchChatsAll({
         pageNumber: 1,

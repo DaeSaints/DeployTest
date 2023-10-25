@@ -9,6 +9,61 @@ import Parent from "../models/parent.model";
 import { ChatType } from "../interfaces/chat.interface";
 import { UserRolesType } from "../interfaces/user.interface";
 
+export async function createNewChat({
+  senderId,
+  recipientEmail,
+  role,
+}: {
+  senderId: string;
+  recipientEmail: string;
+  role: string;
+}) {
+  try {
+    connectDB();
+
+    let recipient;
+
+    if (role === "parent") {
+      recipient = await Parent.findOne({ email: recipientEmail });
+    } else {
+      recipient = await User.findOne({ email: recipientEmail, role: role });
+    }
+
+    if (recipient === null || !recipient) {
+      return {
+        message:
+          "No recipient found with that email, maybe the email/role is incorrect",
+        success: false,
+      };
+    }
+    const recipientId = recipient._id.toString();
+    const users = [recipientId, senderId];
+    const existingChat = await Chat.findOne({
+      users: { $all: users },
+    });
+
+    if (!existingChat) {
+      const newChat = await Chat.create({
+        chatName: null,
+        users,
+      });
+      return {
+        message: "Successfully Created New Chat",
+        success: true,
+        data: newChat._id.toString(),
+      };
+    }
+
+    return {
+      message: "Chat Already Exists",
+      success: true,
+      data: existingChat._id.toString(),
+    };
+  } catch (error: any) {
+    throw new Error(`Error creating new chat: ${error.message}`);
+  }
+}
+
 export async function fetchChats({
   pageNumber,
   pageSize,

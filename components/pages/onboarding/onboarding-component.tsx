@@ -7,13 +7,6 @@ import PageThree from "./components/page-three";
 import { addProfilePicture } from "@/lib/actions/user.action";
 import { useToast } from "@/components/ui/use-toast";
 
-type ProfilePictureParams = {
-  _id: string;
-  name: string; 
-  password: string;
-  profileURL: string;
-};
-
 const OnboardingComponent = () => {
   const { toast } = useToast();
 
@@ -56,40 +49,16 @@ const OnboardingComponent = () => {
   }
 
   async function handlerFinish() {
-    if (page === 3) {
-      try {
-        if (userName && password && profileURL) {
-          const params: ProfilePictureParams = {
-            _id: "6538dd2367526cb4e19190f0",
-            name: userName,
-            password,
-            profileURL,
-          };
-
-          const res = await addProfilePicture(params);
-
-          if (res.message) {
-            toast({
-              variant: "success",
-              title: "Successfully Onboarded",
-              description: "Welcome to Umonics LMS",
-            });
-          }
-        } else {
-          toast({
-            variant: "destructive",
-            title: "Missing Information",
-            description: "Please fill in all required information.",
-          });
-        }
-      } catch (error) {
-        console.error("Error saving data to MongoDB:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "An error occurred while saving your data.",
-        });
-      }
+    const res = await addProfilePicture({
+      _id: "65176d6b9ce0272c671d6583",
+      profileURL,
+    });
+    if (res.message) {
+      toast({
+        variant: "success",
+        title: "Successfully Onboarded",
+        description: "Welcome to Umonics LMS",
+      });
     }
   }
 
