@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import OpenMiniChat from "./minichat-open";
+import { userId } from "@/utils/constants";
 
 const MiniChat = () => {
   const [toggleMiniChat, setToggleMiniChat] = useState<boolean>(false);
@@ -18,7 +19,9 @@ const MiniChat = () => {
   if (atMessagePage) return null;
 
   if (toggleMiniChat) {
-    return <OpenMiniChat close={() => setToggleMiniChat(false)} />;
+    return (
+      <OpenMiniChat close={() => setToggleMiniChat(false)} userId={userId} />
+    );
   }
 
   return (

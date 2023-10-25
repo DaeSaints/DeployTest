@@ -17,7 +17,13 @@ import { fetchMessages } from "@/lib/actions/message.action";
 import { MessageType } from "@/lib/interfaces/message.interface";
 import MiniChatNewBox from "./minichat-new";
 
-const OpenMiniChat = ({ close }: { close: () => void }) => {
+const OpenMiniChat = ({
+  close,
+  userId,
+}: {
+  close: () => void;
+  userId: string;
+}) => {
   const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
   const [toggleNewChat, setToggleNewChat] = useState<boolean>(false);
 
@@ -29,7 +35,10 @@ const OpenMiniChat = ({ close }: { close: () => void }) => {
     if (toggleNewChat) setToggleNewChat(false);
     setSelectedChat(chatSelected);
   }
-  const userId = "65176d6b9ce0272c671d6583";
+  function handleSelectNewChat() {
+    setToggleNewChat(false);
+  }
+  // const userId = "65176d6b9ce0272c671d6583";
 
   const chatId = selectedChat?._id as string;
 
@@ -87,7 +96,7 @@ const OpenMiniChat = ({ close }: { close: () => void }) => {
           handleSelectChat={handleSelectChat}
         />
         {toggleNewChat ? (
-          <MiniChatNewBox />
+          <MiniChatNewBox handleSelectNewChat={handleSelectNewChat} />
         ) : (
           <>
             {!selectedChat ? (

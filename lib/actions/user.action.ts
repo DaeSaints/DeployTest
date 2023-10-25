@@ -39,31 +39,51 @@ export async function fetchUsers(pageNumber = 1, pageSize = 20) {
   }
 }
 
-export async function fetchUsersSearch(search: string) {
+export async function fetchUsersSearch(
+  search: string,
+  userId: string,
+  role: string
+) {
   try {
     connectDB();
 
+    const filter =
+      role === "All"
+        ? {
+            email: { $regex: search, $options: "i" },
+            _id: { $ne: userId },
+            role: { $in: ["general manager", "teacher"] },
+          }
+        : {
+            email: { $regex: search, $options: "i" },
+            _id: { $ne: userId },
+            role,
+          };
+
     // Fetch users with pagination
-    const usersQuery = User.find({ email: { $regex: search, $options: "i" } })
+    const usersQuery = User.find(filter)
       .sort({ createdAt: "desc" })
       .lean()
-      .limit(2)
-      .select("_id name email image role")
+      .limit(4)
+      .select("_id name email photoURL role")
       .exec();
 
     const usersData = await usersQuery;
 
-    // PARENTS
-    const parentsQuery = Parent.find({
-      email: { $regex: search, $options: "i" },
-    })
-      .sort({ createdAt: "desc" })
-      .lean()
-      .limit(2)
-      .select("_id name email")
-      .exec();
+    // if(role === "Parent")
 
-    const parentsData = await parentsQuery;
+    // PARENTS
+    // const parentsQuery = Parent.find({
+    //   email: { $regex: search, $options: "i" },
+    //   _id: { $ne: userId },
+    // })
+    //   .sort({ createdAt: "desc" })
+    //   .lean()
+    //   .limit(2)
+    //   .select("_id name email photoURL")
+    //   .exec();
+
+    // const parentsData = await parentsQuery;
 
     const usersPlainData: UserType[] = usersData.map((d: any) => {
       return {
@@ -72,16 +92,16 @@ export async function fetchUsersSearch(search: string) {
       };
     });
 
-    const parentsPlainData: ParentType[] = parentsData.map((d: any) => {
-      return {
-        ...d,
-        _id: d._id?.toString(),
-      };
-    });
+    // const parentsPlainData: ParentType[] = parentsData.map((d: any) => {
+    //   return {
+    //     ...d,
+    //     _id: d._id?.toString(),
+    //   };
+    // });
 
-    const combinedData = [...usersPlainData, ...parentsPlainData];
+    // const combinedData = [...usersPlainData, ...parentsPlainData];
 
-    return { users: combinedData };
+    return { users: usersPlainData };
   } catch (error: any) {
     throw new Error("Error in fetching users", error.message);
   }
@@ -146,7 +166,7 @@ export async function addProfilePicture({
   connectDB();
 
   try {
-    const user = await User.findByIdAndUpdate(
+    const user = await Parent.findByIdAndUpdate(
       { _id },
       { profileURL },
       { new: true }

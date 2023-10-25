@@ -6,6 +6,7 @@ import PageTwo from "./components/page-two";
 import PageThree from "./components/page-three";
 import { addProfilePicture } from "@/lib/actions/user.action";
 import { useToast } from "@/components/ui/use-toast";
+import { userId } from "@/utils/constants";
 
 const OnboardingComponent = () => {
   const { toast } = useToast();
@@ -50,7 +51,7 @@ const OnboardingComponent = () => {
 
   async function handlerFinish() {
     const res = await addProfilePicture({
-      _id: "65176d6b9ce0272c671d6583",
+      _id: userId,
       profileURL,
     });
     if (res.message) {
