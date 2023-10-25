@@ -80,8 +80,13 @@ export async function fetchMessages({
     const totalCount = await User.countDocuments({});
 
     for (let message of data) {
-      let user = await User.findById(message.sender).lean();
-      if (!user) user = await Parent.findById(message.sender).lean();
+      let user = await User.findById(message.sender)
+        .select("_id name email photoURL")
+        .lean();
+      if (!user)
+        user = await Parent.findById(message.sender)
+          .select("_id name email photoURL")
+          .lean();
       message.sender = user;
     }
 
@@ -89,6 +94,10 @@ export async function fetchMessages({
       return {
         ...d,
         _id: d._id?.toString(),
+        sender: {
+          ...d.sender,
+          _id: d.sender._id.toString(),
+        },
       };
     });
 

@@ -10,28 +10,31 @@ const MiniSingleMessage = ({
   date,
   content,
   today,
+  senderImage,
+  senderName,
 }: {
   side: "Me" | "Other";
   image?: string;
   date: Date;
   today: Date;
   content: string;
+  senderImage: string;
+  senderName: string;
 }) => {
-  // const formattedDate =
-  //   date.toDateString() === today.toDateString()
-  //     ? date.toLocaleString("en-US", {
-  //         hour: "2-digit",
-  //         minute: "2-digit",
-  //       })
-  //     : date
-  //         .toLocaleString("en-US", {
-  //           day: "numeric",
-  //           month: "short",
-  //           hour: "2-digit",
-  //           minute: "2-digit",
-  //         })
-  //         .replace(/\s/g, " ");
-
+  const formattedDate =
+    date.toDateString() === today.toDateString()
+      ? date.toLocaleString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : date
+          .toLocaleString("en-US", {
+            day: "numeric",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          .replace(/\s/g, " ");
   return (
     <div
       className={`items-start gap-2 justify-start w-full ${
@@ -39,10 +42,12 @@ const MiniSingleMessage = ({
       } h-fit`}
     >
       <div className="flex flex-col items-center justify-start w-10 h-full gap-2">
-        <TooltipButton tooltip={""}>
+        <TooltipButton tooltip={formattedDate}>
           <Avatar>
-            <AvatarImage src={image} />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={senderImage} />
+            <AvatarFallback>
+              {side === "Me" ? senderName[0] : "CN"}
+            </AvatarFallback>
           </Avatar>
         </TooltipButton>
       </div>

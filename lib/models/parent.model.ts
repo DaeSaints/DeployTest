@@ -15,6 +15,9 @@ const parentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profileURL: {
+      type: String,
+    },
     children: [
       {
         type: mongoose.Schema.Types.ObjectId,

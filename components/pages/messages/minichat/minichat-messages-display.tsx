@@ -15,10 +15,14 @@ const MiniChatMessagesDisplay = ({
   chat,
   userId,
   initialMessages,
+  senderImage,
+  senderName,
 }: {
   chat: ChatType;
   userId: string;
   initialMessages: MessageType[];
+  senderImage: string;
+  senderName: string;
 }) => {
   const chatId = chat._id as string;
   const MessagesEndRef = useRef<HTMLDivElement>(null);
@@ -80,6 +84,8 @@ const MiniChatMessagesDisplay = ({
                     date={message.createdAt}
                     today={new Date()}
                     content={message.content}
+                    senderImage={senderImage}
+                    senderName={senderName}
                   />
                 );
               })}

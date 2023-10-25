@@ -20,6 +20,11 @@ const MiniChatMessages = ({
   const recipient: UserType | ParentType = chat.users.find(
     (d) => d._id !== userId
   ) as UserType | ParentType;
+  const sender: UserType | ParentType = chat.users.find(
+    (d) => d._id === userId
+  ) as UserType | ParentType;
+  console.log(chat)
+
   // @ts-ignore
   const recipientRole: UserRolesType = recipient.role || "parent";
   const chatId = chat._id as string;
@@ -39,6 +44,8 @@ const MiniChatMessages = ({
           chat={chat}
           userId={userId}
           initialMessages={initialMessages}
+          senderImage={sender.profileURL || ""}
+          senderName={sender.name}
         />
         <MiniChatSendMessage chatId={chatId} senderId={userId} />
       </main>

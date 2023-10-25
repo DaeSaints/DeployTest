@@ -6,6 +6,7 @@ export interface ParentType {
   name: string;
   email: string;
   phone: string;
+  profileURL?: string;
   children?: StudentType[];
   transactions?: TransactionType[];
 }

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 // UI
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, PenBoxIcon, Search } from "lucide-react";
 
 // BACKEND
-import { fetchChats } from "@/lib/actions/chat.action";
+import { searchChats, searchChatsAll } from "@/lib/actions/chat.action";
 import { useQuery } from "@tanstack/react-query";
 import { UserRolesType, UserType } from "@/lib/interfaces/user.interface";
 import { ParentType } from "@/lib/interfaces/parent.interface";
@@ -16,6 +16,7 @@ import { ChatType } from "@/lib/interfaces/chat.interface";
 import { pusherClient } from "@/lib/pusher";
 import { Button } from "@/components/ui/button";
 import MiniChatNewChat from "./minichat-new-chat";
+import useDebounce from "@/lib/hooks/useDebounce";
 
 const MiniChatDrawer = ({
   toggleNewChat,
@@ -29,14 +30,18 @@ const MiniChatDrawer = ({
   handleNewChat: () => void;
 }) => {
   const userId = "65176d6b9ce0272c671d6583";
+  const [searchInput, setSearchInput] = useState<string>("");
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: [`minichat-${userId}:chats`],
+    queryKey: [`minichat-${userId}:chats`, debouncedSearch],
     queryFn: async () => {
-      const { chats } = await fetchChats({
+      const { chats } = await searchChatsAll({
         pageNumber: 1,
         pageSize: 20,
         userId,
+        search: debouncedSearch,
+        filterRole: undefined,
       });
       return chats;
     },
@@ -69,40 +74,52 @@ const MiniChatDrawer = ({
           variant={"transparent"}
           placeholder="Search..."
           className="pl-8 border-b-2 border-transparent rounded-none border-b-slate-200"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
-      <ScrollArea className="flex-1 w-full">
+      <ScrollArea className="flex flex-1 w-full">
         {isLoading ? (
           <div className="flex items-center justify-center w-full h-full">
             <Loader2 className="w-6 h-6 animate-spin" />
           </div>
         ) : (
           <>
-            <div className="flex">
-              <ul className="flex-col flex-1 border-r">
+            <div className="flex flex-1 w-full h-full">
+              <ul className="flex flex-col flex-1 border-r">
                 {toggleNewChat && <MiniChatNewChat />}
-                {data?.map((chat) => {
-                  const _id = chat._id as string;
-                  const active = selectedChat?._id === _id;
-                  const recipient: UserType | ParentType = chat.users.find(
-                    (d) => d._id !== userId
-                  ) as UserType | ParentType;
+                {data && data?.length > 0 ? (
+                  <>
+                    {data?.map((chat) => {
+                      const _id = chat._id as string;
+                      const active = selectedChat?._id === _id;
+                      const recipient: UserType | ParentType = chat.users.find(
+                        (d) => d._id !== userId
+                      ) as UserType | ParentType;
 
-                  // @ts-ignore
-                  let recipientRole: UserRolesType = recipient.role || "parent";
-                  return (
-                    <MiniChatSingleChat
-                      key={_id}
-                      _id={_id}
-                      chat={chat}
-                      active={active}
-                      handleSelectChat={handleSelectChat}
-                      name={recipient?.name as string}
-                      latestContent={chat.latestMessage.content}
-                      recipientRole={recipientRole}
-                    />
-                  );
-                })}
+                      // @ts-ignore
+                      let recipientRole: UserRolesType =
+                        //@ts-ignore
+                        recipient.role || "parent";
+                      return (
+                        <MiniChatSingleChat
+                          key={_id}
+                          _id={_id}
+                          chat={chat}
+                          active={active}
+                          handleSelectChat={handleSelectChat}
+                          name={recipient?.name as string}
+                          latestContent={chat.latestMessage.content}
+                          recipientRole={recipientRole}
+                        />
+                      );
+                    })}
+                  </>
+                ) : (
+                  <li className="flex items-center justify-center flex-1 w-full mt-4">
+                    No chats found
+                  </li>
+                )}
               </ul>
             </div>
           </>
