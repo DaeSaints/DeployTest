@@ -11,6 +11,11 @@ export const ourFileRouter = {
       return { userId: "123" };
     })
     .onUploadComplete(() => {}),
+  message: f({ image: { maxFileSize: "16MB", maxFileCount: 1 } })
+    .middleware(() => {
+      return { userId: "123" };
+    })
+    .onUploadComplete(() => {}),
   courseImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
     .middleware(() => {
       return { userId: "123" };

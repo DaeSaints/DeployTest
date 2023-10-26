@@ -87,7 +87,7 @@ export async function fetchChats({
       .populate({
         path: "latestMessage",
         model: Message,
-        select: "_id content isRead sender createdAt",
+        select: "_id content isRead sender createdAt isImage",
       })
       .lean()
       .exec();
@@ -211,7 +211,7 @@ export async function searchChats({
       .populate({
         path: "latestMessage",
         model: Message,
-        select: "_id content isRead sender createdAt",
+        select: "_id content isRead sender createdAt isImage",
       })
       .exec()
       .then((chats) => {
@@ -341,7 +341,7 @@ export async function searchChatsAll({
       .populate({
         path: "latestMessage",
         model: Message,
-        select: "_id content isRead sender createdAt",
+        select: "_id content isRead sender createdAt isImage",
       })
       .exec()
       .then((chats) => {

@@ -10,6 +10,10 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isImage: {
+      type: Boolean,
+      default: false,
+    },
     chat: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",

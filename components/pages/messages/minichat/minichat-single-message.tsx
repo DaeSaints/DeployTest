@@ -3,6 +3,7 @@ import React from "react";
 // UI
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TooltipButton from "@/components/global/TooltipButton";
+import Image from "next/image";
 
 const MiniSingleMessage = ({
   side,
@@ -12,6 +13,7 @@ const MiniSingleMessage = ({
   today,
   senderImage,
   senderName,
+  isImage = false,
 }: {
   side: "Me" | "Other";
   image?: string;
@@ -20,6 +22,7 @@ const MiniSingleMessage = ({
   content: string;
   senderImage: string;
   senderName: string;
+  isImage: boolean;
 }) => {
   const formattedDate =
     date.toDateString() === today.toDateString()
@@ -57,13 +60,23 @@ const MiniSingleMessage = ({
           side === "Other" ? "pr-10 flex" : "pl-10 flex flex-row-reverse"
         }`}
       >
-        <div className="max-w-full pl-2">
+        <div className="max-w-[15rem] pl-2">
           <p
             className={`p-2 rounded-md text-sm ${
               side === "Other" ? "bg-main-300" : "bg-slate-300"
             }`}
           >
-            {content}
+            {isImage ? (
+              <>
+                <div className="relative w-[13rem] p-2 h-[10rem] overflow-hidden">
+                  <Image src={content} fill alt="content" />
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="">{content}</span>
+              </>
+            )}
           </p>
         </div>
       </div>
