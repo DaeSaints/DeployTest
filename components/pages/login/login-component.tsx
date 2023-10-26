@@ -30,7 +30,16 @@ import Image from "next/image";
 import Knowledge from "@/public/svg/knowledge.svg";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
+// NEXTAUTH
+import { signIn } from "next-auth/react";
+//ROUTER
+import { useRouter } from "next/navigation";
+//ISONBOARDED
+import { isOnboarded } from "@/lib/actions/user.action";
+
+
 const LoginComponent = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const form = useForm<z.infer<typeof loginValidation>>({
     resolver: zodResolver(loginValidation),
@@ -39,9 +48,34 @@ const LoginComponent = () => {
       password: "",
     },
   });
-
+  
   async function onSubmit(values: z.infer<typeof loginValidation>) {
     console.log(values);
+    
+    const email = values.email;
+    const password = values.password;
+    
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+      .then(async ({ok,error}) => {
+        if (ok) {
+          console.log("success");
+          const onboarded = await isOnboarded({email});
+          if(onboarded){
+            router.push("/dashboard");
+          }else{
+            router.push("/onboarding");
+          }
+
+        } else {
+          console.log("error:",error)
+        }
+      })
+
+    
   }
 
   return (

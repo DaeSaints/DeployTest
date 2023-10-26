@@ -1,5 +1,5 @@
-import User from "@/libs/models/user.model";
-import connectDB from "@/libs/mongodb";
+import User from "@/lib/models/user.model";
+import connectDB from "@/lib/mongodb";
 
 interface Params {
   account: any;

@@ -1,10 +1,18 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { signInWithOAuth } from "./signInWithOAuth";
-import { UserType } from "@/libs/interfaces/user.interface";
-import { authUser, getUserByEmail } from "./getUserByEmail";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { authUser, getUserByEmail } from "@/utils/getUserByEmail";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+
+//bcrypt
+import bcrypt from "bcrypt";
+
+interface UserSession {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null | undefined;
+  role?: string | null | undefined; // Add the 'role' property here
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -20,23 +28,32 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         console.log(credentials?.email, credentials?.password);
+        if (credentials) {
 
-        const user = await authUser({
-          email: credentials?.email as string,
-          password: credentials?.password as string,
-        });
 
-        if (!user) {
-          return null;
-        }
+          const user = await authUser({
+            email: credentials?.email as string,
+            password: credentials?.password as string,
+          });
+          console.log(user.role);
+          if (!user) {
+            return null;
+          }
 
-        const passwordsMatch = user.password === credentials?.password;
+          // const hashpassw = await bcrypt.hash(credentials?.password,10)
+          // console.log(user.password);
+          // console.log(hashpassw);
+          // console.log(credentials?.password);
 
-        if (!passwordsMatch) {
-          return null;
-        }
+          const match = await bcrypt.compare(credentials?.password, user.password);
+          if(!match) {
+              console.log("success");
+              return null;
+          }
 
-        return user;
+
+          return user;
+        }  
       },
     }),
   ],
@@ -52,7 +69,7 @@ export const authOptions: NextAuthOptions = {
       if (trigger === "update") {
         if (token?.user) {
           const user: UserType = token.user as UserType;
-          user.role = session.role;
+          user.role = session.user?.role;
           token.user = user;
         }
       } else {
@@ -62,11 +79,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user = token.user as {
-        name?: string;
-        email?: string;
-        image?: string;
-      };
+      session.user = token.user as UserSession;
       return session;
     },
   },

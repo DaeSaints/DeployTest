@@ -6,6 +6,7 @@ import PageTwo from "./components/page-two";
 import PageThree from "./components/page-three";
 import { addProfilePicture } from "@/lib/actions/user.action";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type ProfilePictureParams = {
   _id: string;
@@ -16,7 +17,7 @@ type ProfilePictureParams = {
 
 const OnboardingComponent = () => {
   const { toast } = useToast();
-
+  const router = useRouter();
   const totalPages = 3;
   const [page, setPage] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
@@ -82,6 +83,7 @@ const OnboardingComponent = () => {
             description: "Please fill in all required information.",
           });
         }
+        router.push("/dashboard");
       } catch (error) {
         console.error("Error saving data to MongoDB:", error);
         toast({

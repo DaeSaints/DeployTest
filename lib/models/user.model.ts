@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "credentials",
   },
+  isOnboarded:{
+    type: String,
+  },
 });
 
 const User = mongoose.models.user || mongoose.model("user", userSchema);

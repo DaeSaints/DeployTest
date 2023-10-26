@@ -1,8 +1,8 @@
-import { MessageType } from "@/libs/interfaces/message.interface";
-import Message from "@/libs/models/chat/message.model";
-import Parent from "@/libs/models/parent.model";
-import User from "@/libs/models/user.model";
-import connectDB from "@/libs/mongodb";
+import { MessageType } from "@/lib/interfaces/message.interface";
+import Message from "@/lib/models/chat/message.model";
+import Parent from "@/lib/models/parent.model";
+import User from "@/lib/models/user.model";
+import connectDB from "@/lib/mongodb";
 
 export async function GET(
   req: Request,

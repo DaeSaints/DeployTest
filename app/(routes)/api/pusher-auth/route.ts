@@ -1,4 +1,4 @@
-import { pusherServer } from "@/libs/pusher";
+import { pusherServer } from "@/lib/pusher";
 import { nanoid } from "nanoid";
 
 export async function POST(req: Request) {

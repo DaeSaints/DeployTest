@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { boolean } from "zod";
 
 const parentSchema = new mongoose.Schema(
   {
@@ -36,9 +37,24 @@ const parentSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    isOnboarded:{
+      type: Boolean,
+      default:false,
+    },
+    role: {
+      type: String,
+      enum: [
+        "general manager",
+        "customer support",
+        "teacher",
+        "sales manager",
+        "no role",
+      ],
+      default: "no role",
+    },
   },
   { timestamps: true }
 );
 
-const Parent = mongoose.models.parent || mongoose.model("parent", parentSchema);
+const Parent = mongoose.models.parents || mongoose.model("parents", parentSchema);
 export default Parent;
