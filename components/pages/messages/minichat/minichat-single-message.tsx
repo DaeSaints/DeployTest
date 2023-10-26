@@ -61,23 +61,23 @@ const MiniSingleMessage = ({
         }`}
       >
         <div className="max-w-[15rem] pl-2">
-          <p
-            className={`p-2 rounded-md text-sm ${
-              side === "Other" ? "bg-main-300" : "bg-slate-300"
-            }`}
-          >
-            {isImage ? (
-              <>
-                <div className="relative w-[13rem] p-2 h-[10rem] overflow-hidden">
-                  <Image src={content} fill alt="content" />
-                </div>
-              </>
-            ) : (
-              <>
+          {isImage ? (
+            <>
+              <div className="relative w-[13rem] p-2 h-[10rem] overflow-hidden border-2 rounded-lg">
+                <Image src={content} fill alt="content" />
+              </div>
+            </>
+          ) : (
+            <>
+              <p
+                className={`p-2 rounded-md text-sm ${
+                  side === "Other" ? "bg-main-300" : "bg-slate-300"
+                }`}
+              >
                 <span className="">{content}</span>
-              </>
-            )}
-          </p>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

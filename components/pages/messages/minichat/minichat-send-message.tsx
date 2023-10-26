@@ -143,6 +143,7 @@ const MiniChatSendMessage = ({
             <Input
               type="file"
               className="hidden"
+              accept="image/*"
               ref={fileInputRef}
               // onChange={handleFileChange}
               onChange={async (e) => {
