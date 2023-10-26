@@ -1,12 +1,14 @@
+const { withUt } = require("uploadthing/tw");
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+module.exports = withUt({
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -17,17 +19,17 @@ module.exports = {
     },
     extend: {
       colors: {
-        "main": {
-          "50": "#ecf5ff",
-          "100": "#d9eaff",
-          "200": "#b3d6ff",
-          "300": "#8cc1ff",
-          "400": "#66adff",
-          "500": "#4098ff",
-          "600": "#337acc",
-          "700": "#265b99",
-          "800": "#1a3d66",
-          "900": "#0d1e33"
+        main: {
+          50: "#ecf5ff",
+          100: "#d9eaff",
+          200: "#b3d6ff",
+          300: "#8cc1ff",
+          400: "#66adff",
+          500: "#4098ff",
+          600: "#337acc",
+          700: "#265b99",
+          800: "#1a3d66",
+          900: "#0d1e33",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -85,4 +87,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+});

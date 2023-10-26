@@ -1,12 +1,10 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import ProgressPage from "./progressbar";
 import { User } from "lucide-react";
 import Image from "next/image";
-import { UploadButton } from "@/lib/uploadthing";
-import { fetchUpload } from "@/utils/fetchUpload";
-
+import { Input } from "@/components/ui/input";
 const PageThree = ({
   page,
   totalPages,
@@ -16,8 +14,23 @@ const PageThree = ({
   page: number;
   totalPages: number;
   selectedImageOrig: string | undefined;
-  handlerPageThree: (img: string | undefined, url: string) => void;
+  handlerPageThree: (img: string | undefined, file: File[]) => void;
 }) => {
+  //   FILE
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const file = e.target.files && e.target.files;
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        handlerPageThree(reader.result as string, selectedFiles);
+      };
+
+      reader.readAsDataURL(file[0]);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col w-full">
@@ -32,7 +45,15 @@ const PageThree = ({
             <Label htmlFor="profile-pic" className="text-xl font-medium">
               Profile Picture
             </Label>
-            <UploadButton
+            <div>
+              <Input type="file" onChange={handleFileChange} />
+              <div className="mt-4 text-xs text-muted-foreground">
+                16:9 aspect ratio recommended
+              </div>
+            </div>
+
+            {/* <Input type="file" onChange={handleFileChange} /> */}
+            {/* <UploadButton
               className="border border-dash"
               endpoint="profileImage"
               onClientUploadComplete={async (res) => {
@@ -45,7 +66,7 @@ const PageThree = ({
               onUploadError={(error: Error) => {
                 alert(`ERROR! ${error.message}`);
               }}
-            />
+            /> */}
           </div>
         </div>
         <div className="relative flex items-center justify-center ml-20 overflow-hidden rounded-full w-80 h-80 outline outline-main-300">
