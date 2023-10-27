@@ -27,7 +27,7 @@ const MiniChat = () => {
   return (
     <Button
       onClick={() => setToggleMiniChat(true)}
-      className="absolute px-4 py-6 text-xl font-bold text-white transition rounded-full shadow bottom-8 right-8 bg-main-500 hover:opacity-40 animate-in"
+      className="fixed px-4 py-6 text-xl font-bold text-white transition rounded-full shadow bottom-8 right-8 bg-main-500 hover:opacity-40 animate-in"
     >
       <span className="">Chat</span>
       <MessageSquare className="ml-2 text-white w-7 h-7" />
