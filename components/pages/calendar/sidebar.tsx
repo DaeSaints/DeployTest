@@ -10,8 +10,10 @@ const CalendarSideBar = () => {
   console.log(date);
 
   return (
-    <article className="flex flex-col w-full max-w-xs pt-4 bg-white">
-      <header className="w-full h-24"></header>
+    <article className="flex flex-col w-full max-w-xs bg-white">
+      <header className="flex items-center justify-start w-full pl-8 text-3xl font-bold h-28">
+        <span>Calendar</span>
+      </header>
       <main className="flex flex-col items-center justify-start flex-1 gap-4 pb-4">
         <div className="w-full px-4">
           <Calendar

@@ -8,16 +8,40 @@ import { getMonthName } from "@/utils/calendar";
 import { useCalendarContext } from "@/components/providers/CalendarProvider";
 
 const CalendarTopBar = () => {
-  const { monthIndex, setMonthIndex, calendarType, setCalendarType } =
-    useCalendarContext();
-  const currDate = new Date();
+  const {
+    monthIndex,
+    setMonthIndex,
+    calendarType,
+    setCalendarType,
+    setDateSpecific,
+    dateSpecific,
+  } = useCalendarContext();
+  const currDate = dateSpecific;
+  currDate.setDate(1);
   currDate.setMonth(monthIndex);
 
   function prevMonth() {
-    setMonthIndex(monthIndex - 1);
+    if (calendarType === "Month") {
+      let newMonth = monthIndex - 1;
+      if (monthIndex === 0) {
+        newMonth = 11;
+
+        dateSpecific.setFullYear(dateSpecific.getFullYear() - 1);
+        setDateSpecific(dateSpecific);
+      }
+      setMonthIndex(newMonth);
+    }
   }
   function nextMonth() {
-    setMonthIndex(monthIndex + 1);
+    if (calendarType === "Month") {
+      let newMonth = (monthIndex + 1) % 12;
+
+      if (monthIndex === 11) {
+        dateSpecific.setFullYear(dateSpecific.getFullYear() + 1);
+        setDateSpecific(dateSpecific);
+      }
+      setMonthIndex(newMonth);
+    }
   }
 
   return (
@@ -49,6 +73,7 @@ const CalendarTopBar = () => {
           onClick={() => {
             const today = new Date();
             setMonthIndex(today.getMonth());
+            setDateSpecific(today);
           }}
           type="button"
           variant={"outline"}
