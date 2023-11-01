@@ -6,6 +6,7 @@ import MonthlyView from "./month-view";
 import WeeklyView from "./week-view";
 import useAttendance from "@/lib/hooks/useAttendance";
 import { AttendanceType } from "@/lib/interfaces/attendance.interface";
+import { Loader2 } from "lucide-react";
 
 const CalendarComponent = () => {
   const { monthIndex, calendarType, dateSpecific } = useCalendarContext();
@@ -17,7 +18,9 @@ const CalendarComponent = () => {
   return (
     <>
       {isLoading ? (
-        <></>
+        <div className="flex items-center justify-center w-full h-full">
+          <Loader2 className="w-6 h-6 animate-spin" />
+        </div>
       ) : (
         <>
           {calendarType === "Month" ? (

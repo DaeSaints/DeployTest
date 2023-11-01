@@ -10,6 +10,14 @@ function getDaysInMonth(month: number, year: number): Date[] {
   if (isSundayFirstDate) {
   } else {
     const temp = getDaysStartingFromSunday(days[0]);
+    let index = -1;
+    const temp1 = temp.find((d, i) => {
+      if (d.getDate() === 1) {
+        index = i;
+      }
+    });
+    const toRemove = 7 - index;
+    temp.splice(0, toRemove);
     days = [...temp, ...days];
   }
   return days;
