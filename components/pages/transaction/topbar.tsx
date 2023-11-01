@@ -10,7 +10,7 @@ const TransactionTopBar = () => {
   const [selectedTab, setSelectedTab] = useState("All");
   return (
     <header className="flex flex-col justify-center w-full h-32 gap-1 px-4 bg-white">
-      <div className="text-2xl font-bold">Transactions</div>
+      <div className="text-2xl font-bold text-main-700">Transactions</div>
       <div className="flex items-center justify-between w-full">
         <div className="flex gap-4">
           <div className="relative flex items-center justify-center px-4 border rounded-lg">

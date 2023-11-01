@@ -1,7 +1,14 @@
+import SettingsComponent from "@/components/pages/settings/component";
 import React from "react";
+import { Toaster } from "@/components/ui/toaster";
 
 const page = () => {
-  return <div>SettingsPages</div>;
+  return (
+    <>
+      <Toaster />
+      <SettingsComponent />
+    </>
+  );
 };
 
 export default page;
