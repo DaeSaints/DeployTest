@@ -10,7 +10,7 @@ import {
 import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import { convertToTimeZone } from "@/utils/helpers/timeZone";
 import { XCircle } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 export function CalendarSheet({
   trigger,
@@ -21,6 +21,7 @@ export function CalendarSheet({
   setTrigger: (col: boolean) => void;
   selectedAttendance: AttendanceType;
 }) {
+  
   let startDateTime: Date = new Date(selectedAttendance.date);
   let endDateTime: Date = new Date(selectedAttendance.date);
   let [hours, minutes]: string[] = [];
@@ -28,6 +29,24 @@ export function CalendarSheet({
   startDateTime.setHours(Number(hours), Number(minutes));
   [hours, minutes] = selectedAttendance.endTime.split(":");
   endDateTime.setHours(Number(hours), Number(minutes));
+
+  const [studentAttendance, setStudentAttendance] = useState(
+    selectedAttendance.class.participants?.map((student) => ({
+      name: student.name,
+      present: false,
+    })) ?? []
+  );
+
+  const classPassed = new Date() > new Date(selectedAttendance.date);
+
+  const toggleAttendance = (index: number) => {
+    if (!classPassed) {
+      const updatedAttendance = [...studentAttendance];
+      updatedAttendance[index].present = !updatedAttendance[index].present;
+      setStudentAttendance(updatedAttendance);
+    }
+  };
+
   return (
     <Sheet open={trigger} onOpenChange={setTrigger}>
       <SheetContent>
@@ -67,12 +86,14 @@ export function CalendarSheet({
               <>
                 {selectedAttendance?.class.participants?.map(
                   (student, index) => {
+                    const isPresent = studentAttendance[index].present;
                     return (
                       <React.Fragment key={index}>
                         <span className="flex items-center justify-end">
                           <Button
                             variant={"ghost"}
                             className="p-1 rounded-full w-7 h-7"
+                            onClick={() => toggleAttendance(index)}
                           >
                             <XCircle className="w-full h-full" />
                           </Button>
