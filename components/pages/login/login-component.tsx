@@ -11,7 +11,7 @@ const loginValidation = z.object({
   email: z.string().email().min(1, {
     message: "Invalid Email",
   }),
-  password: z.string().min(1),
+  password: z.string().min(0),
 });
 
 // UI
@@ -31,7 +31,7 @@ import Knowledge from "@/public/svg/knowledge.svg";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 // NEXTAUTH
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 //ROUTER
 import { useRouter } from "next/navigation";
 //ISONBOARDED
@@ -66,12 +66,15 @@ const LoginComponent = () => {
           const onboarded = await isOnboarded({email});
           if(onboarded){
             router.push("/dashboard");
-          }else{
+          }else if (!onboarded && password != ""){
             router.push("/onboarding");
+          }else{
+            router.push("/messages")
           }
 
         } else {
           console.log("error:",error)
+          
         }
       })
 

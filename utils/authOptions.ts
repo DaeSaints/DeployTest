@@ -39,15 +39,19 @@ export const authOptions: NextAuthOptions = {
           if (!user) {
             return null;
           }
+          console.log(credentials?.password);
+          console.log(user.password);
+          console.log(await bcrypt.hash(credentials?.password,10));
+          const match = true;
 
-          // const hashpassw = await bcrypt.hash(credentials?.password,10)
-          // console.log(user.password);
-          // console.log(hashpassw);
-          // console.log(credentials?.password);
-
-          const match = await bcrypt.compare(credentials?.password, user.password);
+          if(credentials?.password != ""){
+            const match = await bcrypt.compare(credentials?.password, user.password);
+          } else {
+            console.log("new account");
+            
+          }
           if(!match) {
-              console.log("success");
+              console.log("password incorrect");
               return null;
           }
 
@@ -66,6 +70,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, trigger, session }) {
+      console.log("processed");
       if (trigger === "update") {
         if (token?.user) {
           const user: UserType = token.user as UserType;

@@ -41,6 +41,10 @@ const parentSchema = new mongoose.Schema(
       type: Boolean,
       default:false,
     },
+    isAccepted:{
+      type: Boolean,
+      default:false,
+    },
     role: {
       type: String,
       enum: [

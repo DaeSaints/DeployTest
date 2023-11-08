@@ -29,9 +29,10 @@ const userSchema = new mongoose.Schema({
     default: "credentials",
   },
   isOnboarded:{
-    type: String,
+    type: Boolean,
+    default:false,
   },
 });
 
-const User = mongoose.models.user || mongoose.model("user", userSchema);
+const User = mongoose.models.users || mongoose.model("users", userSchema);
 export default User;
