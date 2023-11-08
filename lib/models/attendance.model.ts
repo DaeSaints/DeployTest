@@ -49,6 +49,13 @@ const attendanceSchema = new mongoose.Schema({
       ref: "Student",
     },
   ],
+
+  materials: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Material",
+    },
+  ],
 });
 
 const Attendance =

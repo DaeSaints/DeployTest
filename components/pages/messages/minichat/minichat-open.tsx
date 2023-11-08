@@ -90,13 +90,14 @@ const OpenMiniChat = ({
       </header>
       <main className="flex flex-1 w-full h-full overflow-hidden">
         <MiniChatDrawer
+          userId={userId}
           toggleNewChat={toggleNewChat}
           handleNewChat={handleNewChat}
           selectedChat={selectedChat}
           handleSelectChat={handleSelectChat}
         />
         {toggleNewChat ? (
-          <MiniChatNewBox handleSelectNewChat={handleSelectNewChat} />
+          <MiniChatNewBox handleSelectNewChat={handleSelectNewChat} userId={userId}/>
         ) : (
           <>
             {!selectedChat ? (

@@ -28,7 +28,7 @@ const MiniChatMessagesDisplay = ({
   const MessagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
-  const [incomingMessages, setIncomingMessages] = useState<MessageType[]>([]);
+  // const [incomingMessages, setIncomingMessages] = useState<MessageType[]>([]);
   React.useEffect(() => {
     if (MessagesEndRef.current) {
       MessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -86,6 +86,7 @@ const MiniChatMessagesDisplay = ({
                     content={message.content}
                     senderImage={senderImage}
                     senderName={senderName}
+                    isImage={message.isImage}
                   />
                 );
               })}

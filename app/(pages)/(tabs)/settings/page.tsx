@@ -3,7 +3,9 @@ import { UserType } from "@/lib/interfaces/user.interface";
 import { authOptions } from "@/utils/authOptions";
 import { isParent } from "@/utils/helpers/isParent";
 import { getServerSession } from "next-auth";
+import SettingsComponent from "@/components/pages/settings/component";
 import React from "react";
+import { Toaster } from "@/components/ui/toaster";
 
 const page = async ({ searchParams }: PageProps) => {
   const session = await getServerSession(authOptions);
@@ -12,7 +14,12 @@ const page = async ({ searchParams }: PageProps) => {
   console.log(session?.user)
 console.log(isParent(user));
   if (!user) return null;
-  return <div>SettingsPages</div>;
+  return (
+    <>
+      <Toaster />
+      <SettingsComponent />
+    </>
+  );
 };
 
 export default page;

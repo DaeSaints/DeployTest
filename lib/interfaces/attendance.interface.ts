@@ -1,4 +1,5 @@
 import { ClassesType } from "./class.interface";
+import { MaterialType } from "./material.interface";
 import { StudentType } from "./student.interface";
 
 export interface AttendanceType {
@@ -13,6 +14,7 @@ export interface AttendanceType {
   studentsPresent?: StudentType[];
   studentsNotPresent?: StudentType[];
   specialClassParticipants?: StudentType[];
+  materials?: MaterialType[];
 }
 
 export type ClassAttendanceType = "regular" | "special";

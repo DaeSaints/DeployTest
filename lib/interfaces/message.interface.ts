@@ -7,6 +7,7 @@ export interface MessageType {
   _id?: string;
   content: string;
   isRead: boolean;
+  isImage: boolean;
   chat: ChatType;
   sender: UserType | ParentType;
   createdAt: Date;

@@ -17,7 +17,6 @@ import { Loader2, User2Icon, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { fetchUsersSearch } from "@/lib/actions/user.action";
-import { userId } from "@/utils/constants";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { Badge } from "@/components/ui/badge";
@@ -27,8 +26,10 @@ import { ChatType } from "@/lib/interfaces/chat.interface";
 
 const MiniChatNewBox = ({
   handleSelectNewChat,
+  userId
 }: {
   handleSelectNewChat: () => void;
+  userId:string
 }) => {
   const [roleFilter, setRoleFilter] = useState<string>("All");
   const [value, setValue] = useState<string>("");

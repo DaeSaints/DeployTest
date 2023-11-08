@@ -5,6 +5,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserRolesType } from "@/lib/interfaces/user.interface";
 import { ChatType } from "@/lib/interfaces/chat.interface";
+import { Image, ImageIcon } from "lucide-react";
 
 const MiniChatSingleChat = ({
   _id,
@@ -53,7 +54,7 @@ const MiniChatSingleChat = ({
             </div>
             <div className="flex items-center justify-between flex-1 gap-2">
               <p className="flex-[4] text-xs text-left line-clamp-1">
-                You: {latestContent}
+                You: {chat.latestMessage.isImage ? "Image Upload" : latestContent}
               </p>
               <span className="flex-1 text-xs text-right text-slate-500">
                 {"9:00am"}

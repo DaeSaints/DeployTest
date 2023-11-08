@@ -24,6 +24,10 @@ const parentSchema = new mongoose.Schema(
     profileURL: {
       type: String,
     },
+    isOnboarded: {
+      type: Boolean,
+      default: false,
+    },
     children: [
       {
         type: mongoose.Schema.Types.ObjectId,

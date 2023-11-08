@@ -3,14 +3,33 @@ export function FormattedLocaleString(timeZone: string, date: Date) {
   return date.toLocaleString("en-US", { timeZone });
 }
 
+export function FormattedTimeLocaleString(
+  timeZone: keyof typeof timeZones,
+  currDate: Date,
+  timeString: string
+) {
+  let time: Date = currDate;
+  let [hours, minutes]: string[] = timeString.split(":");
+  time.setHours(Number(hours), Number(minutes));
+  return time.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "numeric",
+  });
+}
+
 export function convertToTimeZone(
   inputDate: Date,
   timeZoneAbbreviation: keyof typeof timeZoneOffsets
 ) {
-  const inputDateCopy = new Date(inputDate);
+  const inputDateCopy = inputDate;
   const timeZoneOffset = timeZoneOffsets[timeZoneAbbreviation];
+  console.log(inputDateCopy.getHours(), timeZoneAbbreviation);
   inputDateCopy.setHours(inputDateCopy.getHours() + timeZoneOffset);
-  return inputDateCopy;
+  return inputDateCopy.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+  });
 }
 
 export const timeZoneOffsets = {
@@ -23,4 +42,10 @@ export const timeZoneOffsets = {
   AEST: 10,
   IST: 5.5,
   JST: 9,
+};
+
+const timeZones = {
+  ET: "America/New_York",
+  IST: "Asia/Kolkata",
+  HKT: "Asia/Hong_Kong",
 };

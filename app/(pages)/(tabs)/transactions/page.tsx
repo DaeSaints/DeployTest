@@ -1,7 +1,8 @@
+import TransactionComponent from "@/components/pages/transaction/component";
 import React from "react";
 
 const page = () => {
-  return <div>TransactionsPage</div>;
+  return <TransactionComponent />;
 };
 
 export default page;

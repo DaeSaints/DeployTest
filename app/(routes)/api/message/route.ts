@@ -7,7 +7,7 @@ import connectDB from "@/lib/mongodb";
 import { pusherServer } from "@/lib/pusher";
 
 export async function POST(req: Request) {
-  const { chatId, content, senderId } = await req.json();
+  const { chatId, content, senderId, isImage } = await req.json();
 
   try {
     connectDB();
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
       chat: chatId,
       content,
       sender: senderId,
+      isImage,
     });
 
     const query = Message.findById(newMessage._id)

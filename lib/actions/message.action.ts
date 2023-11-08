@@ -73,7 +73,7 @@ export async function fetchMessages({
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(pageSize)
-      .select("_id content isRead sender createdAt")
+      .select("_id content isRead sender createdAt isImage")
       .lean()
       .exec();
 

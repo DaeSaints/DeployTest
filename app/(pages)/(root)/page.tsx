@@ -5,7 +5,7 @@ export default function Home() {
     <section className="flex flex-1 w-full h-full">
       <article className="flex-[0.5] bg-main-400 flex justify-start items-center px-20 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)]">
         <div className="flex flex-col items-start justify-center gap-4 text-5xl font-bold text-left text-white">
-          <h1 className="drop-shadow-md">Knowles</h1>
+          <h1 className="drop-shadow-md">Umonics</h1>
           <h1 className="drop-shadow-md">Training</h1>
           <h1 className="drop-shadow-md">Institute</h1>
         </div>

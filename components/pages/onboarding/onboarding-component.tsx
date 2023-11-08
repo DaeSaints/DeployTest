@@ -8,9 +8,14 @@ import { addProfilePicture } from "@/lib/actions/user.action";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
+// UPLOADTHING
+import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
+import { useUploadThing } from "@/lib/uploadthing";
+import { Loader2 } from "lucide-react";
+
 type ProfilePictureParams = {
   _id: string;
-  name: string; 
+  name: string;
   password: string;
   profileURL: string;
 };
@@ -23,6 +28,7 @@ const OnboardingComponent = () => {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
 
   const [profileURL, setProfileURL] = useState<string>("");
   const [password, setPassword] = useState("");
@@ -51,9 +57,15 @@ const OnboardingComponent = () => {
     setUserName(event.target.value);
   };
 
-  function handlerPageThree(img: string | undefined, url: string) {
+  // UPLOADTHING
+  const { startUpload, isUploading } = useUploadThing("profileImage", {
+    onClientUploadComplete: (url) => {
+      return url;
+    },
+  });
+  function handlerPageThree(img: string | undefined, file: File[]) {
     setSelectedImage(img);
-    setProfileURL(url);
+    setSelectedFile(file);
   }
 
   async function handlerFinish() {
@@ -93,6 +105,11 @@ const OnboardingComponent = () => {
         });
       }
     }
+  }
+
+  async function uploadBtn() {
+    const res = await startUpload(selectedFile);
+    console.log(res);
   }
 
   const isContinueDisabledOnName = page === 1 && userName.trim() === "";
@@ -139,9 +156,20 @@ const OnboardingComponent = () => {
           </Button>
         ) : null}
         {totalPages === page ? (
-          <Button size={"lg"} type="button" onClick={handlerFinish}>
-            Finish
-          </Button>
+          <>
+            <Button size={"lg"} type="button" onClick={handlerFinish}>
+              Finish
+            </Button>
+            <Button
+              size={"lg"}
+              type="button"
+              disabled={isUploading}
+              onClick={uploadBtn}
+            >
+              Upload
+              {isUploading && <Loader2 className="w-6 h-6 animate-spin" />}
+            </Button>
+          </>
         ) : (
           <Button
             size={"lg"}

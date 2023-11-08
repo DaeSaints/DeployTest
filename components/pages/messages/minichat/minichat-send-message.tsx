@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/input";
 
 // BACKEND
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+
+// UPLOAD THING
+import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const MiniChatSendMessage = ({
   chatId,
@@ -19,7 +22,6 @@ const MiniChatSendMessage = ({
   senderId: string;
   disabled?: boolean;
 }) => {
-  const [imageUpload, setImageUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [toSendMessage, setToSendMessage] = useState<string>("");
   const queryClient = useQueryClient();
@@ -37,11 +39,23 @@ const MiniChatSendMessage = ({
       chatId,
       content: toSendMessage,
       senderId,
+      isImage: false,
     });
     const res = await axios.post("/api/message", {
       chatId,
       content: toSendMessage,
       senderId,
+    });
+    console.log(res.data.data);
+    return res.data.data;
+  };
+
+  const sendMessageWtImageAPI = async (d: string) => {
+    const res = await axios.post("/api/message", {
+      chatId,
+      content: d,
+      senderId,
+      isImage: true,
     });
     console.log(res.data.data);
     return res.data.data;
@@ -56,42 +70,88 @@ const MiniChatSendMessage = ({
       setToSendMessage("");
     },
   });
+
+  const sendMessageWtImageMutation = useMutation({
+    mutationFn: (d: string) => {
+      return sendMessageWtImageAPI(d);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`minichat:chats-${chatId}:messages`],
+      });
+      setSelectedFile([]);
+    },
+  });
   //   FILE
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      setImageUpload(file);
+
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files && e.target.files[0];
+  //   if (file) {
+  //     setImageUpload(file);
+  //   }
+  // };
+
+  // FILE UPLOAD
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
+  const { startUpload, isUploading } = useUploadThing("message", {
+    onClientUploadComplete: (url) => {
+      return url;
+    },
+  });
+  async function sendMessageWtImage() {
+    const res = await startUpload(selectedFile);
+    if (res) {
+      const url = res[0].url;
+      sendMessageWtImageMutation.mutate(url);
     }
-  };
+  }
 
   return (
     <form
       onSubmit={handleSendMessage}
       className="flex items-center w-full h-16 gap-2 px-2 justify-evenly"
     >
-      {/* <Button
-        onClick={handleButtonClick}
-        type="button"
-        variant={"outline"}
-        className="p-1 rounded-md w-9 h-9"
-      >
-        <Image className="w-full h-full" />
-        <Input
-          type="file"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-      </Button> */}
-      {imageUpload ? (
-        <div className="w-full">{imageUpload.name}</div>
+      {selectedFile.length > 0 ? (
+        <>
+          <div className="flex-1 max-w-[23rem] overflow-hidden line-clamp-1 text-sm">
+            {selectedFile[0].name}
+          </div>
+          <Button
+            disabled={isUploading}
+            type="button"
+            onClick={sendMessageWtImage}
+            className="p-2 rounded-md w-9 h-9"
+          >
+            <SendIcon className="w-full h-full" />
+          </Button>
+        </>
       ) : (
         <>
+          <Button
+            onClick={handleButtonClick}
+            type="button"
+            variant={"outline"}
+            className="p-1 rounded-md w-9 h-9"
+          >
+            <Image className="w-full h-full" />
+            <Input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              ref={fileInputRef}
+              // onChange={handleFileChange}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setSelectedFile([file]);
+              }}
+            />
+          </Button>
           <Input
             onChange={(e) => setToSendMessage(e.target.value)}
             value={toSendMessage}
@@ -100,15 +160,15 @@ const MiniChatSendMessage = ({
             placeholder="Send a message"
             disabled={disabled}
           />
+          <Button
+            disabled={toSendMessage === "" ? true : false}
+            type="submit"
+            className="p-2 rounded-md w-9 h-9"
+          >
+            <SendIcon className="w-full h-full" />
+          </Button>
         </>
       )}
-      <Button
-        disabled={toSendMessage === "" ? true : false}
-        type="submit"
-        className="p-2 rounded-md w-9 h-9"
-      >
-        <SendIcon className="w-full h-full" />
-      </Button>
     </form>
   );
 };
