@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default:false,
   },
+  isAccepted:{
+    type: Boolean,
+    default:false,
+  },
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);

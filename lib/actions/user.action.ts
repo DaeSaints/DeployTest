@@ -174,17 +174,14 @@ try{
   
   if (user && user.isOnboarded) {
     // If the User has isOnboarded set to true, return true
-    console.log(user.isOnboarded);
-    console.log(true);
+
     return true;
   } else if (userparent && userparent.isOnboarded) {
-    // If the Parent has isOnboarded set to true, return true
-    console.log(true);
-    console.log(userparent.isOnboarded);
+
     return true;
   } else {
     // If no matching records found or isOnboarded is false for both, return false
-    console.log("test",false);
+    console.log("onboard test",false);
 
     return false;
   }
@@ -206,16 +203,18 @@ export async function isAccepted({
 connectDB();
 
 try{
+  const user = await User.findOne({email});
   const userparent = await Parent.findOne({email});
   
-  if (userparent && userparent.isAccepted) {
-    // If the Parent has isOnboarded set to true, return true
-    console.log(true);
-    console.log(userparent.isAccepted);
+  if (user.isAccepted) {
+    // If the User has isOnboarded set to true, return true
+    return true;
+  } else if (userparent.isAccepted) {
+
     return true;
   } else {
-    // If no matching records found or isOnboarded is false for both, return false
-    console.log("test",false);
+
+    console.log("isaccepted test",false);
 
     return false;
   }

@@ -26,9 +26,15 @@ import TooltipButton from "./TooltipButton";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { UserType } from "@/lib/interfaces/user.interface";
 import Parent from "@/lib/models/parent.model";
-import { isAccepted } from "@/lib/actions/user.action";
+import { Session, getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
 
-const NavButtons = ({ user }: { user: ParentType | UserType }) => {
+
+
+const NavButtons = ({ user, }: { user: ParentType | UserType  }) => {
+
+
+  console.log(user); 
   const pathname = usePathname();
   const router = useRouter();
   const NavLinks = [
@@ -39,23 +45,6 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
     { label: "transactions", href: "/transactions" },
     { label: "settings", href: "/settings" },
   ];
-
-  
-
-  //ACCEPTED USER OR NOT
-  const [isAcceptedUser, setIsAcceptedUser] = useState(false);
-
-  useEffect(() => {
-    async function fetchIsAccepted() {
-      const accepted = await isAccepted(user);
-      setIsAcceptedUser(accepted);
-    }
-
-    if (isParent(user)) {
-      fetchIsAccepted();
-    }
-  }, [user]);
-
 
   function isParent(user: ParentType | UserType): user is ParentType {
     return (user as ParentType).children !== undefined;
@@ -116,8 +105,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
           pathname === nav.href;
         const iconClassName = `w-full h-full transition text-slate-400  ${isActive ? "text-black" : "group-hover:text-white"
           }`;
-        console.log(isAcceptedUser);
-        if (isParent(user) ? user.role : "Parent") {
+        if (user.isAccepted) {
           return (
             <TooltipButton tooltip={nav.label}>
               <Button
@@ -153,7 +141,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
               </Button>
             </TooltipButton>
           );
-        } else if (!isAcceptedUser) {
+        } else if (!user.isAccepted) {
           // Return only "Messages" and "Transactions" for non-accepted users
           if (nav.label === "messages" || nav.label === "transactions") {
             return (

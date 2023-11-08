@@ -8,24 +8,29 @@ export async function getUserByEmail({
 }: {
   email: string | undefined | null;
 }) {
+  console.log(email)
   try {
     connectDB();
 
 
     const user = await User.findOne({ email });
     const userparent = await Parent.findOne({email});
-    console.log(user);
-    console.log(userparent);
+  //  const userparent = false;
+   
 
-    if (!user && !userparent) {
+
+    if (!user && !userparent ) {
       console.log("No email found");
       throw new Error("Email does not exist!")
-    } else if(!user || userparent) {
+    } else if(userparent) {
       console.log("User is parent");
       return { ...userparent._doc, _id: userparent._id.toString() };
+      
     } else { 
       console.log("User is not parent");
+      
       return { ...user._doc, _id: user._id.toString() };
+      
     }
   } catch (error: any) {
     throw new Error(`Error getting User by Email: ${error.message}`);
@@ -46,16 +51,14 @@ export async function authUser({
 
     const user = await User.findOne({ email });
     const userparent = await Parent.findOne({email});
-    console.log(user);
-    console.log(userparent);
-
-    if (!user && !userparent) {
+    // const userparent = false;
+    if (!user && !userparent) { 
       console.log("No email found");
       throw new Error("Email does not exist!")
-    } else if(!user || userparent) {
-      console.log("User is parent");
+    } else if (!user ) {
+      console.log("User is parent"); 
       return { ...userparent._doc, _id: userparent._id.toString() };
-    } else { 
+    } else if (user) {
       console.log("User is not parent");
       return { ...user._doc, _id: user._id.toString() };
     }

@@ -38,7 +38,7 @@ import { useRouter } from "next/navigation";
 import { isOnboarded } from "@/lib/actions/user.action";
 
 
-const LoginComponent = () => {
+const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const form = useForm<z.infer<typeof loginValidation>>({
@@ -59,11 +59,12 @@ const LoginComponent = () => {
       email,
       password,
       redirect: false,
+     
     })
-      .then(async ({ok,error}) => {
+    .then(async ({ok,error}) => {
         if (ok) {
-          console.log("success");
           const onboarded = await isOnboarded({email});
+          console.log(onboarded);
           if(onboarded){
             router.push("/dashboard");
           }else if (!onboarded && password != ""){

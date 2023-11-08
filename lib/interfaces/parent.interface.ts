@@ -9,4 +9,6 @@ export interface ParentType {
   profileURL?: string;
   children?: StudentType[];
   transactions?: TransactionType[];
+  isAccepted: Boolean;
+  role?: string;
 }

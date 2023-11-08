@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { authUser, getUserByEmail } from "@/utils/getUserByEmail";
@@ -7,12 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 //bcrypt
 import bcrypt from "bcrypt";
 
-interface UserSession {
-  name?: string | null | undefined;
-  email?: string | null | undefined;
-  image?: string | null | undefined;
-  role?: string | null | undefined; // Add the 'role' property here
-}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -30,31 +24,26 @@ export const authOptions: NextAuthOptions = {
         console.log(credentials?.email, credentials?.password);
         if (credentials) {
 
-
           const user = await authUser({
             email: credentials?.email as string,
             password: credentials?.password as string,
           });
-          console.log(user.role);
+
+
           if (!user) {
             return null;
           }
-          console.log(credentials?.password);
-          console.log(user.password);
-          console.log(await bcrypt.hash(credentials?.password,10));
-          const match = true;
-
-          if(credentials?.password != ""){
+          
+          if (credentials?.password !== "") {
             const match = await bcrypt.compare(credentials?.password, user.password);
-          } else {
-            console.log("new account");
-            
-          }
-          if(!match) {
+            if (!match) {
               console.log("password incorrect");
               return null;
+            }
+          } else {
+            console.log("new account");
+            const match = true; // This variable is only accessible within the "else" block
           }
-
 
           return user;
         }  
@@ -70,21 +59,34 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, trigger, session }) {
-      console.log("processed");
-      if (trigger === "update") {
+      if (trigger == "update") {
+        console.log("YOU ARE HERE")
+
         if (token?.user) {
           const user: UserType = token.user as UserType;
-          user.role = session.user?.role;
+          user.role = session.user.role;
+          user.isAccepted = session.user.isAccepted;
           token.user = user;
         }
       } else {
         const user = await getUserByEmail({ email: token.email });
+        console.log(user.isAccepted)
+        console.log(user._id)
+        token.uid = user._id
         token.user = user;
+        // session.user = user;
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user = token.user as UserSession;
+    async session({ session, token, }) {
+      session.user = token.user as {
+        id?: string;
+        name?: string;
+        email?: string;
+        image?: string;
+        role?: string;
+        isAccepted?: Boolean;
+      };
       return session;
     },
   },

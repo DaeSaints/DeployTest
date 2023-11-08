@@ -9,27 +9,26 @@ export default withAuth(
     const { token } = req.nextauth;
 
     const user: UserType = token?.user as UserType;
-    console.log(user);
     if (
-      (pathname.startsWith("/users") ||
-        pathname.startsWith("/client-chats")) &&
-      user?.role === null
+      (pathname.startsWith("/dashboard")) &&
+      user?.role === "no role"
     ) {
-      return NextResponse.redirect("http://localhost:3000/dashboard");
+      return NextResponse.redirect("http://localhost:3000/messages");
     } else if (
       (pathname.startsWith("/users") ||
         pathname.startsWith("/transactions") ||
         pathname.startsWith("/leads") ||
         pathname.startsWith("/customers")) &&
-      user?.role === "teacher"
+      user?.role === "parent"
     ) {
       return NextResponse.redirect("http://localhost:3000/dashboard");
-    }
+    } 
+
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        console.log(token);
+        console.log("tokenmiddle",token);
         return !!token;
       },
     },
