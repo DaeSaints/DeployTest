@@ -6,6 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 //bcrypt
 import bcrypt from "bcrypt";
+import { isParent } from "./helpers/isParent";
 
 
 export const authOptions: NextAuthOptions = {
@@ -73,6 +74,10 @@ export const authOptions: NextAuthOptions = {
         console.log(user.isAccepted)
         console.log(user._id)
         token.uid = user._id
+        if(user.isAccepted && isParent(user)){
+          user.role ="parent"
+          token.role = "parent"
+        }
         token.user = user;
         // session.user = user;
       }

@@ -12,7 +12,7 @@ export async function fetchSingleParentId({ _id }: { _id: string }) {
     const query = Parent.findById({ _id })
       .sort({ createdAt: "desc" })
       .lean()
-      .select("_id name email profileURL")
+      .select("_id name email profileURL isAccepted")
       .populate({
         path: "children",
         model: Student,

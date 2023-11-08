@@ -10,19 +10,16 @@ export default withAuth(
 
     const user: UserType = token?.user as UserType;
     if (
-      (pathname.startsWith("/dashboard")) &&
+      ( pathname.startsWith("/dashboard")||
+        pathname.startsWith("/calendar")||
+        pathname.startsWith("/courses")||
+        pathname.startsWith("/settings")
+      ) &&
       user?.role === "no role"
     ) {
       return NextResponse.redirect("http://localhost:3000/messages");
-    } else if (
-      (pathname.startsWith("/users") ||
-        pathname.startsWith("/transactions") ||
-        pathname.startsWith("/leads") ||
-        pathname.startsWith("/customers")) &&
-      user?.role === "parent"
-    ) {
-      return NextResponse.redirect("http://localhost:3000/dashboard");
-    } 
+    }
+    
 
   },
   {

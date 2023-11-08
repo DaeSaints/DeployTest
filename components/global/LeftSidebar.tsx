@@ -10,9 +10,11 @@ import { isParent } from "@/utils/helpers/isParent";
 const LeftSidebar = async () => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
+  console.log(user.isAccepted)
   let users;
   if(isParent(user)){
     users = await fetchSingleParentId({ _id: user._id });
+    console.log(users.isAccepted)
   } else {
     users = user
   }
