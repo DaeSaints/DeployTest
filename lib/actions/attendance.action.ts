@@ -5,6 +5,7 @@ import User from "../models/user.model";
 import Attendance from "../models/attendance.model";
 import Classes from "../models/class.model";
 import Student from "../models/student.model";
+import { AttendanceType } from "../interfaces/attendance.interface";
 
 export async function fetchAttendanceTeachers({
   pageNumber = 1,
@@ -50,12 +51,17 @@ export async function fetchAttendanceTeachers({
           select: "_id name profileURL",
         },
       })
+      .populate({
+        path: "studentsPresent",
+        model: Student,
+      })
       .exec();
 
     const totalCount = await User.countDocuments({});
     const data = await query;
 
     const plainData = data.map((d: any) => {
+      
       return {
         ...d,
         _id: d._id?.toString(),
@@ -66,11 +72,50 @@ export async function fetchAttendanceTeachers({
             return { ...d2, _id: d2._id.toString() };
           }),
         },
+        studentsPresent: d.studentsPresent.map((d2: any) => {
+          return { ...d2, _id: d2._id.toString() };
+        }),
       };
     });
 
     return { attendance: plainData };
   } catch (error: any) {
     throw new Error("Error in fetching attendance", error.message);
+  }
+}
+
+export async function updateAttendance ({
+  studentId,
+  attendanceId,
+  isPresent,
+}: {
+  studentId: string;
+  attendanceId: string;
+  isPresent:boolean;
+}) {
+  try {
+    connectDB();
+    let newData;
+    if(isPresent){
+      newData = await Attendance.findByIdAndUpdate(attendanceId, {
+        $push: { studentsPresent: studentId },
+        
+      });
+    }
+    else{
+      newData = await Attendance.findByIdAndUpdate(attendanceId, {
+        $pull: { studentsPresent: studentId },
+      });
+    }
+    
+
+    if (!newData) {
+      console.log("No Attendance Found");
+      throw new Error("No Attendance Found");
+    }
+
+    return { message: "Student Confirmed Successfully", data: newData };
+  } catch (error: any) {
+    throw new Error("Error in updating student attendance", error.message);
   }
 }
