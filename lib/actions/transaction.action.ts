@@ -245,3 +245,24 @@ export async function updateTransactionStatusById({
   }
 }
 
+export async function expireTransactionById(_id: string) {
+  try {
+    connectDB();
+
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
+      { _id },
+      { status: "Expired" },
+      { new: true }
+
+    ).exec();
+
+    if (!updatedTransaction) {
+      console.log("No Transaction Found");
+      throw new Error("No Transaction Found");
+    }
+
+    return { message: "Successfully updated transaction status to Expired" };
+  } catch (error: any) {
+    throw new Error("Error in updating transaction status to Expired", error.message);
+  }
+}
