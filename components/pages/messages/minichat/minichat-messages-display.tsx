@@ -40,6 +40,9 @@ const MiniChatMessagesDisplay = ({
       queryClient.invalidateQueries({
         queryKey: [`minichat:chats-${chatId}:messages`],
       });
+      queryClient.invalidateQueries({
+        queryKey: [`minichat:chats`],
+      });
     });
     return () => {
       pusherClient.unsubscribe(chatId);

@@ -68,6 +68,9 @@ const MiniChatSendMessage = ({
       queryClient.invalidateQueries({
         queryKey: [`minichat:chats-${chatId}:messages`],
       });
+      queryClient.invalidateQueries({
+        queryKey: [`minichat:chats`],
+      });
       setToSendMessage("");
     },
   });
