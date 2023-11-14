@@ -63,13 +63,13 @@ const TransactionCard = ({transactions}: {transactions: TransactionsType}) => {
         </div>
         <div className="flex flex-col flex-1">
           <h3 className="font-bold">{transactions.class?.class}</h3>
-          <span className=""> {transactions.student.name} - {transactions.student.age}</span>
+          <span className=""> {transactions.student.name} - {transactions.student.age} Years Old</span>
           <span className="">{transactions.duration} Duration</span>
 
           
         </div>
       </div>
-      <InvoiceButton />
+      <InvoiceButton transactions={transactions}/>
     </div>
   );
 };
