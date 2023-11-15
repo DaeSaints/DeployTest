@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { TransactionsType } from "@/lib/interfaces/transaction.interface";
+import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
 
 const InvoiceButton = ({transactions} : {transactions: TransactionsType}) => {
   const { toast } = useToast();
@@ -20,14 +21,25 @@ const InvoiceButton = ({transactions} : {transactions: TransactionsType}) => {
     try {
       const exportData = {
         transactionId: transactions._id,
+        price: transactions.price,
+        duration: transactions.duration,
+        student: transactions.student.name,
+        datepaid: transactions.paidDate,
+        expirydate: transactions.expiryDate,
+        status: transactions.status
       };
 
       const pdf = new jsPDF();
 
-      pdf.text(`Invoice\nTransaction ID: ${exportData.transactionId}`, 10, 10);
+      pdf.text(`Invoice\n
+                Transaction ID: ${exportData.transactionId}\n
+                Transaction Status: ${exportData.status}\n
+                Date Paid: ${exportData.datepaid?.toLocaleDateString()}\n
+                For student: ${exportData.student}\n
+                Valid For: ${exportData.duration}\n
+                Valid Until: ${exportData.expirydate?.toLocaleDateString()}\n
+                $${exportData.price} paid on ${exportData.datepaid?.toDateString()}`, 10, 10);
       pdf.save("invoice.pdf");
-
-      console.log("Exporting invoice data:", exportData);
 
       toast({
         title: "Downloading Invoice",
