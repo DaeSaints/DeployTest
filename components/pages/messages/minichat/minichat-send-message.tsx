@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // UPLOAD THING
-import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
 import { useUploadThing } from "@/lib/uploadthing";
 import axios from "axios";
 
