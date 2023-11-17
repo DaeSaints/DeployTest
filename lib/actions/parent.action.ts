@@ -4,6 +4,7 @@ import connectDB from "../mongodb";
 import Parent from "../models/parent.model";
 import Student from "../models/student.model";
 import Classes from "../models/class.model";
+import Transaction from "../models/transaction.model";
 
 export async function fetchSingleParentId({ _id }: { _id: string }) {
   try {
@@ -85,7 +86,7 @@ export async function fetchChildrenId({ _id }: { _id: string }) {
   }
 }
 
-export async function fetchChildrenId({ _id }: { _id: string }) {
+export async function fetchTransactionId({ _id }: { _id: string }) {
   try {
     connectDB();
 
@@ -94,14 +95,21 @@ export async function fetchChildrenId({ _id }: { _id: string }) {
       .lean()
       .select("_id")
       .populate({
-        path: "children",
-        model: Student,
-        select: "_id name age status profileURL",
-        populate: {
-          path: "enrolledClass",
-          model: Classes,
-          select: "class",
-        },
+        path: "transactions",
+        model: Transaction,
+        select: "_id price duration status paidDate expiryDate",
+        populate: [
+          {
+            path: "class",
+            model: Classes,
+            select: "_id class",
+          },
+          {
+            path: "student",
+            model: Student, 
+            select: "_id name age", 
+          },
+        ],
       })
       .exec();
 
@@ -112,12 +120,16 @@ export async function fetchChildrenId({ _id }: { _id: string }) {
     }
 
     const plainData = {
-      ...single,
-      _id: single._id.toString(),
-      children: single.children.map((child: any) => {
-        return { ...child, _id: child._id.toString() };
+      transactions: single.transactions.map((transaction: any) => {
+        return {...transaction,
+          _id: transaction._id.toString(),
+          class: {
+            ...transaction.class,
+            _id: transaction.class._id.toString(),
+          }, };
       }),
     };
+
 
     return plainData;
   } catch (error) {

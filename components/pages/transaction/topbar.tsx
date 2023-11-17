@@ -4,10 +4,13 @@ import React, { useState } from "react";
 // UI
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { useTabContext } from "./tabcontext";
+
 
 const TransactionTopBar = () => {
+  
   const TABS = ["All", "Pending", "Paid", "Cancelled"] as const;
-  const [selectedTab, setSelectedTab] = useState("All");
+  const { selectedTab, changeTab } = useTabContext();
   return (
     <header className="flex flex-col justify-center w-full h-32 gap-1 px-4 bg-white">
       <div className="text-2xl font-bold text-main-700">Transactions</div>
@@ -31,7 +34,7 @@ const TransactionTopBar = () => {
               <Button
                 key={tab}
                 type="button"
-                onClick={() => setSelectedTab(tab)}
+                onClick={() => changeTab(tab)}
                 variant={"ghost"}
                 className={`text-slate-500 hover:bg-white ${activeClass}`}
               >
