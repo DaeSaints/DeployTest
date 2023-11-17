@@ -24,7 +24,7 @@ const MiniChat = () => {
 
   if (toggleMiniChat) {
     return (
-      <OpenMiniChat close={() => setToggleMiniChat(false)} userId={userInfo._id as string} />
+      <OpenMiniChat close={() => setToggleMiniChat(false)} userId={userInfo?._id as string} />
     );
   }
 

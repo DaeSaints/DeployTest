@@ -12,10 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 // UPLOAD THING
 import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
 import { useUploadThing } from "@/lib/uploadthing";
-
-// UPLOAD THING
-import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
-import { useUploadThing } from "@/lib/uploadthing";
+import axios from "axios";
 
 const MiniChatSendMessage = ({
   chatId,
@@ -106,7 +103,7 @@ const MiniChatSendMessage = ({
   // FILE UPLOAD
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const { startUpload, isUploading } = useUploadThing("message", {
-    onClientUploadComplete: (url) => {
+    onClientUploadComplete: (url: any) => {
       return url;
     },
   });
