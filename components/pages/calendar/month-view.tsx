@@ -47,7 +47,7 @@ const MonthlyView = ({
               {week.map((day, idx) => {
                 const dayOfTheWeek = getDayOfWeek(day);
                 const today = new Date();
-                const temp = attendance.filter((d) => {
+                const temp = attendance?.filter((d) => {
                   return d.date.toDateString() === day.toDateString();
                 });
                 const dateTodayClass =
