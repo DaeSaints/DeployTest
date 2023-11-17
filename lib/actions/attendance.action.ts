@@ -256,3 +256,39 @@ export async function updateStudentNo({
     throw new Error("Error in updating student attendance", error.message);
   }
 }
+
+export async function updateAttendance ({
+  studentId,
+  attendanceId,
+  isPresent,
+}: {
+  studentId: string;
+  attendanceId: string;
+  isPresent:boolean;
+}) {
+  try {
+    connectDB();
+    let newData;
+    if(isPresent){
+      newData = await Attendance.findByIdAndUpdate(attendanceId, {
+        $push: { studentsPresent: studentId },
+        
+      });
+    }
+    else{
+      newData = await Attendance.findByIdAndUpdate(attendanceId, {
+        $pull: { studentsPresent: studentId },
+      });
+    }
+    
+
+    if (!newData) {
+      console.log("No Attendance Found");
+      throw new Error("No Attendance Found");
+    }
+
+    return { message: "Student Confirmed Successfully", data: newData };
+  } catch (error: any) {
+    throw new Error("Error in updating student attendance", error.message);
+  }
+}
