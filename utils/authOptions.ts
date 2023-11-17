@@ -1,10 +1,13 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { signInWithOAuth } from "./signInWithOAuth";
-import { UserType } from "@/libs/interfaces/user.interface";
-import { authUser, getUserByEmail } from "./getUserByEmail";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { authUser, getUserByEmail } from "@/utils/getUserByEmail";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+
+//bcrypt
+import bcrypt from "bcrypt";
+import { isParent } from "./helpers/isParent";
+
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -20,23 +23,31 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         console.log(credentials?.email, credentials?.password);
+        if (credentials) {
 
-        const user = await authUser({
-          email: credentials?.email as string,
-          password: credentials?.password as string,
-        });
+          const user = await authUser({
+            email: credentials?.email as string,
+            password: credentials?.password as string,
+          });
 
-        if (!user) {
-          return null;
-        }
 
-        const passwordsMatch = user.password === credentials?.password;
+          if (!user) {
+            return null;
+          }
+          
+          if (credentials?.password !== "") {
+            const match = await bcrypt.compare(credentials?.password, user.password);
+            if (!match) {
+              console.log("password incorrect");
+              return null;
+            }
+          } else {
+            console.log("new account");
+            const match = true; // This variable is only accessible within the "else" block
+          }
 
-        if (!passwordsMatch) {
-          return null;
-        }
-
-        return user;
+          return user;
+        }  
       },
     }),
   ],
@@ -49,23 +60,37 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, trigger, session }) {
-      if (trigger === "update") {
+      if (trigger == "update") {
+        console.log("YOU ARE HERE")
+
         if (token?.user) {
           const user: UserType = token.user as UserType;
-          user.role = session.role;
+          user.role = session.user.role;
+          user.isAccepted = session.user.isAccepted;
           token.user = user;
         }
       } else {
         const user = await getUserByEmail({ email: token.email });
+        console.log(user.isAccepted)
+        console.log(user._id)
+        token.uid = user._id
+        if(user.isAccepted && isParent(user)){
+          user.role ="parent"
+          token.role = "parent"
+        }
         token.user = user;
+        // session.user = user;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, }) {
       session.user = token.user as {
+        id?: string;
         name?: string;
         email?: string;
         image?: string;
+        role?: string;
+        isAccepted?: Boolean;
       };
       return session;
     },

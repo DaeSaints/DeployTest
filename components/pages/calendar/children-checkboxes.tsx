@@ -7,8 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 // UI
 import { Checkbox } from "@/components/ui/checkbox";
 import { fetchChildrenId } from "@/lib/actions/parent.action";
-import { userId } from "@/utils/constants";
 import { StudentType } from "@/lib/interfaces/student.interface";
+import { useSession } from "next-auth/react";
+import { UserType } from "@/lib/interfaces/user.interface";
 
 const children = [
   {
@@ -22,6 +23,10 @@ const children = [
 ] as const;
 
 const ChildrenCheckboxes = () => {
+  const { data: session } = useSession();
+  const userInfo = session?.user as UserType;
+  const userId = userInfo._id as string;
+  
   const { data, isLoading } = useQuery({
     queryKey: [`children`],
     queryFn: async () => {

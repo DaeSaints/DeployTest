@@ -23,7 +23,6 @@ const MiniChatMessages = ({
   const sender: UserType | ParentType = chat.users.find(
     (d) => d._id === userId
   ) as UserType | ParentType;
-  console.log(chat)
 
   // @ts-ignore
   const recipientRole: UserRolesType = recipient.role || "parent";

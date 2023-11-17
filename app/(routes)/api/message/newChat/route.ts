@@ -1,10 +1,10 @@
-import { MessageType } from "@/libs/interfaces/message.interface";
-import Chat from "@/libs/models/chat/chat.model";
-import Message from "@/libs/models/chat/message.model";
-import Parent from "@/libs/models/parent.model";
-import User from "@/libs/models/user.model";
-import connectDB from "@/libs/mongodb";
-import { pusherServer } from "@/libs/pusher";
+import { MessageType } from "@/lib/interfaces/message.interface";
+import Chat from "@/lib/models/chat/chat.model";
+import Message from "@/lib/models/chat/message.model";
+import Parent from "@/lib/models/parent.model";
+import User from "@/lib/models/user.model";
+import connectDB from "@/lib/mongodb";
+import { pusherServer } from "@/lib/pusher";
 
 export async function POST(req: Request) {
   const { recipientId, content, senderId } = await req.json();

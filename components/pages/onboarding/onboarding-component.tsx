@@ -6,6 +6,12 @@ import PageTwo from "./components/page-two";
 import PageThree from "./components/page-three";
 import { addProfilePicture } from "@/lib/actions/user.action";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+
+// UPLOADTHING
+import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
+import { useUploadThing } from "@/lib/uploadthing";
+import { Loader2 } from "lucide-react";
 
 // UPLOADTHING
 import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
@@ -21,7 +27,7 @@ type ProfilePictureParams = {
 
 const OnboardingComponent = () => {
   const { toast } = useToast();
-
+  const router = useRouter();
   const totalPages = 3;
   const [page, setPage] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
@@ -94,6 +100,7 @@ const OnboardingComponent = () => {
             description: "Please fill in all required information.",
           });
         }
+        router.push("/dashboard");
       } catch (error) {
         console.error("Error saving data to MongoDB:", error);
         toast({

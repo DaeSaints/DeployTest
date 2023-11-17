@@ -159,6 +159,72 @@ export async function updateUserRoleByID({
   }
 }
 
+export async function isOnboarded({
+  email,
+
+}: {
+  email: string;
+
+}) {
+connectDB();
+
+try{
+  const user = await User.findOne({ email });
+  const userparent = await Parent.findOne({email});
+  
+  if (user && user.isOnboarded) {
+    // If the User has isOnboarded set to true, return true
+
+    return true;
+  } else if (userparent && userparent.isOnboarded) {
+
+    return true;
+  } else {
+    // If no matching records found or isOnboarded is false for both, return false
+    console.log("onboard test",false);
+
+    return false;
+  }
+  
+}   catch (error: any) {
+    console.log(error);
+    return false;
+  }
+}
+
+
+export async function isAccepted({
+  email,
+
+}: {
+  email: string;
+
+}) {
+connectDB();
+
+try{
+  const user = await User.findOne({email});
+  const userparent = await Parent.findOne({email});
+  
+  if (user.isAccepted) {
+    // If the User has isOnboarded set to true, return true
+    return true;
+  } else if (userparent.isAccepted) {
+
+    return true;
+  } else {
+
+    console.log("isaccepted test",false);
+
+    return false;
+  }
+  
+}   catch (error: any) {
+    console.log(error);
+    return false;
+  }
+}
+
 export async function addProfilePicture({
   _id,
   profileURL,

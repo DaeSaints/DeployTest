@@ -1,113 +1,250 @@
 "use server";
 
-import connectDB from "../mongodb";
-import User from "../models/user.model";
+import { AttendanceType } from "../interfaces/attendance.interface";
+import { ClassesType } from "../interfaces/class.interface";
+import { StudentType } from "../interfaces/student.interface";
 import Attendance from "../models/attendance.model";
 import Classes from "../models/class.model";
+import Material from "../models/material.model";
 import Student from "../models/student.model";
-import { AttendanceType } from "../interfaces/attendance.interface";
+import connectDB from "../mongodb";
 
-export async function fetchAttendanceTeachers({
-  pageNumber = 1,
-  pageSize = 20,
-  currDate,
+export async function fetchAttendances({
+  year,
+  month,
 }: {
-  pageNumber?: number;
-  pageSize?: number;
-  currDate: Date;
+  year: number;
+  month: number;
 }) {
   try {
     connectDB();
 
-    const presentMonth = new Date();
-    presentMonth.setHours(0, 0, 0, 0);
+    // const skipAmount = (pageNumber - 1) * pageSize;
 
-    const pastMonth = new Date(currDate);
-    pastMonth.setMonth(pastMonth.getMonth() - 1);
-    pastMonth.setHours(0, 0, 0, 0);
+    const startDate = new Date(year, month - 1, 1); // Note: Month is 0-indexed
+    const endDate = new Date(year, month + 1, 1); // This gives the first day of the next month
+    endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Subtract one millisecond to get the last millisecond of the last day
 
-    const futureMonth = new Date(currDate);
-    futureMonth.setMonth(futureMonth.getMonth() + 1);
-    futureMonth.setHours(0, 0, 0, 0);
-    // Fetch users with pagination
-    // find greater than past month but less than the future month
+    console.log(startDate, endDate);
+
     const query = Attendance.find({
-      date: {
-        // $eq: presentMonth,
-        $gt: pastMonth,
-        $lt: futureMonth,
-      },
+      date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
     })
-      .sort({ createdAt: "desc" })
+      .sort({ date: "asc" })
+      // .limit(pageSize)
       .lean()
-      .select("_id date startTime endTime")
+      .select(
+        "_id startTime endTime date isClassCancelled classAttendanceType classAttendanceStatus"
+      )
       .populate({
         path: "class",
         model: Classes,
-        select: "_id class ageGroup",
+        select: "_id class zoomLink ageGroup",
         populate: {
           path: "participants",
           model: Student,
-          select: "_id name profileURL",
+          select: "_id name",
         },
       })
       .populate({
         path: "studentsPresent",
         model: Student,
+        select: "_id name age",
+      })
+      .populate({
+        path: "studentsNotPresent",
+        model: Student,
+        select: "_id name age",
+      })
+      .populate({
+        path: "specialClassParticipants",
+        model: Student,
+        select: "_id name age",
+      })
+      .populate({
+        path: "materials",
+        model: Material,
+        select: "_id name",
       })
       .exec();
 
-    const totalCount = await User.countDocuments({});
+    const totalCount = await Attendance.countDocuments({});
     const data = await query;
 
-    const plainData = data.map((d: any) => {
-      
-      return {
-        ...d,
-        _id: d._id?.toString(),
-        class: {
-          ...d.class,
-          _id: d.class._id.toString(),
-          participants: d.class.participants.map((d2: any) => {
-            return { ...d2, _id: d2._id.toString() };
-          }),
-        },
-        studentsPresent: d.studentsPresent.map((d2: any) => {
-          return { ...d2, _id: d2._id.toString() };
-        }),
-      };
-    });
+    console.log(data);
 
-    return { attendance: plainData };
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType[] = data.map((d: any) => ({
+      ...d,
+      _id: d._id.toString(),
+      class: {
+        ...d.class,
+        _id: d._id.toString(),
+      },
+    }));
+    return { attendances: arrToIdString, totalCount };
   } catch (error: any) {
-    throw new Error("Error in fetching attendance", error.message);
+    throw new Error("Error in fetching attendances", error.message);
   }
 }
 
-export async function updateAttendance ({
-  studentId,
-  attendanceId,
-  isPresent,
+export async function fetchFilterAttendances({
+  pageNumber,
+  pageSize,
+  filter,
 }: {
-  studentId: string;
-  attendanceId: string;
-  isPresent:boolean;
+  pageNumber: number;
+  pageSize: number;
+  filter: string;
 }) {
   try {
     connectDB();
-    let newData;
-    if(isPresent){
-      newData = await Attendance.findByIdAndUpdate(attendanceId, {
-        $push: { studentsPresent: studentId },
-        
-      });
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const skipAmount = (pageNumber - 1) * pageSize;
+
+    let dateFilter = {};
+
+    if (filter === "today") {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(now.getDate() + 1);
+
+      filter = "ongoing";
+      dateFilter = { date: { $gte: now, $lt: tomorrow } };
+    } else if (filter === "upcoming") {
+      filter = "ongoing";
+      const today = new Date();
+      dateFilter = { date: { $gt: today } };
+    } else if (filter === "past") {
+      filter = "ongoing";
+      dateFilter = { date: { $lt: now } };
     }
-    else{
-      newData = await Attendance.findByIdAndUpdate(attendanceId, {
-        $pull: { studentsPresent: studentId },
-      });
+
+    const query = Attendance.find({
+      classAttendanceStatus: filter,
+      ...dateFilter,
+    })
+      .sort({ date: "asc" })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .lean()
+      .select(
+        "_id startTime endTime date isClassCancelled classAttendanceType classAttendanceStatus"
+      )
+      .populate({
+        path: "class",
+        model: Classes,
+        select: "_id class zoomLink ageGroup",
+        populate: {
+          path: "participants",
+          model: Student,
+          select: "_id name",
+        },
+      })
+      .populate({ path: "studentsPresent", model: Student, select: "_id name" })
+      .populate({
+        path: "studentsNotPresent",
+        model: Student,
+        select: "_id name",
+      })
+      .populate({
+        path: "specialClassParticipants",
+        model: Student,
+        select: "_id name",
+      })
+      .populate({
+        path: "materials",
+        model: Material,
+        select: "_id",
+      })
+      .exec();
+
+    const data = await query;
+    const arrToIdString: AttendanceType[] = data.map((d: any) => ({
+      ...d,
+      _id: d._id.toString(),
+      class: {
+        ...d.class,
+        _id: d._id.toString(),
+      },
+    }));
+
+    return { attendances: arrToIdString };
+  } catch (error: any) {
+    throw new Error("Error in fetching pending attendances", error.message);
+  }
+}
+
+export async function fetchMateriaByAttendanceId(attendance: AttendanceType) {
+  try {
+    connectDB();
+
+    const query = Material.find({ attendance: attendance })
+      .sort({ addedDate: "desc" })
+      .lean()
+      .select("_id filename materials classDate addedDate type")
+      .exec();
+
+    const materials = await query;
+
+    return materials;
+  } catch (error) {
+    throw new Error(`Error in fetching materials by attendance ID`);
+  }
+}
+
+export async function fetchParticipants(students: StudentType[]) {
+  try {
+    connectDB();
+
+    const studentss = await Student.find({ _id: { $in: students } }, "_id name age participants")
+      .exec();
+
+    return studentss;
+  } catch (error) {
+    throw new Error("Error in fetching participants by attendance ID");
+  }
+}
+
+export async function updateStudentYes({
+  studentId,
+  attendanceId,
+}: {
+  studentId: string;
+  attendanceId: string;
+}) {
+  try {
+    connectDB();
+
+    const newData = await Attendance.findByIdAndUpdate(attendanceId, {
+      $push: { studentsPresent: studentId },
+    });
+
+    if (!newData) {
+      console.log("No Attendance Found");
+      throw new Error("No Attendance Found");
     }
-    
+
+    return { message: "Student Confirmed Successfully", data: newData };
+  } catch (error: any) {
+    throw new Error("Error in updating student attendance", error.message);
+  }
+}
+
+export async function updateStudentNo({
+  studentId,
+  attendanceId,
+}: {
+  studentId: string;
+  attendanceId: string;
+}) {
+  try {
+    connectDB();
+
+    const newData = await Attendance.findByIdAndUpdate(attendanceId, {
+      $pull: { studentsPresent: studentId },
+    });
 
     if (!newData) {
       console.log("No Attendance Found");

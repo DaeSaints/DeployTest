@@ -11,7 +11,7 @@ const loginValidation = z.object({
   email: z.string().email().min(1, {
     message: "Invalid Email",
   }),
-  password: z.string().min(1),
+  password: z.string().min(0),
 });
 
 // UI
@@ -30,7 +30,16 @@ import Image from "next/image";
 import Knowledge from "@/public/svg/knowledge.svg";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-const LoginComponent = () => {
+// NEXTAUTH
+import { signIn, signOut } from "next-auth/react";
+//ROUTER
+import { useRouter } from "next/navigation";
+//ISONBOARDED
+import { isOnboarded } from "@/lib/actions/user.action";
+
+
+const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const form = useForm<z.infer<typeof loginValidation>>({
     resolver: zodResolver(loginValidation),
@@ -39,9 +48,38 @@ const LoginComponent = () => {
       password: "",
     },
   });
-
+  
   async function onSubmit(values: z.infer<typeof loginValidation>) {
     console.log(values);
+    
+    const email = values.email;
+    const password = values.password;
+    
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+     
+    })
+    .then(async ({ok,error}) => {
+        if (ok) {
+          const onboarded = await isOnboarded({email});
+          console.log(onboarded);
+          if(onboarded){
+            router.push("/dashboard");
+          }else if (!onboarded && password != ""){
+            router.push("/onboarding");
+          }else{
+            router.push("/messages")
+          }
+
+        } else {
+          console.log("error:",error)
+          
+        }
+      })
+
+    
   }
 
   return (

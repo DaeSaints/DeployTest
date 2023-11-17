@@ -17,20 +17,20 @@ import { pusherClient } from "@/lib/pusher";
 import { Button } from "@/components/ui/button";
 import MiniChatNewChat from "./minichat-new-chat";
 import useDebounce from "@/lib/hooks/useDebounce";
-import { userId } from "@/utils/constants";
 
 const MiniChatDrawer = ({
   toggleNewChat,
   selectedChat,
   handleNewChat,
   handleSelectChat,
+  userId,
 }: {
+  userId: string;
   toggleNewChat: boolean;
   selectedChat: ChatType | null;
   handleSelectChat: (temp: ChatType | null) => void;
   handleNewChat: () => void;
 }) => {
-
   const [searchInput, setSearchInput] = useState<string>("");
   const debouncedSearch = useDebounce(searchInput, 500);
 

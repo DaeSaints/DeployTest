@@ -1,6 +1,11 @@
 "use client";
 import { OurFileRouter } from "@/app/(routes)/api/uploadthing/core";
-import { generateReactHelpers } from "@uploadthing/react/hooks";
+import { generateComponents } from "@uploadthing/react";
+import { UTApi } from "uploadthing/server";
+ 
+export const { UploadButton, UploadDropzone, Uploader } =
+  generateComponents<OurFileRouter>();
 
-export const { useUploadThing, uploadFiles } =
-  generateReactHelpers<OurFileRouter>();
+
+
+export const utapi = new UTApi();

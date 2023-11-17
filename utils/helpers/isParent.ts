@@ -1,4 +1,4 @@
-import { ParentType } from "@/libs/interfaces/parent.interface";
+import { ParentType } from "@/lib/interfaces/parent.interface";
 
 export function isParent(recipient: any): recipient is ParentType {
   return (

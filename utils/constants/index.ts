@@ -1,4 +1,4 @@
-export const userId = "6538dd2367526cb4e19190f0";
+
 export const TIMESLOTS = [
   "8:00 AM",
   "9:00 AM",

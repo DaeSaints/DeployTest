@@ -1,20 +1,37 @@
-import { UserRolesType } from "@/libs/interfaces/user.interface";
-import User from "@/libs/models/user.model";
-import connectDB from "@/libs/mongodb";
+import { UserRolesType } from "@/lib/interfaces/user.interface";
+import Parent from "@/lib/models/parent.model";
+import User from "@/lib/models/user.model";
+import connectDB from "@/lib/mongodb";
 
 export async function getUserByEmail({
   email,
 }: {
   email: string | undefined | null;
 }) {
+  console.log(email)
   try {
     connectDB();
 
+
     const user = await User.findOne({ email });
+    const userparent = await Parent.findOne({email});
+  //  const userparent = false;
+   
 
-    if (!user) throw new Error("Email does not exist!");
 
-    return { ...user._doc, _id: user._id.toString() };
+    if (!user && !userparent ) {
+      console.log("No email found");
+      throw new Error("Email does not exist!")
+    } else if(userparent) {
+      console.log("User is parent");
+      return { ...userparent._doc, _id: userparent._id.toString() };
+      
+    } else { 
+      console.log("User is not parent");
+      
+      return { ...user._doc, _id: user._id.toString() };
+      
+    }
   } catch (error: any) {
     throw new Error(`Error getting User by Email: ${error.message}`);
   }
@@ -33,14 +50,20 @@ export async function authUser({
     connectDB();
 
     const user = await User.findOne({ email });
-
-    console.log(user);
-    if (!user) {
+    const userparent = await Parent.findOne({email});
+    // const userparent = false;
+    if (!user && !userparent) { 
       console.log("No email found");
-      throw new Error("No email found");
+      throw new Error("Email does not exist!")
+    } else if (!user ) {
+      console.log("User is parent"); 
+      return { ...userparent._doc, _id: userparent._id.toString() };
+    } else if (user) {
+      console.log("User is not parent");
+      return { ...user._doc, _id: user._id.toString() };
     }
 
-    return { ...user._doc, _id: user._id.toString() };
+    
   } catch (error: any) {
     throw new Error(`Error getting User by Email: ${error.message}`);
   }

@@ -4,11 +4,19 @@ import React, { useState } from "react";
 import CourseDisplay from "./single-courses-display";
 import { Undo } from "lucide-react";
 import TooltipButton from "@/components/global/TooltipButton";
+
 import Link from "next/link";
 
 const SingleCourseComponent = () => {
-  const TABS = ["Upcoming", "Past", "Pending", "Cancelled"] as const;
-  const [selectedTab, setSelectedTab] = useState("Upcoming");
+  const TABS = ["Today", "Upcoming", "Past", "Pending", "Cancelled"] as const;
+  const [selectedTab, setSelectedTab] = useState("Today");
+
+  const [page, setPage] = useState(1); // Initialize page to 1
+
+  const handleTabChange = (tab: React.SetStateAction<string>) => {
+    setSelectedTab(tab);
+    setPage(1); // Reset the page to 1 when changing tabs
+  };
   return (
     <>
       <div className="flex items-center justify-between w-full gap-2">
@@ -42,7 +50,7 @@ const SingleCourseComponent = () => {
               <Button
                 key={tab}
                 type="button"
-                onClick={() => setSelectedTab(tab)}
+                onClick={() => handleTabChange(tab)}
                 variant={"ghost"}
                 className={`text-slate-500 hover:bg-white ${activeClass}`}
               >
@@ -52,7 +60,7 @@ const SingleCourseComponent = () => {
           })}
         </div>
       </div>
-      <CourseDisplay />
+      <CourseDisplay selectedTab={selectedTab.toLowerCase()} page={page} setPage={setPage}/>
     </>
   );
 };

@@ -1,8 +1,17 @@
 import NewMessagesComponent from "@/components/pages/messages/new-messages-component";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { authOptions } from "@/utils/authOptions";
+import { isParent } from "@/utils/helpers/isParent";
 import { Loader2 } from "lucide-react";
+import { getServerSession } from "next-auth";
 import React, { Suspense } from "react";
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+  const user: UserType = session?.user as UserType;
+  console.log(user.role)
+
+  if (!user) return null;
   return (
     <>
       <Suspense

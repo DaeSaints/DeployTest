@@ -1,14 +1,27 @@
 import React from "react";
 import NavButtons from "./NavButtons";
 import SignOutButton from "./SignOutButton";
-import { userId } from "@/utils/constants";
 import { fetchSingleParentId } from "@/lib/actions/parent.action";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { isParent } from "@/utils/helpers/isParent";
 
 const LeftSidebar = async () => {
-  const user = await fetchSingleParentId({ _id: userId });
+  const session = await getServerSession(authOptions);
+  const user: UserType = session?.user as UserType;
+  console.log(user.isAccepted)
+  let users;
+  if(isParent(user)){
+    users = await fetchSingleParentId({ _id: user._id });
+    console.log(users.isAccepted)
+  } else {
+    users = user
+  }
+
   return (
-    <article className="fixed top-0 left-0 flex flex-col items-center justify-between w-16 h-screen px-2 py-4 z-[100] bg-main-700">
-      <NavButtons user={user}/>
+    <article className="flex flex-col items-center justify-between flex-1 py-4 bg-main-700">
+      <NavButtons user={users}/>
       <SignOutButton />
     </article>
   );

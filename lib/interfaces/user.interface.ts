@@ -6,6 +6,7 @@ export interface UserType {
   profileURL?: string;
   password?: string;
   role: UserRolesType;
+  isAccepted: Boolean;
 }
 
 export type UserRoles = "admin" | "monitoring" | "financial";

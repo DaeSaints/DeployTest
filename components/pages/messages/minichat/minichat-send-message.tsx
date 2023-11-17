@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/input";
 
 // BACKEND
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+
+// UPLOAD THING
+import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
+import { useUploadThing } from "@/lib/uploadthing";
 
 // UPLOAD THING
 import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
