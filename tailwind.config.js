@@ -31,6 +31,10 @@ module.exports = withUt({
           800: "#1a3d66",
           900: "#0d1e33",
         },
+        dark: {
+          1: "#101010",
+          2: "#282828",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
