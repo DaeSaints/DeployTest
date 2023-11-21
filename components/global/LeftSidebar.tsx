@@ -10,18 +10,14 @@ import { isParent } from "@/utils/helpers/isParent";
 const LeftSidebar = async () => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
-  console.log(user.isAccepted)
-  let users;
-  if(isParent(user)){
-    users = await fetchSingleParentId({ _id: user._id });
-    console.log(users.isAccepted)
-  } else {
-    users = user
-  }
+  const userInfo = await fetchSingleParentId({ _id: user._id as string });
+  if (!userInfo) return null;
+
+  console.log(userInfo);
 
   return (
     <article className="flex flex-col items-center justify-between flex-1 py-4 bg-main-700">
-      <NavButtons user={users}/>
+      <NavButtons user={userInfo} />
       <SignOutButton />
     </article>
   );

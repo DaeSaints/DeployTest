@@ -29,12 +29,8 @@ import Parent from "@/lib/models/parent.model";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 
-
-
-const NavButtons = ({ user, }: { user: ParentType | UserType  }) => {
-
-
-  console.log(user); 
+const NavButtons = ({ user }: { user: ParentType | UserType }) => {
+  console.log(user);
   const pathname = usePathname();
   const router = useRouter();
   const NavLinks = [
@@ -103,16 +99,18 @@ const NavButtons = ({ user, }: { user: ParentType | UserType  }) => {
         const isActive =
           (pathname.includes(nav.href) && nav.href.length > 1) ||
           pathname === nav.href;
-        const iconClassName = `w-full h-full transition text-slate-400  ${isActive ? "text-black" : "group-hover:text-white"
-          }`;
+        const iconClassName = `w-full h-full transition text-slate-400  ${
+          isActive ? "text-black" : "group-hover:text-white"
+        }`;
         if (user.isAccepted) {
           return (
             <TooltipButton tooltip={nav.label}>
               <Button
                 key={nav.label}
                 variant={"ghost"}
-                className={`w-10 h-10 p-2 rounded-full group relative ${isActive ? "bg-white" : "hover:bg-primary/50"
-                  }`}
+                className={`w-10 h-10 p-2 rounded-full group relative ${
+                  isActive ? "bg-white" : "hover:bg-primary/50"
+                }`}
                 onClick={() => {
                   router.replace(nav.href);
                 }}
@@ -170,12 +168,6 @@ const NavButtons = ({ user, }: { user: ParentType | UserType  }) => {
             );
           }
         }
-        
-        
-        
-        
-        
-        
       })}
     </div>
   );

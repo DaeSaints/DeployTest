@@ -2,16 +2,17 @@
 import React, { useState } from "react";
 
 // FORM
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 
-const loginValidation = z.object({
+const validation = z.object({
+  username: z.string().min(0),
   email: z.string().email().min(1, {
     message: "Invalid Email",
   }),
   password: z.string().min(0),
+  child_name: z.string().min(0),
 });
 
 // UI
@@ -20,46 +21,80 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
-
-// NEXTAUTH
-import { signIn } from "next-auth/react";
-//ROUTER
-import { useRouter } from "next/navigation";
-//ISONBOARDED
-import { isOnboarded } from "@/lib/actions/user.action";
+import {
+  Cat,
+  EyeIcon,
+  EyeOffIcon,
+  User,
+  CalendarIcon,
+  Loader2,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
 
-const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
-  const router = useRouter();
+//ROUTER
+import { useRouter } from "next/navigation";
+import { createNewParent } from "@/lib/actions/parent.action";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { StudentType } from "@/lib/interfaces/student.interface";
+
+const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const [isLoading, setisLoading] = useState(false);
+  const [child_bday, setchild_bday] = useState<string | undefined>();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const form = useForm<z.infer<typeof loginValidation>>({
-    resolver: zodResolver(loginValidation),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const form = useForm<z.infer<typeof validation>>({
+    resolver: zodResolver(validation),
   });
 
-  async function onSubmit(values: z.infer<typeof loginValidation>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof validation>) {
     setisLoading(true);
-    const email = values.email;
-    const password = values.password;
-
-    const res = await signIn("credentials", {
+    const { username, email, child_name, password } = values;
+    const child_age =
+      new Date().getFullYear() - new Date(child_bday || "").getFullYear();
+    const newDataParent: ParentType = {
+      name: username,
       email,
+      isAccepted: false,
+    };
+    const newDataStudent: StudentType = {
+      name: child_name,
+      age: child_age,
+      parent: newDataParent,
+      status: "Not Paid",
+    };
+
+    const res = await createNewParent({
+      newDataParent,
+      newDataStudent,
       password,
-      redirect: false,
     });
-    if (res) {
-      router.push("/dashboard");
+
+    if (res.success) {
+      toast({
+        variant: "success",
+        title: "Successfully Registered! Please login again",
+      });
+      form.reset();
+      router.push("/authenticate/sign-in");
+      setisLoading(false);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Email already exists",
+      });
       setisLoading(false);
     }
   }
@@ -69,12 +104,36 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
       <section className="flex w-full h-[calc(100vh-80px)]">
         <div className="flex flex-col w-full md:w-1/2">
           <div className="flex flex-col justify-center px-8 pt-8 my-auto md:justify-start md:pt-0 md:px-24 lg:px-32">
-            <p className="text-3xl text-center">Welcome Back.</p>
+            <p className="text-3xl text-center">Welcome.</p>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col pt-3 md:pt-8"
               >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex flex-col pt-4">
+                          <div className="relative flex ">
+                            <span className="inline-flex items-center px-3 text-sm text-gray-500 bg-white border-t border-b border-l border-gray-300 shadow-sm ">
+                              <User className="w-4 h-4" />
+                            </span>
+                            <Input
+                              className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
+                              type="text"
+                              {...field}
+                              placeholder="Username"
+                            />
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="email"
@@ -95,8 +154,7 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
                               </svg>
                             </span>
                             <Input
-                              id="design-login-email"
-                              className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
+                              className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
                               type="email"
                               {...field}
                               placeholder="Email"
@@ -114,7 +172,7 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex flex-col pt-4 mb-12">
+                        <div className="flex flex-col pt-4">
                           <div className="relative flex ">
                             <span className="inline-flex items-center px-3 text-sm text-gray-500 bg-white border-t border-b border-l border-gray-300 shadow-sm ">
                               <svg
@@ -129,11 +187,10 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
                             </span>
                             <div className="relative flex-1 w-full">
                               <Input
-                                id="design-login-password"
                                 type={showPassword ? "text" : "password"}
                                 {...field}
                                 placeholder="Password"
-                                className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
+                                className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
                               />
                               {showPassword ? (
                                 <Button
@@ -162,12 +219,53 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
                     </FormItem>
                   )}
                 />
+                <div className="w-full mt-8 mb-4 text-sm font-bold text-center">
+                  Child's information
+                </div>
+                <FormField
+                  control={form.control}
+                  name="child_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex flex-col">
+                          <div className="relative flex ">
+                            <span className="inline-flex items-center px-3 text-sm text-gray-500 bg-white border-t border-b border-l border-gray-300 shadow-sm ">
+                              <Cat className="w-4 h-4" />
+                            </span>
+                            <Input
+                              className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
+                              type="text"
+                              {...field}
+                              placeholder="Child Name"
+                            />
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-col pt-4">
+                  <div className="relative flex ">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-500 bg-white border-t border-b border-l border-gray-300 shadow-sm ">
+                      <CalendarIcon className="w-4 h-4" />
+                    </span>
+                    <input
+                      className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent"
+                      type="date"
+                      value={child_bday}
+                      onChange={(e) => setchild_bday(e.target.value)}
+                      placeholder="Child Date of Birth"
+                    />
+                  </div>
+                </div>
                 <Button
                   disabled={isLoading}
                   type="submit"
-                  className="text-base font-semibold"
+                  className="mt-12 text-base font-semibold"
                 >
-                  Log In{" "}
+                  Submit
                   {isLoading && (
                     <Loader2 className="w-5 h-6 ml-2 animate-spin" />
                   )}
@@ -176,12 +274,12 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
             </Form>
             <div className="pt-12 pb-12 text-center">
               <p>
-                Don&#x27;t have an account?
+                Already have an account?
                 <Link
-                  href="/authenticate/sign-up"
+                  href="/authenticate/sign-in"
                   className="ml-2 font-semibold underline"
                 >
-                  Register here.
+                  Login here.
                 </Link>
               </p>
             </div>
@@ -199,4 +297,4 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   );
 };
 
-export default LoginComponent;
+export default RegisterComponent;

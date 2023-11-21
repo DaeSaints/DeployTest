@@ -1,5 +1,6 @@
 import Footer from "@/components/pages/home/footer";
 import HomeNavbar from "@/components/pages/home/navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default function RootLayout({
         <article className="flex flex-col flex-1 bg-white">{children}</article>
       </section>
       <Footer />
+      <Toaster />
     </main>
   );
 }
