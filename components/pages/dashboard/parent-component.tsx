@@ -1,25 +1,18 @@
+"use client";
+
+// BACKEND
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import React from "react";
-import NotAcceptedSection from "./parent/not-accepted";
-import AcceptedSection from "./parent/accepted";
-import { fetchSingleParentId } from "@/lib/actions/parent.action";
 
-const ParentComponent = async ({ userInfo }: { userInfo: ParentType }) => {
-  const parent = await fetchSingleParentId({ _id: userInfo._id as string });
+import useSingleParent from "./parent/hook/useSingleParent";
+import ParentMain from "./parent/main";
 
-  return (
-    <section className="flex flex-col w-full h-screen overflow-y-auto bg-white">
-      {userInfo.isAccepted ? (
-        <>
-          <AcceptedSection userInfo={parent} />
-        </>
-      ) : (
-        <>
-          <NotAcceptedSection userInfo={parent} />
-        </>
-      )}
-    </section>
-  );
+const ParentComponent = ({ userInfo }: { userInfo: ParentType }) => {
+  const { data: parent, isLoading } = useSingleParent(userInfo?._id as string);
+  if (isLoading) return null;
+  if (parent.children.length === 0) return null;
+
+  return <ParentMain parent={parent} />;
 };
 
 export default ParentComponent;

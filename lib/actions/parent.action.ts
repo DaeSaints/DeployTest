@@ -100,7 +100,21 @@ export async function fetchSingleParentId({ _id }: { _id: string }) {
       ...single,
       _id: single._id.toString(),
       children: single.children.map((child: any) => {
-        return { ...child, _id: child._id.toString() };
+        if (child.enrolledClass)
+          return {
+            ...child,
+            _id: child._id.toString(),
+            enrolledClass: {
+              ...child.enrolledClass,
+              _id: child.enrolledClass._id.toString(),
+            },
+          };
+        else {
+          return {
+            ...child,
+            _id: child._id.toString(),
+          };
+        }
       }),
     };
 

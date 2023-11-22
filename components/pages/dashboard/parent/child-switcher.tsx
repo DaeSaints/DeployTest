@@ -8,9 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -31,42 +29,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { CheckIcon, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { StudentType } from "@/lib/interfaces/student.interface";
-
-const groups = [
-  {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
-  },
-  {
-    label: "Teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-];
-
-type Team = (typeof groups)[number]["teams"][number];
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -74,19 +38,23 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 
 interface ChildSwitcherProps extends PopoverTriggerProps {
   students: StudentType[];
+  selectedChild: StudentType;
+  handleSelectChild: (sel: StudentType) => void;
 }
 
 export default function ChildSwitcher({
   students,
+  selectedChild,
+  handleSelectChild,
   className,
 }: ChildSwitcherProps) {
   if (students.length === 0) return null;
 
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  const [selectedChild, setSelectedChild] = React.useState<StudentType>(
-    students[0]
-  );
+  // const [selectedChild, setSelectedChild] = React.useState<StudentType>(
+  //   students[0]
+  // );
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -117,7 +85,7 @@ export default function ChildSwitcher({
                 <CommandItem
                   key={single._id}
                   onSelect={() => {
-                    setSelectedChild(single);
+                    handleSelectChild(single);
                     setOpen(false);
                   }}
                   className="text-sm"
