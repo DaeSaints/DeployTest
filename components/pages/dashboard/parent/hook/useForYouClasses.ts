@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useForYouClasses = (childId: string) => {
   const { data, isLoading } = useQuery({
-    queryKey: [`classes:for-you`],
+    queryKey: [`classes:for-you`, childId],
     queryFn: async () => {
       const { classes } = await fetchForYouClasses(childId);
       return { classes };

@@ -23,11 +23,6 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,9 +33,6 @@ import {
   CalendarIcon,
   Loader2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
 
@@ -49,6 +41,7 @@ import { useRouter } from "next/navigation";
 import { createNewParent } from "@/lib/actions/parent.action";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { StudentType } from "@/lib/interfaces/student.interface";
+import { calculateAge } from "@/utils/helpers/calculateAge";
 
 const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const [isLoading, setisLoading] = useState(false);
@@ -62,8 +55,7 @@ const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   async function onSubmit(values: z.infer<typeof validation>) {
     setisLoading(true);
     const { username, email, child_name, password } = values;
-    const child_age =
-      new Date().getFullYear() - new Date(child_bday || "").getFullYear();
+    const child_age = calculateAge(new Date(child_bday || ""));
     const newDataParent: ParentType = {
       name: username,
       email,

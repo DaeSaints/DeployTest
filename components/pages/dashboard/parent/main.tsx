@@ -24,6 +24,7 @@ const ParentMain = ({ parent }: { parent: ParentType }) => {
           Dashboard
         </h2>
         <ChildSwitcher
+          parent={parent}
           students={parent?.children as StudentType[]}
           selectedChild={selectedChild}
           handleSelectChild={handleSelectChild}
@@ -31,11 +32,11 @@ const ParentMain = ({ parent }: { parent: ParentType }) => {
       </div>
       {selectedChild?.enrolledClass ? (
         <>
-          <AcceptedSection userInfo={parent} />
+          <AcceptedSection userInfo={parent} selectedChild={selectedChild} />
         </>
       ) : (
         <>
-          <NotAcceptedSection userInfo={parent} />
+          <NotAcceptedSection userInfo={parent} selectedChild={selectedChild} />
         </>
       )}
     </section>

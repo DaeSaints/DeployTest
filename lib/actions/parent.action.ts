@@ -8,6 +8,7 @@ import Transaction from "../models/transaction.model";
 import { ParentType } from "../interfaces/parent.interface";
 import { StudentType } from "../interfaces/student.interface";
 import * as bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 
 async function isParentExists(email: string) {
   const existingParent = await Parent.findOne({ email }); // Assuming 'email' is a unique identifier
@@ -64,6 +65,42 @@ export async function createNewParent({
     return {
       message: "Successfully Created New Parent",
       data: createdParent,
+      success: true,
+    };
+  } catch (error: any) {
+    throw new Error(`Error creating new parent: ${error.message}`);
+  }
+}
+
+export async function createNewStudent({
+  parentId,
+  newDataStudent,
+}: {
+  parentId: string;
+  newDataStudent: StudentType;
+}) {
+  try {
+    connectDB();
+
+    const selectedParent = await Parent.findById(parentId);
+
+    const createdStudent = await Student.create({
+      ...newDataStudent,
+      parent: selectedParent._id,
+    });
+
+    // @ts-ignore
+    const children: any[] = [...selectedParent.children, createdStudent._id];
+
+    // @ts-ignore
+    await Parent.findByIdAndUpdate(selectedParent._id, {
+      children,
+    });
+    revalidatePath("/dashboard");
+
+    return {
+      message: "Successfully Created New Parent",
+      data: selectedParent,
       success: true,
     };
   } catch (error: any) {

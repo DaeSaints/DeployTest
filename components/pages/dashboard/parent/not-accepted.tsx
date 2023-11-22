@@ -9,10 +9,17 @@ import { ClassCard } from "./card/class";
 // BACKEND
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import useForYouClasses from "./hook/useForYouClasses";
+import { StudentType } from "@/lib/interfaces/student.interface";
 
-const NotAcceptedSection = ({ userInfo }: { userInfo: ParentType }) => {
+const NotAcceptedSection = ({
+  userInfo,
+  selectedChild,
+}: {
+  userInfo: ParentType;
+  selectedChild: StudentType;
+}) => {
   if (!userInfo?.children) return null;
-  const ForYou = useForYouClasses(userInfo?.children[0]?._id as string);
+  const ForYou = useForYouClasses(selectedChild._id as string);
 
   return (
     <>

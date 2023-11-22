@@ -7,6 +7,14 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   Command,
   CommandGroup,
   CommandItem,
@@ -29,8 +37,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CheckIcon, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { CheckIcon, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { StudentType } from "@/lib/interfaces/student.interface";
+import { toast } from "@/components/ui/use-toast";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -39,23 +48,79 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 interface ChildSwitcherProps extends PopoverTriggerProps {
   students: StudentType[];
   selectedChild: StudentType;
+  parent: ParentType;
   handleSelectChild: (sel: StudentType) => void;
 }
+
+// FORM
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { calculateAge } from "@/utils/helpers/calculateAge";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { createNewStudent } from "@/lib/actions/parent.action";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+
+const validation = z.object({
+  child_name: z.string().min(1),
+});
 
 export default function ChildSwitcher({
   students,
   selectedChild,
   handleSelectChild,
   className,
+  parent,
 }: ChildSwitcherProps) {
   if (students.length === 0) return null;
 
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  // const [selectedChild, setSelectedChild] = React.useState<StudentType>(
-  //   students[0]
-  // );
+  const [child_bday, setchild_bday] = React.useState<string | undefined>();
+  const [isLoading, setisLoading] = React.useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
+  //FORM
+  const form = useForm<z.infer<typeof validation>>({
+    resolver: zodResolver(validation),
+  });
+  async function onSubmit(values: z.infer<typeof validation>) {
+    setisLoading(true);
+    const { child_name } = values;
+    console.log(child_name, child_bday);
+    const child_age = calculateAge(new Date(child_bday || ""));
+    const newDataStudent: StudentType = {
+      name: child_name,
+      age: child_age,
+      parent,
+      status: "Not Paid",
+    };
+    console.log(newDataStudent);
+    const res = await createNewStudent({
+      newDataStudent,
+      parentId: parent?._id as string,
+    });
+    if (res.success) {
+      toast({
+        variant: "success",
+        title: "Successfully Added New Student",
+      });
+      form.reset();
+      queryClient.invalidateQueries({
+        queryKey: [`classes:for-you`],
+      });
+      setShowNewTeamDialog(false);
+      setisLoading(false);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error in Adding New Student",
+      });
+      setisLoading(false);
+    }
+  }
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -65,7 +130,7 @@ export default function ChildSwitcher({
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn("w-[200px] justify-between", className)}
+            className={cn("w-[250px] justify-between", className)}
           >
             <Avatar className="w-5 h-5 mr-2">
               <AvatarImage
@@ -78,7 +143,7 @@ export default function ChildSwitcher({
             <ChevronsUpDown className="w-4 h-4 ml-auto opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-[250px] p-0">
           <Command>
             <CommandList>
               {students.map((single) => (
@@ -92,13 +157,13 @@ export default function ChildSwitcher({
                 >
                   <Avatar className="w-5 h-5 mr-2">
                     <AvatarImage
-                      src={selectedChild?.profileURL || ""}
+                      src={single?.profileURL || ""}
                       alt={single.name}
                       className="grayscale"
                     />
-                    <AvatarFallback>{selectedChild?.name[0]}</AvatarFallback>
+                    <AvatarFallback>{single?.name[0]}</AvatarFallback>
                   </Avatar>
-                  {selectedChild.name}
+                  {single.name} - {single.age}yrs. old
                   <CheckIcon
                     className={cn(
                       "ml-auto h-4 w-4",
@@ -137,23 +202,52 @@ export default function ChildSwitcher({
           </DialogDescription>
         </DialogHeader>
         <div>
-          <div className="py-2 pb-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Child's full name</Label>
-              <Input id="name" placeholder="John Doe" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Child's date of birth</Label>
-              <Input id="dob" type="date" />
-            </div>
-          </div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
+              <FormField
+                control={form.control}
+                name="child_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Child's full name</Label>
+                        <Input id="name" placeholder="John Doe" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="space-y-2">
+                <Label htmlFor="plan">Child's date of birth</Label>
+                <Input
+                  id="dob"
+                  type="date"
+                  value={child_bday}
+                  onChange={(e) => setchild_bday(e.target.value)}
+                />
+              </div>
+              <DialogFooter className="mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowNewTeamDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button disabled={isLoading} type="submit">
+                  Continue
+                  {isLoading && (
+                    <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-            Cancel
-          </Button>
-          <Button type="submit">Continue</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
