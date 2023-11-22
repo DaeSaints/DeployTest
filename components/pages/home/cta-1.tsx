@@ -7,7 +7,7 @@ import { ChevronRight } from "lucide-react";
 
 const CTA_ONE = () => {
   return (
-    <section className="flex flex-col items-center justify-center w-full px-64 py-32 bg-white">
+    <section className="flex flex-col items-center justify-center w-full px-64 py-10 bg-white">
       <div className="w-full text-4xl font-black text-left uppercase text-dark-1">
         subscribe
       </div>

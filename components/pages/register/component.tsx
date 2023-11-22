@@ -89,7 +89,6 @@ const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
       });
       form.reset();
       router.push("/authenticate/sign-in");
-      setisLoading(false);
     } else {
       toast({
         variant: "destructive",

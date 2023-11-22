@@ -60,7 +60,6 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
     });
     if (res) {
       router.push("/dashboard");
-      setisLoading(false);
     }
   }
 

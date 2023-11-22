@@ -6,7 +6,7 @@ import React from "react";
 
 const HEADER_LINKS = [
   {
-    href: "/",
+    href: "/home",
     label: "Home",
   },
   {
@@ -30,9 +30,11 @@ const HomeNavbar = () => {
         <div className="px-8 mx-auto max-w-7xl">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center justify-between w-full">
-              <div className="text-2xl font-[800] uppercase text-main-500">
-                Umonics <span className="text-dark-1">Method</span>
-              </div>
+              <Link href={"/home"}>
+                <div className="text-2xl font-[800] uppercase text-main-500">
+                  Umonics <span className="text-dark-1">Method</span>
+                </div>
+              </Link>
               <div className="hidden md:block">
                 <div className="flex items-baseline ml-10 space-x-4">
                   {HEADER_LINKS.map((nav) => {
