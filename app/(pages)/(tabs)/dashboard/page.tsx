@@ -1,3 +1,5 @@
+import ParentComponent from "@/components/pages/dashboard/parent-component";
+import TeacherComponent from "@/components/pages/dashboard/teacher-component";
 import { PageProps } from "@/lib/interfaces/page.props";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { authOptions } from "@/utils/authOptions";
@@ -8,11 +10,20 @@ import React from "react";
 const page = async ({ searchParams }: PageProps) => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
-  console.log(user.role)
-  console.log(session?.user)
-console.log(isParent(user));
   if (!user) return null;
 
-  return <div>DashboardsPage</div>;
-}
+  return (
+    <>
+      {isParent(user) ? (
+        <>
+          <ParentComponent userInfo={user} />
+        </>
+      ) : (
+        <>
+          <TeacherComponent userInfo={user} />
+        </>
+      )}
+    </>
+  );
+};
 export default page;

@@ -9,23 +9,18 @@ export default withAuth(
     const { token } = req.nextauth;
 
     const user: UserType = token?.user as UserType;
+    console.log(user);
     if (
-      ( pathname.startsWith("/dashboard")||
-        pathname.startsWith("/calendar")||
-        pathname.startsWith("/courses")||
-        pathname.startsWith("/settings")
-      ) &&
-      user?.role === "no role"
+      (pathname.startsWith("/calendar") || pathname.startsWith("/courses")) &&
+      user?.role === undefined
     ) {
-      return NextResponse.redirect("http://localhost:3000/messages");
+      return NextResponse.redirect("http://localhost:3000/dashboard");
     }
-    
-
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        console.log("tokenmiddle",token);
+        console.log("tokenmiddle", token);
         return !!token;
       },
     },
@@ -35,10 +30,10 @@ export default withAuth(
 export const config = {
   matcher: [
     "/calendar/:path*",
-    "/client-chats/:path*",
+    "/courses/:path*",
     "/dashboard/:path*",
-    "/leads/:path*",
+    "/messages/:path*",
+    "/settings/:path*",
     "/transactions/:path*",
-    "/users/:path*",
   ],
 };

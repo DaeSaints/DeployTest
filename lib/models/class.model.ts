@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const classesSchema = new mongoose.Schema(
   {
+    image: {
+      type: String,
+    },
     class: {
       type: String,
       required: true,

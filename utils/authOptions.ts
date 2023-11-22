@@ -71,8 +71,7 @@ export const authOptions: NextAuthOptions = {
         }
       } else {
         const user = await getUserByEmail({ email: token.email });
-        console.log(user.isAccepted)
-        console.log(user._id)
+        console.log(user)
         token.uid = user._id
         if(user.isAccepted && isParent(user)){
           user.role ="parent"

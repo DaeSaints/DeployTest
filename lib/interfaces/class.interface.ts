@@ -3,13 +3,14 @@ import { StudentType } from "./student.interface";
 
 export interface ClassesType {
   _id?: string;
+  image?: string;
   class: string;
   subscriptionPlans?: SubscriptionPlansType[];
   ageGroup: AgeGroupType;
   classDate: Date;
   startTime: string;
   endTime: string;
-  zoomLink ?: string;
+  zoomLink?: string;
   repeatedDays?: string[];
   participants?: StudentType[];
 }
