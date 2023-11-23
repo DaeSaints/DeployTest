@@ -27,8 +27,8 @@ const NewEnrollmentPage = async ({ params, searchParams }: PageProps) => {
   const grade_level = GRADE[classCourse.ageGroup];
   return (
     <section className="flex flex-col flex-1 w-full h-full">
-      <article className="grid flex-1 grid-cols-9 grid-rows-1">
-        <div className="col-span-6 border-r border-r-slate-300">
+      <article className="grid flex-1 grid-cols-10 grid-rows-1">
+        <div className="col-span-7 border-r border-r-slate-300">
           <ScrollArea className="w-full h-screen px-14">
             <div className="flex items-center justify-start gap-2 pt-10 text-base font-medium text-muted-foreground">
               <Link href={"/dashboard"}>
@@ -113,6 +113,7 @@ const NewEnrollmentPage = async ({ params, searchParams }: PageProps) => {
         <NewEnrollmentSidebar
           classId={_id as string}
           ageGroup={classCourse.ageGroup}
+          repeatedDays={classCourse.repeatedDays as string[]}
         />
       </article>
     </section>
