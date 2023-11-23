@@ -3,8 +3,8 @@ import React from "react";
 import RelatedClasses from "./related-classes";
 import SmallCalendar from "./small-calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import StripeButton from "./btn";
 import { stripe } from "@/lib/stripe";
+import StripeButton from "./btn";
 
 async function getProductsAndPrices() {
   const products = await stripe.products.list();

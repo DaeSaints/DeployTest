@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
+import Head from "next/head";
 // import 'react-day-picker/dist/style.css';
 
 const poppins = Poppins({
@@ -21,6 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+      </head>
       <body className={poppins.className}>
         <main className="flex flex-col w-full min-h-screen bg-slate-50">
           {children}

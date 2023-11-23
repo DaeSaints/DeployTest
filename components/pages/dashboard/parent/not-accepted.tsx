@@ -10,6 +10,7 @@ import { ClassCard } from "./card/class";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import useForYouClasses from "./hook/useForYouClasses";
 import { StudentType } from "@/lib/interfaces/student.interface";
+import BuyButton from "../new-enrollment/BuyButton";
 
 const NotAcceptedSection = ({
   userInfo,

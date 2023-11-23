@@ -11,6 +11,7 @@ import { Calendar, Clock1, Link2, User2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NewEnrollmentSidebar from "@/components/pages/dashboard/new-enrollment/right-sidebar";
 import { Card, CardContent } from "@/components/ui/card";
+import BuyButton from "@/components/pages/dashboard/new-enrollment/BuyButton";
 
 const NewEnrollmentPage = async ({ params, searchParams }: PageProps) => {
   const { _id } = params;
@@ -41,9 +42,12 @@ const NewEnrollmentPage = async ({ params, searchParams }: PageProps) => {
                 <div className="text-dark-1">{classCourse.class}</div>
               </Link>
             </div>
-            <h1 className="mt-6 text-4xl font-medium uppercase text-dark-2">
-              {classCourse.class} Class
-            </h1>
+            <div className="flex items-center justify-between w-full mt-6">
+              <h1 className="text-4xl font-medium uppercase text-dark-2">
+                {classCourse.class} Class
+              </h1>
+              {/* <BuyButton /> */}
+            </div>
             <div className="w-full h-[23rem] rounded-lg shadow-md bg-main-500 my-6"></div>
             <Card className="mb-4">
               <CardContent className="p-4">
