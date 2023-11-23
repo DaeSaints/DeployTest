@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ClassesType } from "@/lib/interfaces/class.interface";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Clock4 } from "lucide-react";
+import { convertTime } from "@/utils/helpers/convertTime";
 
 interface ClassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   classCourse?: ClassesType;
@@ -43,9 +45,10 @@ export function ClassCard({
         </div>
       </div>
     );
-  if (classCourse)
+  if (classCourse) {
+    const courseTime = convertTime(classCourse.startTime, classCourse.endTime);
     return (
-      <div className={cn("space-y-3", className)} {...props}>
+      <div className={cn("space-y-3 group", className)} {...props}>
         <Link
           href={`/dashboard/new-enrollment/${classCourse?._id}`}
           className="overflow-hidden rounded-md"
@@ -63,14 +66,21 @@ export function ClassCard({
             />
           </div>
         </Link>
-        <div className="space-y-1 text-sm">
-          <h3 className="font-medium leading-none uppercase">
+        <div className="space-y-1 text-lg">
+          <h3 className="font-medium leading-none uppercase transition-colors group-hover:text-main-700">
             {classCourse?.class}
           </h3>
           <p className="text-xs text-muted-foreground">
             {classCourse?.repeatedDays?.join(", ")}
           </p>
+          <div className="flex items-center justify-start gap-2">
+            <div className="p-1 rounded-full w-7 h-7 bg-main-50">
+              <Clock4 className="w-full h-full text-main-700" />
+            </div>
+            <p className="text-sm text-muted-foreground">{courseTime}</p>
+          </div>
         </div>
       </div>
     );
+  }
 }

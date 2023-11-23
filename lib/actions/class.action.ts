@@ -168,6 +168,44 @@ export async function fetchAllClassesSelection(gradeLevel: string[]) {
   }
 }
 
+export async function fetchRelatedClasses(
+  gradeLevel: string[],
+  classId: string
+) {
+  try {
+    connectDB();
+
+    const postQuery = Classes.find({
+      ageGroup: { $in: gradeLevel },
+      _id: { $ne: classId },
+    })
+      .sort({
+        createdAt: "desc",
+      })
+      .lean()
+      .select(
+        "_id class ageGroup startTime endTime image repeatedDays participants"
+      )
+      .exec();
+
+    const data = await postQuery;
+
+    const plainData: ClassesType[] = data.map((d: any) => {
+      return {
+        ...d,
+        _id: d._id?.toString(),
+        participants: d.participants.map((single: any) => {
+          return { ...single, _id: single._id.toString() };
+        }),
+      };
+    });
+
+    return { classes: plainData };
+  } catch (error: any) {
+    throw new Error("Error in fetching customers", error.message);
+  }
+}
+
 export async function fetchForYouClasses(childId: string) {
   try {
     connectDB();
@@ -186,7 +224,7 @@ export async function fetchForYouClasses(childId: string) {
         createdAt: "desc",
       })
       .lean()
-      .select("_id class repeatedDays image")
+      .select("_id class repeatedDays image startTime endTime")
       // .populate({
       //   path: "participants",
       //   model: Student,
