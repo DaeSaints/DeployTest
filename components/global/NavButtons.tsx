@@ -90,9 +90,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
                           {child.name}
                         </span>
                         <span className="font-normal text-slate-600">
-                          {child.status === "Not Paid"
-                            ? "Not Paid"
-                            : `${child.enrolledClass?.ageGroup} - ${child.enrolledClass?.class} Class`}
+                          {child.status}
                         </span>
                       </div>
                     </DropdownMenuItem>

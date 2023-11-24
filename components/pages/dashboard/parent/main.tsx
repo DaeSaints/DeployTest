@@ -37,7 +37,7 @@ const ParentMain = ({ parent }: { parent: ParentType }) => {
           handleSelectChild={handleSelectChild}
         />
       </div>
-      {selectedChild?.enrolledClass ? (
+      {selectedChild?.status !== "Enrolling" ? (
         <>
           <AcceptedSection userInfo={parent} selectedChild={selectedChild} />
         </>

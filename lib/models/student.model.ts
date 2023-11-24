@@ -27,6 +27,9 @@ const studentSchema = new mongoose.Schema(
         ref: "Classes",
       },
     ],
+    package: {
+      type: String,
+    },
     status: {
       type: String,
       default: "Enrolling",

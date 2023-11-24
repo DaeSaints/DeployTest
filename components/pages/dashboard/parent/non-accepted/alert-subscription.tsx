@@ -97,7 +97,7 @@ export function SubscriptionPopUp({ close }: { close: () => void }) {
                   </li>
                 </ul>
                 <div className="flex items-center justify-center mt-8 rounded-md">
-                  <LessonsOnlyBtn />
+                  <LessonsOnlyBtn close={close}/>
                 </div>
               </div>
             </div>
@@ -178,7 +178,7 @@ export function SubscriptionPopUp({ close }: { close: () => void }) {
                   </li>
                 </ul>
                 <div className="flex items-center justify-center mt-8 rounded-md">
-                  <AllInclusiveBtn />
+                  <AllInclusiveBtn close={close}/>
                 </div>
               </div>
             </div>

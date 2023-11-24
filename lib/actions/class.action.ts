@@ -212,14 +212,14 @@ export async function fetchForYouClasses(childId: string) {
 
     const selectedStudent: StudentType = (await Student.findById(childId)
       .lean()
-      .select("_id age")
+      .select("_id age gradeLevel")
       .exec()) as StudentType;
 
-    const gradeLevel: string[] = getGradeLevel(selectedStudent?.age as number);
+    // const gradeLevel: string[] = getGradeLevel(selectedStudent?.age as number);
 
-    console.log(gradeLevel);
+    // console.log(gradeLevel);
 
-    const postQuery = Classes.find({ ageGroup: { $in: gradeLevel } })
+    const postQuery = Classes.find({ ageGroup: selectedStudent.gradeLevel })
       .sort({
         createdAt: "desc",
       })

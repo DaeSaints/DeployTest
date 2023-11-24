@@ -5,7 +5,6 @@ import { fetchSingleParentId } from "@/lib/actions/parent.action";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { UserType } from "@/lib/interfaces/user.interface";
-import { isParent } from "@/utils/helpers/isParent";
 
 const LeftSidebar = async () => {
   const session = await getServerSession(authOptions);

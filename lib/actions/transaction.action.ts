@@ -71,6 +71,7 @@ export async function createNewTransactionSubscription({
     await Student.findByIdAndUpdate(NewTransaction.student, {
       classSchedule: NewTransaction.classSchedule,
       status: "Not Paid",
+      package: NewTransaction.package,
     });
 
     return {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // FORM
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,12 +7,13 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 
 const validation = z.object({
-  username: z.string().min(0),
+  username: z.string().min(1),
   email: z.string().email().min(1, {
     message: "Invalid Email",
   }),
-  password: z.string().min(0),
-  child_name: z.string().min(0),
+  password: z.string().min(4),
+  child_name: z.string().min(1),
+  gradeLevel: z.string().min(1),
 });
 
 // UI
@@ -32,9 +33,17 @@ import {
   User,
   CalendarIcon,
   Loader2,
+  Book,
 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 //ROUTER
 import { useRouter } from "next/navigation";
@@ -42,6 +51,8 @@ import { createNewParent } from "@/lib/actions/parent.action";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { StudentType } from "@/lib/interfaces/student.interface";
 import { calculateAge } from "@/utils/helpers/calculateAge";
+import { GRADE_LEVEL, getGradeLevel } from "@/utils/constants/data/gradeLevels";
+import { AgeGroupType } from "@/lib/interfaces/class.interface";
 
 const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const [isLoading, setisLoading] = useState(false);
@@ -51,10 +62,19 @@ const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const form = useForm<z.infer<typeof validation>>({
     resolver: zodResolver(validation),
   });
+  const [gradeOption, setGradeOption] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (child_bday) {
+      const child_age = calculateAge(new Date(child_bday));
+      const temp = getGradeLevel(child_age as number);
+      setGradeOption(temp);
+    }
+  }, [child_bday]);
 
   async function onSubmit(values: z.infer<typeof validation>) {
     setisLoading(true);
-    const { username, email, child_name, password } = values;
+    const { username, email, child_name, password, gradeLevel } = values;
     const child_age = calculateAge(new Date(child_bday || ""));
     const newDataParent: ParentType = {
       name: username,
@@ -64,8 +84,10 @@ const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
     const newDataStudent: StudentType = {
       name: child_name,
       age: child_age,
+      gradeLevel: gradeLevel as AgeGroupType,
       parent: newDataParent,
-      status: "Not Paid",
+      status: "Enrolling",
+      classSchedule: [],
     };
 
     const res = await createNewParent({
@@ -251,6 +273,50 @@ const RegisterComponent = ({ callbackUrl }: { callbackUrl: string }) => {
                     />
                   </div>
                 </div>
+                <FormField
+                  control={form.control}
+                  name="gradeLevel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <div className="flex flex-col mt-4">
+                            <div className="relative flex ">
+                              <span className="inline-flex items-center px-3 text-sm text-gray-500 bg-white border-t border-b border-l border-gray-300 shadow-sm ">
+                                <Book className="w-4 h-4" />
+                              </span>
+                              <SelectTrigger className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent">
+                                <SelectValue placeholder="Select a grade level for your child" />
+                              </SelectTrigger>
+                            </div>
+                          </div>
+                        </FormControl>
+                        <SelectContent>
+                          {gradeOption.length === 0 ? (
+                            <div className="w-full text-sm text-center">
+                              No Options
+                            </div>
+                          ) : (
+                            <>
+                              {gradeOption.map((d) => {
+                                const label =
+                                  GRADE_LEVEL[d as keyof typeof GRADE_LEVEL];
+                                return (
+                                  <SelectItem value={d}>{label}</SelectItem>
+                                );
+                              })}
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button
                   disabled={isLoading}
                   type="submit"

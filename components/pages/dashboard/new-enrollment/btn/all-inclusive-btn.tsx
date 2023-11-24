@@ -10,10 +10,12 @@ import { UserType } from "@/lib/interfaces/user.interface";
 import { useSelected } from "../../parent/non-accepted/context/useSelected";
 import { TransactionsType } from "@/lib/interfaces/transaction.interface";
 import { createNewTransactionSubscription } from "@/lib/actions/transaction.action";
+import { useRouter } from "next/navigation";
 
-const AllInclusiveBtn = () => {
+const AllInclusiveBtn = ({ close }: { close: () => void }) => {
   const { data: session } = useSession();
   const userInfo = session?.user as UserType;
+  const router = useRouter();
 
   if (!userInfo) return null;
   const { selected, selectedChild } = useSelected();
@@ -36,6 +38,8 @@ const AllInclusiveBtn = () => {
     const res = await createNewTransactionSubscription({ NewTransaction });
     if (res.success) {
       setIsLoading(false);
+      close();
+      router.replace("/dashboard");
       window.open(
         "https://checkout.umonicsplus.com/b/aEUdUg1275PxfCw9AC?locale=en&__embed_source=buy_btn_1OFCUVJdrjeVG3h14v8ccxp1",
         "_blank"

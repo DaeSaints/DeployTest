@@ -37,6 +37,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CheckIcon, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { StudentType } from "@/lib/interfaces/student.interface";
 import { toast } from "@/components/ui/use-toast";
@@ -61,9 +68,12 @@ import { ParentType } from "@/lib/interfaces/parent.interface";
 import { createNewStudent } from "@/lib/actions/parent.action";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { GRADE_LEVEL, getGradeLevel } from "@/utils/constants/data/gradeLevels";
+import { AgeGroupType } from "@/lib/interfaces/class.interface";
 
 const validation = z.object({
   child_name: z.string().min(1),
+  gradeLevel: z.string().min(1),
 });
 
 export default function ChildSwitcher({
@@ -88,16 +98,16 @@ export default function ChildSwitcher({
   });
   async function onSubmit(values: z.infer<typeof validation>) {
     setisLoading(true);
-    const { child_name } = values;
-    console.log(child_name, child_bday);
+    const { child_name, gradeLevel } = values;
     const child_age = calculateAge(new Date(child_bday || ""));
     const newDataStudent: StudentType = {
       name: child_name,
       age: child_age,
+      gradeLevel: gradeLevel as AgeGroupType,
       parent,
-      status: "Not Paid",
+      status: "Enrolling",
+      classSchedule: [],
     };
-    console.log(newDataStudent);
     const res = await createNewStudent({
       newDataStudent,
       parentId: parent?._id as string,
@@ -121,6 +131,17 @@ export default function ChildSwitcher({
       setisLoading(false);
     }
   }
+
+  const [gradeOption, setGradeOption] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    if (child_bday) {
+      const child_age = calculateAge(new Date(child_bday));
+      const temp = getGradeLevel(child_age as number);
+      setGradeOption(temp);
+    }
+  }, [child_bday]);
+
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -231,6 +252,44 @@ export default function ChildSwitcher({
                   onChange={(e) => setchild_bday(e.target.value)}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="gradeLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Child's Grade Level</Label>
+                          <SelectTrigger className="flex-1 w-full px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-none shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-main-600 focus:border-transparent">
+                            <SelectValue placeholder="Select a grade level for your child" />
+                          </SelectTrigger>
+                        </div>
+                      </FormControl>
+                      <SelectContent>
+                        {gradeOption.length === 0 ? (
+                          <div className="w-full text-sm text-center">
+                            No Options
+                          </div>
+                        ) : (
+                          <>
+                            {gradeOption.map((d: string) => {
+                              const label =
+                                GRADE_LEVEL[d as keyof typeof GRADE_LEVEL];
+                              return <SelectItem value={d}>{label}</SelectItem>;
+                            })}
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DialogFooter className="mt-6">
                 <Button
                   variant="outline"
