@@ -3,6 +3,7 @@
 // BACKEND
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import React from "react";
+import { SelectedProvider } from "./parent/non-accepted/context/useSelected";
 
 import useSingleParent from "./parent/hook/useSingleParent";
 import ParentMain from "./parent/main";
@@ -12,7 +13,11 @@ const ParentComponent = ({ userInfo }: { userInfo: ParentType }) => {
   if (isLoading) return null;
   if (parent.children.length === 0) return null;
 
-  return <ParentMain parent={parent} />;
+  return (
+    <SelectedProvider>
+      <ParentMain parent={parent} />
+    </SelectedProvider>
+  );
 };
 
 export default ParentComponent;

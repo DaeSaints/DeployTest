@@ -5,15 +5,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSelected } from "./context/useSelected";
 
-const NonAcceptedHeader = ({
-  length,
-  clear,
-}: {
-  length: number;
-  clear: () => void;
-}) => {
+const NonAcceptedHeader = () => {
   const router = useRouter();
+
+  const { clear, selected } = useSelected();
 
   return (
     <header className="flex flex-col px-10 pb-4 space-y-8">
@@ -31,7 +28,7 @@ const NonAcceptedHeader = ({
           <Button
             variant={"outline"}
             type="button"
-            disabled={length === 0}
+            disabled={selected.length === 0}
             onClick={clear}
             className="py-6 text-base font-bold"
           >

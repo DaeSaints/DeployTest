@@ -9,22 +9,21 @@ import { SelectedScheduleCard } from "../card/selected-schedule";
 import MiniCalendarCard from "../card/mini-calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ClassOptionCard from "../card/class-option";
+import { useSelected } from "./context/useSelected";
 
 const NonAcceptedBody = ({
   AllClassCourses,
-  selectedCourse,
-  moveUp,
-  moveDown,
-  remove,
-  addSelected,
 }: {
   AllClassCourses: ClassesType[];
-  selectedCourse: ClassesType[];
-  moveUp: (sel: number) => void;
-  moveDown: (sel: number) => void;
-  remove: (sel: number) => void;
-  addSelected: (sel: ClassesType) => void;
 }) => {
+  const {
+    selected: selectedCourse,
+    moveDown,
+    moveUp,
+    remove,
+    addSelected,
+  } = useSelected();
+
   const month = dayjs().month();
   const year = dayjs().year();
   const firstDayOFMonth = dayjs(new Date(year, month, 1)).day();
@@ -43,7 +42,7 @@ const NonAcceptedBody = ({
           return d;
         }
       }),
-    [selectedCourse.length]
+    [selectedCourse.length, AllClassCourses]
   );
 
   return (
