@@ -2,26 +2,8 @@ import mongoose from "mongoose";
 
 const classesSchema = new mongoose.Schema(
   {
-    image: {
-      type: String,
-    },
     class: {
       type: String,
-      required: true,
-    },
-    subscriptionPlans: [
-      {
-        plan: String,
-        price: Number,
-      },
-    ],
-    ageGroup: {
-      type: String,
-      enum: ["N1", "N2", "K1", "K2"],
-      required: true,
-    },
-    classDate: {
-      type: Date,
       required: true,
     },
     startTime: {
@@ -32,14 +14,37 @@ const classesSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    day: {
+      type: String,
+      enum: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      required: true,
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    color: {
+      type: String,
+      enum: ["blue", "red", "green", "orange"],
+      default: "blue",
+    },
+    ageGroup: {
+      type: String,
+      enum: ["N1", "N2", "K1", "K2"],
+      required: true,
+    },
     zoomLink: {
       type: String,
+      default: "",
     },
-    repeatedDays: [
-      {
-        type: String,
-      },
-    ],
     participants: [
       {
         type: mongoose.Schema.Types.ObjectId,

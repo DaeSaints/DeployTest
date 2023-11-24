@@ -4,11 +4,11 @@ import React from "react";
 // BACKEND
 import { getMatrixMonth } from "@/utils/calendar/helpers";
 import dayjs from "dayjs";
-import { ClassCourseType } from "@/utils/constants/data/classCourse";
 import { daysOfWeek } from "@/utils/helpers/daysOfWeek";
 import { cn } from "@/lib/utils";
+import { ClassesType } from "@/lib/interfaces/class.interface";
 
-const MiniCalendarCard = ({ selected }: { selected: ClassCourseType[] }) => {
+const MiniCalendarCard = ({ selected }: { selected: ClassesType[] }) => {
   const currMonthIdx = dayjs().month();
   const currMonth = getMatrixMonth(currMonthIdx);
   const format = "DD-MM-YY";

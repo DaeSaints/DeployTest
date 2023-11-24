@@ -5,8 +5,8 @@ import { StudentType } from "@/lib/interfaces/student.interface";
 
 // UI
 import AcceptedSection from "./accepted";
-import NotAcceptedSection from "./not-accepted";
 import ChildSwitcher from "./child-switcher";
+import NotAcceptedComponent from "./non-accepted/component";
 
 const ParentMain = ({ parent }: { parent: ParentType }) => {
   if (parent?.children?.length === 0 && parent?.children) return null;
@@ -36,7 +36,10 @@ const ParentMain = ({ parent }: { parent: ParentType }) => {
         </>
       ) : (
         <>
-          <NotAcceptedSection userInfo={parent} selectedChild={selectedChild} />
+          <NotAcceptedComponent
+            userInfo={parent}
+            selectedChild={selectedChild}
+          />
         </>
       )}
     </section>

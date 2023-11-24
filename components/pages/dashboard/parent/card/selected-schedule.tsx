@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ClassCourseType } from "@/utils/constants/data/classCourse";
+import { ClassesType } from "@/lib/interfaces/class.interface";
 import { convertTime } from "@/utils/helpers/convertTime";
 import {
   ArrowDown,
@@ -36,7 +36,7 @@ export function SelectedScheduleCard({
   moveDown,
   remove,
 }: {
-  classCourses: ClassCourseType[];
+  classCourses: ClassesType[];
   moveUp: (sel: number) => void;
   moveDown: (sel: number) => void;
   remove: (sel: number) => void;
@@ -51,7 +51,7 @@ export function SelectedScheduleCard({
       </CardHeader>
       <CardContent className="grid grid-cols-1 grid-rows-4 gap-1">
         {classCourses.map((data, index) => {
-          const classCourse = data as ClassCourseType;
+          const classCourse = data as ClassesType;
           const classTime = convertTime(
             classCourse.startTime,
             classCourse.endTime

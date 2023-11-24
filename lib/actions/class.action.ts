@@ -224,7 +224,7 @@ export async function fetchForYouClasses(childId: string) {
         createdAt: "desc",
       })
       .lean()
-      .select("_id class repeatedDays image startTime endTime")
+      .select("_id class day ageGroup image startTime endTime")
       // .populate({
       //   path: "participants",
       //   model: Student,
