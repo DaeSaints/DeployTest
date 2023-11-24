@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { StudentType } from "@/lib/interfaces/student.interface";
+import { useSelected } from "./non-accepted/context/useSelected";
 
 // UI
 import AcceptedSection from "./accepted";
@@ -11,11 +12,14 @@ import NotAcceptedComponent from "./non-accepted/component";
 const ParentMain = ({ parent }: { parent: ParentType }) => {
   if (parent?.children?.length === 0 && parent?.children) return null;
 
+  const { clear } = useSelected();
+
   const [selectedChild, setSelectedChild] = useState<StudentType>(
     (parent?.children as StudentType[])[0] as StudentType
   );
   function handleSelectChild(sel: StudentType) {
     setSelectedChild(sel);
+    clear();
   }
   return (
     <section className="flex flex-col w-full h-screen overflow-y-auto bg-white">

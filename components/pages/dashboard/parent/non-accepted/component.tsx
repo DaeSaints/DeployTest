@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 // BACKEND
 import { ParentType } from "@/lib/interfaces/parent.interface";
