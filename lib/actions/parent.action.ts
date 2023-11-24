@@ -119,11 +119,11 @@ export async function fetchSingleParentId({ _id }: { _id: string }) {
         path: "children",
         model: Student,
         select: "_id name age status profileURL",
-        populate: {
-          path: "enrolledClass",
-          model: Classes,
-          select: "class",
-        },
+        // populate: {
+        //   path: "enrolledClass",
+        //   model: Classes,
+        //   select: "class",
+        // },
       })
       .exec();
 

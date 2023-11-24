@@ -13,8 +13,6 @@ import { ClassesType } from "../interfaces/class.interface";
 import { DurationType } from "../interfaces/duration.interface";
 import Parent from "../models/parent.model";
 import Student from "../models/student.model";
-import { ParentType } from "../interfaces/parent.interface";
-
 
 interface Params {
   newTransaction: TransactionType;
@@ -46,6 +44,38 @@ export async function createNewTransaction({
     return {
       message: "Successfully Created New Transaction",
       data: createdTransaction,
+    };
+  } catch (error: any) {
+    throw new Error(`Error creating new transaction: ${error.message}`);
+  }
+}
+
+export async function createNewTransactionSubscription({
+  NewTransaction,
+}: {
+  NewTransaction: TransactionsType;
+}) {
+  try {
+    connectDB();
+
+    const createdTransaction = await Transaction.create({
+      ...NewTransaction,
+    });
+
+    // Update Parent model
+    await Parent.findByIdAndUpdate(NewTransaction.parent, {
+      $push: { transactions: createdTransaction._id },
+    });
+
+    // Update Classes model
+    await Student.findByIdAndUpdate(NewTransaction.student, {
+      classSchedule: NewTransaction.classSchedule,
+      status: "Not Paid",
+    });
+
+    return {
+      message: "Successfully Created New Transaction",
+      success: true,
     };
   } catch (error: any) {
     throw new Error(`Error creating new transaction: ${error.message}`);
@@ -253,7 +283,6 @@ export async function expireTransactionById(_id: string) {
       { _id },
       { status: "Expired" },
       { new: true }
-
     ).exec();
 
     if (!updatedTransaction) {
@@ -263,6 +292,9 @@ export async function expireTransactionById(_id: string) {
 
     return { message: "Successfully updated transaction status to Expired" };
   } catch (error: any) {
-    throw new Error("Error in updating transaction status to Expired", error.message);
+    throw new Error(
+      "Error in updating transaction status to Expired",
+      error.message
+    );
   }
 }

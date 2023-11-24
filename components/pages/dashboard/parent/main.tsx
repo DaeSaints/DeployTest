@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { StudentType } from "@/lib/interfaces/student.interface";
 import { useSelected } from "./non-accepted/context/useSelected";
@@ -12,11 +12,14 @@ import NotAcceptedComponent from "./non-accepted/component";
 const ParentMain = ({ parent }: { parent: ParentType }) => {
   if (parent?.children?.length === 0 && parent?.children) return null;
 
-  const { clear } = useSelected();
+  const { clear, setSelectedChild, selectedChild } = useSelected();
 
-  const [selectedChild, setSelectedChild] = useState<StudentType>(
-    (parent?.children as StudentType[])[0] as StudentType
-  );
+  useEffect(() => {
+    setSelectedChild((parent?.children as StudentType[])[0] as StudentType);
+  }, []);
+
+  if (!selectedChild) return null;
+
   function handleSelectChild(sel: StudentType) {
     setSelectedChild(sel);
     clear();

@@ -5,9 +5,43 @@ import React, { useState } from "react";
 // UI
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { useSelected } from "../../parent/non-accepted/context/useSelected";
+import { TransactionsType } from "@/lib/interfaces/transaction.interface";
+import { createNewTransactionSubscription } from "@/lib/actions/transaction.action";
 
 const AllInclusiveBtn = () => {
+  const { data: session } = useSession();
+  const userInfo = session?.user as UserType;
+
+  if (!userInfo) return null;
+  const { selected, selectedChild } = useSelected();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const NewTransaction: TransactionsType = {
+    student: selectedChild?._id as string,
+    parent: userInfo._id as string,
+    price: 55,
+    status: "Not Paid",
+    package: "AllInclusive",
+    classSchedule: selected.map((d) => d._id),
+  };
+
+  console.log(NewTransaction);
+
+  async function handleClick() {
+    setIsLoading(true);
+
+    const res = await createNewTransactionSubscription({ NewTransaction });
+    if (res.success) {
+      setIsLoading(false);
+      window.open(
+        "https://checkout.umonicsplus.com/b/aEUdUg1275PxfCw9AC?locale=en&__embed_source=buy_btn_1OFCUVJdrjeVG3h14v8ccxp1",
+        "_blank"
+      );
+    }
+  }
 
   return (
     <>
@@ -21,13 +55,7 @@ const AllInclusiveBtn = () => {
         disabled={isLoading}
         type="button"
         className="w-full py-6 text-base font-bold"
-        onClick={() => {
-          setIsLoading(true);
-          window.open(
-            "https://checkout.umonicsplus.com/b/aEUdUg1275PxfCw9AC?locale=en&__embed_source=buy_btn_1OFCUVJdrjeVG3h14v8ccxp1",
-            "_blank"
-          );
-        }}
+        onClick={handleClick}
       >
         Enroll Now
         {isLoading && <Loader2 className="w-6 h-6 ml-2 animate-spin" />}

@@ -2,32 +2,34 @@ import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema(
   {
-    class: {
+    student: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Classes",
+      ref: "Student",
+      required: true,
+    },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Parent",
+      required: true,
     },
     price: {
       type: Number,
       required: true,
     },
-    duration: {
-      type: String,
-      required: true,
-    },
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-    },
     status: {
       type: String,
       default: "Not Paid",
     },
-    paidDate: {
-      type: Date,
+    package: {
+      type: String,
+      required: true,
     },
-    expiryDate: {
-      type: Date,
-    },
+    classSchedule: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Classes",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -13,22 +13,23 @@ const studentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    gradeLevel: {
+      type: String,
+      required: true,
+    },
     parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Parent",
     },
-    enrolledClass: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Classes",
-      default: null,
-    },
+    classSchedule: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Classes",
+      },
+    ],
     status: {
       type: String,
-      default: "Not Paid",
-    },
-    classExpiryDate: {
-      type: Date,
-      default: null,
+      default: "Enrolling",
     },
   },
   { timestamps: true }
