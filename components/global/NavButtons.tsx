@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 // UI
@@ -15,20 +15,21 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ParentAvatarButton from "./ParentAvatarButton";
 
 import TooltipButton from "./TooltipButton";
 import { ParentType } from "@/lib/interfaces/parent.interface";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { isParent } from "@/utils/helpers/isParent";
+import { useSelectedChild } from "./context/useSelectedChild";
+import { StudentType } from "@/lib/interfaces/student.interface";
 
 const NavButtons = ({ user }: { user: ParentType | UserType }) => {
-  console.log(user);
   const pathname = usePathname();
   const router = useRouter();
   const NavLinks = [
@@ -52,6 +53,61 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
       : NewNavLinks
     : NavLinks;
 
+  if (isParent(user)) {
+    const { setSelectedChild } = useSelectedChild();
+
+    useEffect(() => {
+      setSelectedChild((user?.children as StudentType[])[0] as StudentType);
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center justify-center gap-4">
+        <ParentAvatarButton parent={user} />
+        {FINAL_LINKS.map((nav) => {
+          const isActive =
+            (pathname.includes(nav.href) && nav.href.length > 1) ||
+            pathname === nav.href;
+          const iconClassName = `w-full h-full transition text-slate-400  ${
+            isActive ? "text-black" : "group-hover:text-white"
+          }`;
+          return (
+            <TooltipButton tooltip={nav.label}>
+              <Button
+                key={nav.label}
+                variant={"ghost"}
+                className={`w-10 h-10 p-2 rounded-full group relative ${
+                  isActive ? "bg-white" : "hover:bg-primary/50"
+                }`}
+                onClick={() => {
+                  router.replace(nav.href);
+                }}
+              >
+                {nav.label === "dashboard" && (
+                  <LayoutGrid className={iconClassName} />
+                )}
+                {nav.label === "calendar" && (
+                  <Calendar className={iconClassName} />
+                )}
+                {nav.label === "courses" && (
+                  <Backpack className={iconClassName} />
+                )}
+                {nav.label === "messages" && (
+                  <MessagesSquareIcon className={iconClassName} />
+                )}
+                {nav.label === "transactions" && (
+                  <BookOpen className={iconClassName} />
+                )}
+                {nav.label === "settings" && (
+                  <Settings className={iconClassName} />
+                )}
+              </Button>
+            </TooltipButton>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <div className="w-full h-20 pt-4">
@@ -70,33 +126,10 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
             <DropdownMenuLabel className="flex items-center justify-start">
               <div className="flex flex-col">
                 <span className="font-semibold">{user.email}</span>
-                <span className="font-normal text-slate-600">
-                  {!isParent(user) ? user.role : "Parent"}
-                </span>
+                <span className="font-normal text-slate-600">{user.role}</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {isParent(user) &&
-              user.children?.map((child) => {
-                return (
-                  <React.Fragment key={child._id}>
-                    <DropdownMenuItem className="flex items-center justify-start transition cursor-pointer hover:bg-slate-200">
-                      <Avatar className="mr-4">
-                        <AvatarImage src="" />
-                        <AvatarFallback>{child.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-semibold capitalize">
-                          {child.name}
-                        </span>
-                        <span className="font-normal text-slate-600">
-                          {child.status}
-                        </span>
-                      </div>
-                    </DropdownMenuItem>
-                  </React.Fragment>
-                );
-              })}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

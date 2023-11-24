@@ -39,7 +39,7 @@ const LessonsOnlyBtn = ({ close }: { close: () => void }) => {
     if (res.success) {
       setIsLoading(false);
       close();
-      router.replace("/dashboard");
+      window.location.reload();
       window.open(
         "https://checkout.umonicsplus.com/b/8wMdUgbGL6TB4XS003?locale=en&__embed_source=buy_btn_1OFCYgJdrjeVG3h12HCb9Z3C",
         "_blank"

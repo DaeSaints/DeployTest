@@ -5,8 +5,6 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
 type ClassesType = any; // replace with your actual type
 
 const SelectedContext = createContext<{
-  selectedChild: StudentType | undefined;
-  setSelectedChild: (sel: StudentType) => void;
   selected: ClassesType[];
   addSelected: (sel: ClassesType) => void;
   moveUp: (index: number) => void;
@@ -14,8 +12,6 @@ const SelectedContext = createContext<{
   remove: (index: number) => void;
   clear: () => void;
 }>({
-  selectedChild: undefined,
-  setSelectedChild: () => {},
   selected: [],
   addSelected: () => {},
   moveUp: () => {},
@@ -30,7 +26,6 @@ export const SelectedProvider = ({
   children: React.ReactNode;
 }) => {
   const [selected, setSelected] = useState<ClassesType[]>([]);
-  const [selectedChild, setSelectedChild] = useState<StudentType | undefined>();
 
   const addSelected = (sel: ClassesType) => {
     setSelected((prev) => [...prev, sel]);
@@ -71,8 +66,6 @@ export const SelectedProvider = ({
   return (
     <SelectedContext.Provider
       value={{
-        selectedChild,
-        setSelectedChild,
         selected,
         addSelected,
         moveUp,

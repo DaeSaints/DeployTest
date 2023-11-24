@@ -8,11 +8,13 @@ import { useSelected } from "./non-accepted/context/useSelected";
 import AcceptedSection from "./accepted";
 import ChildSwitcher from "./child-switcher";
 import NotAcceptedComponent from "./non-accepted/component";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 
 const ParentMain = ({ parent }: { parent: ParentType }) => {
   if (parent?.children?.length === 0 && parent?.children) return null;
 
-  const { clear, setSelectedChild, selectedChild } = useSelected();
+  const { clear } = useSelected();
+  const { setSelectedChild, selectedChild } = useSelectedChild();
 
   useEffect(() => {
     setSelectedChild((parent?.children as StudentType[])[0] as StudentType);

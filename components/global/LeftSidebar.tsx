@@ -12,8 +12,6 @@ const LeftSidebar = async () => {
   const userInfo = await fetchSingleParentId({ _id: user._id as string });
   if (!userInfo) return null;
 
-  console.log(userInfo);
-
   return (
     <article className="flex flex-col items-center justify-between flex-1 py-4 bg-main-700">
       <NavButtons user={userInfo} />

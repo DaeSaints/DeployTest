@@ -11,7 +11,9 @@ const AcceptedSection = ({
 }) => {
   return (
     <>
-      <section className="flex-1 w-full">AcceptedSection</section>
+      <section className="flex items-center justify-center flex-1 w-full">
+        <span className="">Waiting for Payment</span>
+      </section>
     </>
   );
 };
