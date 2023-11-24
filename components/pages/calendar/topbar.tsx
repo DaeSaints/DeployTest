@@ -4,50 +4,18 @@ import React from "react";
 // UI
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { getMonthName } from "@/utils/calendar";
 import { useCalendarContext } from "@/components/providers/CalendarProvider";
+import dayjs from "dayjs";
 
 const CalendarTopBar = () => {
-  const {
-    monthIndex,
-    setMonthIndex,
-    calendarType,
-    setCalendarType,
-    setDateSpecific,
-    dateSpecific,
-  } = useCalendarContext();
-  const currDate = dateSpecific;
-  currDate.setDate(1);
-  currDate.setMonth(monthIndex);
-
-  function prevMonth() {
-    if (calendarType === "Month") {
-      let newMonth = monthIndex - 1;
-      if (monthIndex === 0) {
-        newMonth = 11;
-
-        dateSpecific.setFullYear(dateSpecific.getFullYear() - 1);
-        setDateSpecific(dateSpecific);
-      }
-      setMonthIndex(newMonth);
-    }
-  }
-  function nextMonth() {
-    if (calendarType === "Month") {
-      let newMonth = (monthIndex + 1) % 12;
-
-      if (monthIndex === 11) {
-        dateSpecific.setFullYear(dateSpecific.getFullYear() + 1);
-        setDateSpecific(dateSpecific);
-      }
-      setMonthIndex(newMonth);
-    }
-  }
+  const { monthIndex, setMonthIndex, calendarType, setCalendarType } =
+    useCalendarContext();
 
   return (
     <div className="flex items-center justify-between w-full pr-4 bg-white h-28">
       <div className="flex items-center justify-center gap-1 px-2 py-1 rounded-lg bg-slate-200">
         <Button
+          disabled
           className={`w-24 py-2 h-fit ${
             calendarType === "Week"
               ? "bg-white text-black hover:bg-white border font-semibold"
@@ -71,9 +39,7 @@ const CalendarTopBar = () => {
       <div className="flex items-center justify-center gap-8 w-[27rem]">
         <Button
           onClick={() => {
-            const today = new Date();
-            setMonthIndex(today.getMonth());
-            setDateSpecific(today);
+            setMonthIndex(dayjs().month());
           }}
           type="button"
           variant={"outline"}
@@ -82,12 +48,12 @@ const CalendarTopBar = () => {
           Today
         </Button>
         <span className="flex-1 text-2xl font-bold">
-          {getMonthName(currDate)} {currDate.getFullYear()}
+          {dayjs(new Date(dayjs().year(), monthIndex)).format("MMMM YYYY")}
         </span>
         <div className="flex items-center justify-center gap-2">
           <Button
             type="button"
-            onClick={prevMonth}
+            onClick={() => setMonthIndex(monthIndex - 1)}
             variant={"outline"}
             className="w-8 h-8 p-1"
           >
@@ -95,7 +61,7 @@ const CalendarTopBar = () => {
           </Button>
           <Button
             type="button"
-            onClick={nextMonth}
+            onClick={() => setMonthIndex(monthIndex + 1)}
             variant={"outline"}
             className="w-8 h-8 p-1"
           >

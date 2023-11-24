@@ -10,12 +10,12 @@ export default withAuth(
 
     const user: UserType = token?.user as UserType;
     console.log(user);
-    if (
-      (pathname.startsWith("/calendar") || pathname.startsWith("/courses")) &&
-      user?.role === undefined
-    ) {
-      return NextResponse.redirect("http://localhost:3000/dashboard");
-    }
+    // if (
+    //   (pathname.startsWith("/calendar") || pathname.startsWith("/courses")) &&
+    //   user?.role === undefined
+    // ) {
+    //   return NextResponse.redirect("http://localhost:3000/dashboard");
+    // }
   },
   {
     callbacks: {

@@ -13,14 +13,14 @@ import {
 import { TIMESLOTS } from "@/utils/constants";
 import { getDayOfWeek } from "@/utils/calendar";
 
-const WeeklyView = ({ month }: { month: Date[][] }) => {
+const WeeklyView = () => {
   return (
     <div className="flex flex-col flex-1 h-[35.2rem]">
       <Table className="relative bg-white">
         <TableHeader className="sticky top-0 z-10 w-full">
           <TableRow className="h-[4.5rem] w-full bg-white">
             <TableHead className="w-[3rem]"></TableHead>
-            {month.map((week, id) => {
+            {/* {month.map((week, id) => {
               const today = new Date();
               const isTodayInArray = week.some((date) => {
                 return date.toDateString() === today.toDateString();
@@ -62,7 +62,7 @@ const WeeklyView = ({ month }: { month: Date[][] }) => {
                       })}
                   </React.Fragment>
                 );
-            })}
+            })} */}
           </TableRow>
         </TableHeader>
         <TableBody>

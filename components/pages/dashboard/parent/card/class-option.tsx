@@ -20,7 +20,7 @@ const ClassOptionCard = ({
   const colorClass = `bg-main-100`;
 
   return (
-    <div className="w-full max-w-xs p-6 overflow-hidden bg-white border shadow rounded-xl">
+    <div className="w-full max-w-xs p-4 overflow-hidden bg-white border shadow rounded-xl">
       <div className="flex flex-col items-center justify-between md:flex-row">
         <div className="flex items-center justify-between flex-grow w-full">
           <div className="flex flex-col items-start ml-4">

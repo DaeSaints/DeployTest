@@ -2,19 +2,21 @@
 
 import React, { useState } from "react";
 import { AttendanceType } from "@/lib/interfaces/attendance.interface";
-import { getDayOfWeek } from "@/utils/calendar";
 import { CalendarSheet } from "@/components/global/CalendarSideSheet";
+import { getMatrixMonth } from "@/utils/calendar/helpers";
+import dayjs from "dayjs";
+import { useCalendarContext } from "@/components/providers/CalendarProvider";
 
-const MonthlyView = ({
-  month,
-  attendance,
-}: {
-  month: Date[][];
-  attendance: AttendanceType[];
-}) => {
+const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
   const [sheetTrigger, setSheetTrigger] = useState(false);
   const [selectedAttendance, setSelectedAttendance] =
     useState<AttendanceType | null>(null);
+
+  const format = "DD-MM-YY";
+  const today = dayjs().format(format);
+
+  const { monthIndex } = useCalendarContext();
+  const monthMatrix = getMatrixMonth(monthIndex);
 
   function closeSheet(col: boolean) {
     setSheetTrigger(false);
@@ -27,6 +29,7 @@ const MonthlyView = ({
     K1: "bg-green-300",
     K2: "bg-orange-300",
   };
+
   return (
     <>
       {sheetTrigger && selectedAttendance && (
@@ -36,98 +39,55 @@ const MonthlyView = ({
           selectedAttendance={selectedAttendance}
         />
       )}
-      <div
-        className={`grid flex-1 h-full grid-cols-7 ${
-          month.length === 5 ? "grid-rows-5" : "grid-rows-6"
-        } bg-white rounded-lg shadow-md`}
-      >
-        {month.map((week, index) => {
-          return (
-            <React.Fragment key={index}>
-              {week.map((day, idx) => {
-                const dayOfTheWeek = getDayOfWeek(day);
-                const today = new Date();
-                const temp = attendance.filter((d) => {
-                  return d.date.toDateString() === day.toDateString();
-                });
-                const dateTodayClass =
-                  day.toDateString() === today.toDateString()
-                    ? "bg-main-100 w-7 h-7 flex justify-center items-center rounded-full font-semibold"
-                    : "font-normal";
+      <div className="flex flex-col flex-1 bg-white">
+        <div className="grid grid-cols-7 grid-rows-1">
+          {monthMatrix[0].map((day, i) => {
+            return (
+              <div
+                key={i}
+                className="flex items-start justify-center w-full pt-2 text-xl font-semibold text-center border-r"
+              >
+                <div className="">
+                  {day.format("dd").charAt(0)}
+                  {day.format("dd").charAt(1)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid flex-1 grid-cols-7 grid-rows-5">
+          {monthMatrix.map((row, i) => {
+            return (
+              <React.Fragment key={i}>
+                {row.map((day, idx) => {
+                  const currDay = day.format(format);
+                  const dayClass =
+                    today === currDay && "bg-main-500 text-white";
 
-                if (index === 0)
                   return (
                     <div
-                      className="flex flex-col items-center justify-start w-full h-full gap-1 p-2 border"
                       key={idx}
+                      className="flex flex-col items-center justify-center w-full h-full p-2 border-b border-r"
                     >
-                      <div className="flex flex-col items-center justify-center">
-                        <span className="text-sm font-semibold">
-                          {dayOfTheWeek}
-                        </span>
-                        <span className={`${dateTodayClass} text-xs`}>
-                          {day.getDate()}
-                        </span>
-                        <div className="flex flex-col w-full">
-                          {temp?.map((single) => {
-                            const colorClass =
-                              AGEGROUP_COLORS[single.class.ageGroup];
-                            return (
-                              <button
-                                className={`${colorClass} text-xs px-2 py-1 rounded-full text-left`}
-                                key={single._id}
-                                onClick={() => {
-                                  setSelectedAttendance(single);
-                                  setSheetTrigger((prev) => !prev);
-                                }}
-                              >
-                                {single.class.class}{" "}
-                                <span className="font-medium">
-                                  {single.startTime} - {single.endTime}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
+                      <button
+                        className={`${dayClass} w-8 h-8 hover:bg-main-200 rounded-full transition-colors`}
+                      >
+                        <span className="text-base">{day.format("D")}</span>
+                      </button>
+                      <div className="flex flex-wrap items-center flex-1 w-full justify-evenly">
+                        {/* {repeatedDaysIndex.includes(day.day()) && (
+                          <>
+                            <div className="w-[6px] h-[6px] rounded-full bg-main-500"></div>
+                          </>
+                        )} */}
                       </div>
                     </div>
                   );
-
-                return (
-                  <div
-                    className="flex flex-col items-center justify-start w-full h-full gap-1 p-2 border"
-                    key={idx}
-                  >
-                    <span className={`${dateTodayClass} text-xs`}>
-                      {day.getDate()}
-                    </span>
-                    <div className="flex flex-col w-full">
-                      {temp?.map((single) => {
-                        const colorClass =
-                          AGEGROUP_COLORS[single.class.ageGroup];
-                        return (
-                          <button
-                            onClick={() => {
-                              setSelectedAttendance(single);
-                              setSheetTrigger((prev) => !prev);
-                            }}
-                            className={`${colorClass} text-xs px-2 py-1 rounded-full text-left`}
-                            key={single._id}
-                          >
-                            {single.class.class}{" "}
-                            <span className="font-medium">
-                              {single.startTime} - {single.endTime}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </React.Fragment>
-          );
-        })}
+                })}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
     </>
   );

@@ -6,12 +6,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const classes = [
   {
-    id: "elephant",
-    label: "Elephant Class",
+    id: "N1",
   },
   {
-    id: "tiger",
-    label: "Tiger Class",
+    id: "N2",
+  },
+  {
+    id: "K1",
+  },
+  {
+    id: "K2",
   },
 ] as const;
 
@@ -22,7 +26,7 @@ const ClassesCheckboxes = () => {
         return (
           <li className="flex w-full gap-2" key={index}>
             <Checkbox onCheckedChange={(checked) => {}} />
-            <span className="">{item.label}</span>
+            <span className="">{item.id}</span>
           </li>
         );
       })}

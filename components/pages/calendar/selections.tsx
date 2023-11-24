@@ -16,7 +16,7 @@ const CalendarSelections = () => {
         <AccordionTrigger>
           <div className="flex w-full gap-2">
             <CalendarClock className="w-5 h-5" />
-            <span className="text-sm font-medium">Enrolled Classes</span>
+            <span className="text-sm font-medium">Grade Level</span>
           </div>
         </AccordionTrigger>
         <AccordionContent>

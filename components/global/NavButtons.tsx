@@ -47,12 +47,6 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
     { label: "settings", href: "/settings" },
   ];
 
-  const FINAL_LINKS = isParent(user)
-    ? user.isAccepted
-      ? NavLinks
-      : NewNavLinks
-    : NavLinks;
-
   if (isParent(user)) {
     const { setSelectedChild } = useSelectedChild();
 
@@ -63,7 +57,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <ParentAvatarButton parent={user} />
-        {FINAL_LINKS.map((nav) => {
+        {NavLinks.map((nav) => {
           const isActive =
             (pathname.includes(nav.href) && nav.href.length > 1) ||
             pathname === nav.href;
@@ -133,7 +127,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {FINAL_LINKS.map((nav) => {
+      {NavLinks.map((nav) => {
         const isActive =
           (pathname.includes(nav.href) && nav.href.length > 1) ||
           pathname === nav.href;

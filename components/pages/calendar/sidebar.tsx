@@ -12,9 +12,9 @@ const CalendarSideBar = () => {
       </header>
       <main className="flex flex-col items-center justify-start flex-1 gap-4 pb-4">
         <SmallCalendar />
-        <div className="w-full px-4">
+        {/* <div className="w-full px-4">
           <CalendarSelections />
-        </div>
+        </div> */}
       </main>
     </article>
   );
