@@ -1,4 +1,5 @@
-import { AgeGroupType, ClassesType } from "./class.interface";
+import { AttendanceType } from "./attendance.interface";
+import { AgeGroupType } from "./class.interface";
 import { ParentType } from "./parent.interface";
 import { TransactionPackageType } from "./transaction.interface";
 
@@ -9,7 +10,7 @@ export interface StudentType {
   age: number;
   gradeLevel: AgeGroupType;
   parent: ParentType;
-  classSchedule: ClassesType[];
+  classSchedule: AttendanceType[];
   package?: TransactionPackageType;
   status: StudentStatus;
 }

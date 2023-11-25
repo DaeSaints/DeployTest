@@ -1,12 +1,10 @@
 "use client";
-import { StudentType } from "@/lib/interfaces/student.interface";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
-type ClassesType = any; // replace with your actual type
-
 const SelectedContext = createContext<{
-  selected: ClassesType[];
-  addSelected: (sel: ClassesType) => void;
+  selected: AttendanceType[];
+  addSelected: (sel: AttendanceType) => void;
   moveUp: (index: number) => void;
   moveDown: (index: number) => void;
   remove: (index: number) => void;
@@ -25,9 +23,9 @@ export const SelectedProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selected, setSelected] = useState<ClassesType[]>([]);
+  const [selected, setSelected] = useState<AttendanceType[]>([]);
 
-  const addSelected = (sel: ClassesType) => {
+  const addSelected = (sel: AttendanceType) => {
     setSelected((prev) => [...prev, sel]);
   };
 

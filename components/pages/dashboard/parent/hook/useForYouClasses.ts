@@ -1,17 +1,26 @@
 "use client";
 
-import { fetchForYouClasses } from "@/lib/actions/class.action";
+import { fetchForYouAttendances } from "@/lib/actions/attendance.action";
+import { AgeGroupType } from "@/lib/interfaces/class.interface";
 import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
-const useForYouClasses = (childId: string) => {
+const useForYouClasses = (childId: string, ageGroup: AgeGroupType) => {
   const { data, isLoading } = useQuery({
     queryKey: [`classes:for-you-${childId}`, childId],
     queryFn: async () => {
-      const { classes } = await fetchForYouClasses(childId);
-      return { classes };
+      const year = dayjs().year();
+      const month = dayjs().month();
+
+      const { attendances } = await fetchForYouAttendances({
+        year,
+        month,
+        ageGroup,
+      });
+      return { attendances };
     },
   });
-  return { data: data?.classes, isLoading };
+  return { data: data?.attendances, isLoading };
 };
 
 export default useForYouClasses;

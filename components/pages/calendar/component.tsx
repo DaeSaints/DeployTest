@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 
 const CalendarComponent = () => {
-  const { monthIndex, calendarType } = useCalendarContext();
+  const { calendarType } = useCalendarContext();
   // const { data, isLoading } = useAttendance(currDate);
   const data: AttendanceType[] = [];
   const isLoading = false;

@@ -11,6 +11,7 @@ import { useSelected } from "../../parent/non-accepted/context/useSelected";
 import { TransactionsType } from "@/lib/interfaces/transaction.interface";
 import { createNewTransactionSubscription } from "@/lib/actions/transaction.action";
 import { useRouter } from "next/navigation";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 
 const AllInclusiveBtn = ({ close }: { close: () => void }) => {
   const { data: session } = useSession();
@@ -18,7 +19,8 @@ const AllInclusiveBtn = ({ close }: { close: () => void }) => {
   const router = useRouter();
 
   if (!userInfo) return null;
-  const { selected, selectedChild } = useSelected();
+  const { selected } = useSelected();
+  const { selectedChild } = useSelectedChild();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const NewTransaction: TransactionsType = {

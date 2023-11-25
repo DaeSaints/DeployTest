@@ -9,6 +9,15 @@ const attendanceSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  link: {
+    type: String,
+    default: "",
+  },
+  ageGroup: {
+    type: String,
+    enum: ["N1", "N2", "K1", "K2"],
+    required: true,
+  },
   startTime: {
     type: String,
     required: true,
@@ -17,20 +26,11 @@ const attendanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isClassCancelled: {
-    type: Boolean,
-    default: false,
-  },
-  classAttendanceType: {
-    type: String,
-    enum: ["regular", "special"],
-    default: "regular",
-  },
-  classAttendanceStatus: {
-    type: String,
-    enum: ["ongoing", "pending", "cancelled"],
-    default: "ongoing",
-  },
+  materials: [
+    {
+      type: String,
+    },
+  ],
   studentsPresent: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -43,17 +43,10 @@ const attendanceSchema = new mongoose.Schema({
       ref: "Student",
     },
   ],
-  specialClassParticipants: [
+  classParticipants: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
-    },
-  ],
-
-  materials: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Material",
     },
   ],
 });

@@ -20,8 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ClassesType } from "@/lib/interfaces/class.interface";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import { convertTime } from "@/utils/helpers/convertTime";
+import dayjs from "dayjs";
 import {
   ArrowDown,
   ArrowUp,
@@ -36,7 +37,7 @@ export function SelectedScheduleCard({
   moveDown,
   remove,
 }: {
-  classCourses: ClassesType[];
+  classCourses: AttendanceType[];
   moveUp: (sel: number) => void;
   moveDown: (sel: number) => void;
   remove: (sel: number) => void;
@@ -51,7 +52,7 @@ export function SelectedScheduleCard({
       </CardHeader>
       <CardContent className="grid grid-cols-1 grid-rows-4 gap-1">
         {classCourses.map((data, index) => {
-          const classCourse = data as ClassesType;
+          const classCourse = data as AttendanceType;
           const classTime = convertTime(
             classCourse.startTime,
             classCourse.endTime
@@ -64,10 +65,10 @@ export function SelectedScheduleCard({
               <div className="space-y-1">
                 <div className="flex items-center justify-start gap-2">
                   <p className="text-lg font-semibold leading-none">
-                    {classCourse.class}
+                    {classCourse.class.class}
                   </p>
                   <Badge variant={"outline"} className="py-1">
-                    {classCourse.day}
+                    {dayjs(classCourse.date).format("dddd")}
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">{classTime}</p>

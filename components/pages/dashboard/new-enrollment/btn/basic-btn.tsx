@@ -11,6 +11,7 @@ import { useSelected } from "../../parent/non-accepted/context/useSelected";
 import { TransactionsType } from "@/lib/interfaces/transaction.interface";
 import { createNewTransactionSubscription } from "@/lib/actions/transaction.action";
 import { useRouter } from "next/navigation";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 
 const LessonsOnlyBtn = ({ close }: { close: () => void }) => {
   const { data: session } = useSession();
@@ -18,7 +19,8 @@ const LessonsOnlyBtn = ({ close }: { close: () => void }) => {
   const router = useRouter();
 
   if (!userInfo) return null;
-  const { selected, selectedChild } = useSelected();
+  const { selected } = useSelected();
+  const { selectedChild } = useSelectedChild();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const NewTransaction: TransactionsType = {
@@ -39,7 +41,6 @@ const LessonsOnlyBtn = ({ close }: { close: () => void }) => {
     if (res.success) {
       setIsLoading(false);
       close();
-      window.location.reload();
       window.open(
         "https://checkout.umonicsplus.com/b/8wMdUgbGL6TB4XS003?locale=en&__embed_source=buy_btn_1OFCYgJdrjeVG3h12HCb9Z3C",
         "_blank"

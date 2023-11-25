@@ -1,20 +1,18 @@
-import { ClassesType } from "./class.interface";
-import { MaterialType } from "./material.interface";
+import { AgeGroupType, ClassesType } from "./class.interface";
 import { StudentType } from "./student.interface";
 
 export interface AttendanceType {
   _id?: string;
   class: ClassesType;
   date: Date;
+  ageGroup: AgeGroupType;
   startTime: string;
   endTime: string;
-  isClassCancelled: boolean;
-  classAttendanceType: ClassAttendanceType;
-  classAttendanceStatus: ClassAttendanceStatus;
   studentsPresent?: StudentType[];
   studentsNotPresent?: StudentType[];
-  specialClassParticipants?: StudentType[];
-  materials?: MaterialType[];
+  classParticipants?: StudentType[];
+  link: string;
+  materials: string[];
 }
 
 export type ClassAttendanceType = "regular" | "special";

@@ -1,8 +1,8 @@
 "use client";
 import React, { useMemo } from "react";
-import { ClassesType } from "@/lib/interfaces/class.interface";
 import { daysOfWeek } from "@/utils/helpers/daysOfWeek";
 import dayjs from "dayjs";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 
 // UI
 import { SelectedScheduleCard } from "../card/selected-schedule";
@@ -10,11 +10,12 @@ import MiniCalendarCard from "../card/mini-calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ClassOptionCard from "../card/class-option";
 import { useSelected } from "./context/useSelected";
+import { getWeeksInAMonth } from "@/utils/helpers/getWeeksInMonth";
 
 const NonAcceptedBody = ({
   AllClassCourses,
 }: {
-  AllClassCourses: ClassesType[];
+  AllClassCourses: AttendanceType[];
 }) => {
   const {
     selected: selectedCourse,
@@ -23,27 +24,25 @@ const NonAcceptedBody = ({
     remove,
     addSelected,
   } = useSelected();
+  const format = "DD-MM-YY";
+  const weeks = [
+    ...getWeeksInAMonth(dayjs().year(), dayjs().month()),
+    // ...getWeeksInAMonth(dayjs().year(), dayjs().month() + 1),
+  ];
+  // console.log(weeks.length);
 
-  const month = dayjs().month();
-  const year = dayjs().year();
-  const firstDayOFMonth = dayjs(new Date(year, month, 1)).day();
-  const lastDayOfMonth = dayjs(new Date(year, month)).endOf("month").day();
+  const filteredOptions: AttendanceType[] = useMemo(() => {
+    return AllClassCourses.filter((attendance) => {
+      const attendanceDate = dayjs(attendance.date).format(format);
 
-  const filteredOptions = useMemo(
-    () =>
-      AllClassCourses.filter((d) => {
-        if (selectedCourse.length === 0) {
-          const selectedDay = daysOfWeek.indexOf(d.day);
-          if (selectedDay >= firstDayOFMonth) return d;
-        } else if (selectedCourse.length === 4) {
-          const selectedDay = daysOfWeek.indexOf(d.day);
-          if (lastDayOfMonth >= selectedDay) return d;
-        } else {
-          return d;
-        }
-      }),
-    [selectedCourse.length, AllClassCourses]
-  );
+      if (weeks.length > selectedCourse.length)
+        return weeks[selectedCourse.length].find(
+          (date) => date.format(format) === attendanceDate
+        );
+    });
+  }, [selectedCourse.length]);
+
+  console.log(filteredOptions);
 
   return (
     <div className="flex flex-1 gap-6 px-10 1">
@@ -74,7 +73,9 @@ const NonAcceptedBody = ({
               })}
             </>
           ) : (
-            <div>No Classes Available</div>
+            <div className="items-center justify-center flex-1 col-span-3 text-center">
+              No Classes Available
+            </div>
           )}
         </div>
       </ScrollArea>

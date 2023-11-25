@@ -1,4 +1,5 @@
 "use client";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Book, Loader2, User } from "lucide-react";
 import Image from "next/image";
@@ -6,6 +7,14 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const CoursesSelection = () => {
+  const { selectedChild } = useSelectedChild();
+  if (selectedChild?.status === "Enrolling")
+    return (
+      <div className="flex items-center justify-center flex-1">
+        <p className="">Waiting for Payment</p>
+      </div>
+    );
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

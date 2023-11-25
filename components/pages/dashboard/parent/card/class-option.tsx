@@ -1,20 +1,21 @@
 "use client";
 import React from "react";
 import { convertTime } from "@/utils/helpers/convertTime";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 
 // UI
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ClassesType } from "@/lib/interfaces/class.interface";
+import dayjs from "dayjs";
 
 const ClassOptionCard = ({
   d,
   add,
   length,
 }: {
-  d: ClassesType;
+  d: AttendanceType;
   length: number;
-  add: (sel: ClassesType) => void;
+  add: (sel: AttendanceType) => void;
 }) => {
   const classTime = convertTime(d.startTime, d.endTime);
   const colorClass = `bg-main-100`;
@@ -26,14 +27,14 @@ const ClassOptionCard = ({
           <div className="flex flex-col items-start ml-4">
             <div className="flex flex-col">
               <span className="text-xl font-semibold text-gray-700 uppercase">
-                {d.class}
+                {d.class.class}
               </span>
               <span className="text-sm text-muted-foreground">
                 ({d.ageGroup})
               </span>
             </div>
           </div>
-          <Badge className="px-3 py-2">{d.day}</Badge>
+          <Badge className="px-3 py-2">{dayjs(d.date).format("dddd")}</Badge>
         </div>
       </div>
       <p className="mt-4 mb-2 text-lg text-gray-800"></p>

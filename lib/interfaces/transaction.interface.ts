@@ -1,3 +1,4 @@
+import { AttendanceType } from "./attendance.interface";
 import { ClassesType } from "./class.interface";
 import { CustomerType } from "./customer.interface";
 import { DurationType } from "./duration.interface";
@@ -21,7 +22,7 @@ export interface TransactionsType {
   price: number;
   status: TransactionStatusType;
   package: TransactionPackageType;
-  classSchedule: ClassesType[];
+  classSchedule: AttendanceType[];
 }
 
 export type TransactionStatusType = "Paid" | "Not Paid" | "Declined";

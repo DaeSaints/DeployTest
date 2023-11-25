@@ -1,7 +1,7 @@
 "use server";
 
 import { AttendanceType } from "../interfaces/attendance.interface";
-import { ClassesType } from "../interfaces/class.interface";
+import { AgeGroupType } from "../interfaces/class.interface";
 import { StudentType } from "../interfaces/student.interface";
 import Attendance from "../models/attendance.model";
 import Classes from "../models/class.model";
@@ -80,6 +80,58 @@ export async function fetchAttendances({
       class: {
         ...d.class,
         _id: d._id.toString(),
+      },
+    }));
+    return { attendances: arrToIdString, totalCount };
+  } catch (error: any) {
+    throw new Error("Error in fetching attendances", error.message);
+  }
+}
+
+export async function fetchForYouAttendances({
+  year,
+  month,
+  ageGroup,
+}: {
+  year: number;
+  month: number;
+  ageGroup: AgeGroupType;
+}) {
+  try {
+    connectDB();
+
+    // const skipAmount = (pageNumber - 1) * pageSize;
+
+    const startDate = new Date(year, month, 1); // Note: Month is 0-indexed
+    const endDate = new Date(year, month + 2, 1); // This gives the first day of the next month
+    endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Subtract one millisecond to get the last millisecond of the last day
+
+    console.log(startDate, endDate);
+
+    const query = Attendance.find({
+      ageGroup,
+      date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
+    })
+      .sort({ date: "asc" })
+      .lean()
+      .select("_id date startTime endTime ageGroup zoomLink")
+      .populate({
+        path: "class",
+        model: Classes,
+        select: "_id class",
+      })
+      .exec();
+
+    const totalCount = await Attendance.countDocuments({});
+    const data = await query;
+
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType[] = data.map((d: any) => ({
+      ...d,
+      _id: d._id.toString(),
+      class: {
+        ...d.class,
+        _id: d.class._id.toString(),
       },
     }));
     return { attendances: arrToIdString, totalCount };
@@ -198,8 +250,10 @@ export async function fetchParticipants(students: StudentType[]) {
   try {
     connectDB();
 
-    const studentss = await Student.find({ _id: { $in: students } }, "_id name age participants")
-      .exec();
+    const studentss = await Student.find(
+      { _id: { $in: students } },
+      "_id name age participants"
+    ).exec();
 
     return studentss;
   } catch (error) {

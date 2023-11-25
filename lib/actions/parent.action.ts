@@ -118,7 +118,7 @@ export async function fetchSingleParentId({ _id }: { _id: string }) {
       .populate({
         path: "children",
         model: Student,
-        select: "_id name age status profileURL package",
+        select: "_id name age status profileURL package gradeLevel",
         // populate: {
         //   path: "enrolledClass",
         //   model: Classes,

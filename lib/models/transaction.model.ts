@@ -27,7 +27,7 @@ const transactionSchema = new mongoose.Schema(
     classSchedule: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Classes",
+        ref: "Attendance",
       },
     ],
   },

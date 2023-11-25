@@ -6,15 +6,15 @@ import { getMatrixMonth } from "@/utils/calendar/helpers";
 import dayjs from "dayjs";
 import { daysOfWeek } from "@/utils/helpers/daysOfWeek";
 import { cn } from "@/lib/utils";
-import { ClassesType } from "@/lib/interfaces/class.interface";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 
-const MiniCalendarCard = ({ selected }: { selected: ClassesType[] }) => {
+const MiniCalendarCard = ({ selected }: { selected: AttendanceType[] }) => {
   const currMonthIdx = dayjs().month();
   const currMonth = getMatrixMonth(currMonthIdx);
   const format = "DD-MM-YY";
   const today = dayjs().format(format);
 
-  const days = selected.map((d) => d.day);
+  const days = selected.map((d) => dayjs(d.date).format("dddd"));
 
   //
   const year = dayjs().year();
