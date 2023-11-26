@@ -15,6 +15,9 @@ export default withAuth(
     if (pathname.startsWith("/transactions") && !isParent(user)) {
       return NextResponse.redirect("http://localhost:3000/dashboard");
     }
+    else if (pathname.startsWith("/courses") && isParent(user)) {
+      return NextResponse.redirect("http://localhost:3000/dashboard");
+    }
   },
   {
     callbacks: {

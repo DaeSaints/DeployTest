@@ -32,18 +32,18 @@ import { StudentType } from "@/lib/interfaces/student.interface";
 const NavButtons = ({ user }: { user: ParentType | UserType }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const NavLinks = [
+  const ParentNavLinks = [
     { label: "dashboard", href: "/dashboard" },
     { label: "calendar", href: "/calendar" },
-    { label: "courses", href: "/courses" },
     { label: "messages", href: "/messages" },
     { label: "transactions", href: "/transactions" },
     { label: "settings", href: "/settings" },
   ];
-  const NewNavLinks = [
+  const TeacherNavLinks = [
     { label: "dashboard", href: "/dashboard" },
+    { label: "calendar", href: "/calendar" },
+    { label: "courses", href: "/courses" },
     { label: "messages", href: "/messages" },
-    { label: "transactions", href: "/transactions" },
     { label: "settings", href: "/settings" },
   ];
 
@@ -57,7 +57,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <ParentAvatarButton parent={user} />
-        {NavLinks.map((nav) => {
+        {ParentNavLinks.map((nav) => {
           const isActive =
             (pathname.includes(nav.href) && nav.href.length > 1) ||
             pathname === nav.href;
@@ -127,7 +127,7 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {NavLinks.map((nav) => {
+      {TeacherNavLinks.map((nav) => {
         const isActive =
           (pathname.includes(nav.href) && nav.href.length > 1) ||
           pathname === nav.href;
