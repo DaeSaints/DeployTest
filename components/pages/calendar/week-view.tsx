@@ -7,18 +7,11 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 import isoWeek from "dayjs/plugin/isoWeek";
 
 // UI
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { TIMESLOTS } from "@/utils/constants";
 import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { ParentType } from "@/lib/interfaces/parent.interface";
+import { convertTime } from "@/utils/helpers/convertTime";
 
 const WeeklyView = ({
   attendance,
@@ -29,11 +22,12 @@ const WeeklyView = ({
 }) => {
   dayjs.extend(weekOfYear);
   dayjs.extend(isoWeek);
+  const format = "DD/MM/YYYY";
 
   const week = dayjs().week();
   const year = dayjs().year();
 
-  const days = [];
+  const days: dayjs.Dayjs[] = [];
   for (let i = 0; i < 7; i++) {
     const day = dayjs()
       .year(year)
@@ -41,6 +35,54 @@ const WeeklyView = ({
       .day(i);
     days.push(day);
   }
+
+  const AttendanceInWeek = days.map((currDay) => {
+    return attendance.filter(
+      (a) => dayjs(a.date).format(format) === dayjs(currDay).format(format)
+    );
+  });
+
+  let temp = TIMESLOTS.map((timeslot) => {
+    const att = AttendanceInWeek.map((attendances) => {
+      const filtered = attendances.filter((a) => {
+        const currTime = timeslot.split(":");
+        const attendanceStartTime = dayjs(a.date)
+          .hour(Number(currTime[0]))
+          .minute(Number(currTime[1]));
+
+        const attendanceEndTime = dayjs(a.date)
+          .hour(Number(currTime[0]) + 1)
+          .minute(Number(currTime[1]));
+
+        const startTime = a.startTime.split(":");
+        const classStart = dayjs(a.date)
+          .hour(Number(startTime[0]))
+          .minute(Number(startTime[1]));
+
+        if (
+          classStart.isAfter(attendanceStartTime) &&
+          classStart.isBefore(attendanceEndTime)
+        ) {
+          return a;
+        }
+      });
+
+      return filtered;
+    });
+
+    return att;
+  }).filter((item) => item.length > 0);
+
+  interface AttendanceDict {
+    [key: string]: any[];
+  }
+
+  let TimeslotsAndAttendanceDict: AttendanceDict = {};
+
+  TIMESLOTS.reduce((dict: AttendanceDict, timeslot, i) => {
+    dict[timeslot] = temp[i];
+    return dict;
+  }, TimeslotsAndAttendanceDict);
 
   return (
     <div className="relative w-full h-full bg-white">
@@ -51,7 +93,7 @@ const WeeklyView = ({
             <ul className="grid w-full grid-cols-7 grid-rows-1">
               {days.map((d) => {
                 const selectedClassName =
-                  d.format("DD/MM/YYYY") === dayjs().format("DD/MM/YYYY") &&
+                  d.format(format) === dayjs().format(format) &&
                   "bg-main-500 text-white";
 
                 return (
@@ -79,7 +121,24 @@ const WeeklyView = ({
                   {Array(7)
                     .fill([])
                     .map((_, index) => {
-                      return <div className="p-2 border-r" key={index}></div>;
+                      const temp = TimeslotsAndAttendanceDict[timeslot];
+
+                      return (
+                        <div className="flex flex-col p-2 border-r" key={index}>
+                          {temp[index].map((data: AttendanceType) => {
+                            return (
+                              <>
+                                <p className="w-full">
+                                  {data.class.class} - {data.ageGroup}
+                                </p>
+                                <p className="">
+                                  {convertTime(data.startTime, data.endTime)}
+                                </p>
+                              </>
+                            );
+                          })}
+                        </div>
+                      );
                     })}
                 </div>
               </li>
