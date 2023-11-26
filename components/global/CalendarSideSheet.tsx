@@ -12,7 +12,7 @@ import { convertToTimeZone } from "@/utils/helpers/timeZone";
 import { useQueryClient } from "@tanstack/react-query";
 
 // UI
-import { CheckCircle, XCircle } from "lucide-react";
+import { Check, CheckCircle, X, XCircle } from "lucide-react";
 import { toast } from "../ui/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,13 +22,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useSelectedChild } from "./context/useSelectedChild";
+import dayjs from "dayjs";
 
 export function CalendarSheet({
   trigger,
+  isParent,
   setTrigger,
   selectedAttendance,
 }: {
   trigger: boolean;
+  isParent: boolean;
   setTrigger: (col: boolean) => void;
   selectedAttendance: AttendanceType;
 }) {
@@ -41,6 +45,30 @@ export function CalendarSheet({
   endDateTime.setHours(Number(hours), Number(minutes));
 
   const queryClient = useQueryClient();
+  const { selectedChild } = useSelectedChild();
+  let foundPresent = false;
+  if (selectedChild) {
+    foundPresent = selectedAttendance.studentsPresent?.find((present) => {
+      const temp: any = present;
+      return temp === selectedChild._id;
+    })
+      ? true
+      : false;
+  }
+
+  const today = dayjs();
+  const time = selectedAttendance.endTime.split(":");
+  const endTime = dayjs(selectedAttendance.date)
+    .set("hour", Number(time[0]))
+    .set("minute", Number(time[1]));
+
+  const closedAttendance = today.isAfter(endTime);
+
+  if (closedAttendance) {
+    console.log("Open Attendance");
+  } else {
+    console.log("Closed Attendance");
+  }
 
   async function handleUpdateAttendance(
     sel: StudentType,
@@ -110,6 +138,18 @@ export function CalendarSheet({
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="flex flex-col gap-2">
+            <span className="font-medium text-left">Link</span>
+            <span className="">
+              <a
+                href={selectedAttendance?.link || "https://umonicsplus.com"}
+                target="_blank"
+                className="transition hover:underline"
+              >
+                {selectedAttendance?.link || "https://umonicsplus.com"}
+              </a>
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
             <span className="font-medium text-left">Time Zones</span>
             {selectedAttendance && (
               <ul className="flex flex-col gap-2">
@@ -127,63 +167,117 @@ export function CalendarSheet({
               </ul>
             )}
           </div>
-          <div className="grid items-center grid-cols-6 gap-4">
-            <span className="font-medium text-right">Participants</span>
-            <span className="col-span-5" />
+          {isParent ? (
+            <>
+              <div className="grid items-center grid-cols-6 gap-4">
+                <span className="font-medium text-right">Going?</span>
+                <span className="col-span-5" />
+                <div className="flex items-center justify-start col-span-6 gap-2">
+                  <Button
+                    disabled={foundPresent || closedAttendance}
+                    variant={"outline"}
+                    onClick={() => {
+                      handleUpdateAttendance(
+                        selectedChild as StudentType,
+                        "Present"
+                      );
+                    }}
+                    className={`${
+                      foundPresent
+                        ? "text-green-800 border-green-800 bg-green-200"
+                        : ""
+                    }`}
+                  >
+                    <Check className="w-5 h-5 mr-2" />
+                    Yes
+                  </Button>
+                  <Button
+                    disabled={!foundPresent || closedAttendance}
+                    variant={"outline"}
+                    onClick={() => {
+                      handleUpdateAttendance(
+                        selectedChild as StudentType,
+                        "Not Present"
+                      );
+                    }}
+                    className={`${
+                      foundPresent
+                        ? ""
+                        : "text-red-800 border-red-800 bg-red-200"
+                    }`}
+                  >
+                    <X className="w-5 h-5 mr-2" />
+                    No
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="grid items-center grid-cols-6 gap-4">
+                <span className="font-medium text-right">Participants</span>
+                <span className="col-span-5" />
 
-            {selectedAttendance &&
-            selectedAttendance?.classParticipants &&
-            selectedAttendance?.classParticipants?.length > 0 ? (
-              <>
-                {selectedAttendance?.classParticipants?.map((student) => {
-                  const found = selectedAttendance.studentsPresent?.find(
-                    (present) => {
-                      const temp: any = present;
-                      return temp === student._id;
-                    }
-                  );
+                {selectedAttendance &&
+                selectedAttendance?.classParticipants &&
+                selectedAttendance?.classParticipants?.length > 0 ? (
+                  <>
+                    {selectedAttendance?.classParticipants?.map((student) => {
+                      const found = selectedAttendance.studentsPresent?.find(
+                        (present) => {
+                          const temp: any = present;
+                          return temp === student._id;
+                        }
+                      );
 
-                  if (!found) {
-                    return (
-                      <React.Fragment key={student._id}>
-                        <span className="flex items-center justify-end">
-                          <Button
-                            variant={"ghost"}
-                            className="p-1 rounded-full w-7 h-7"
-                            onClick={() => {
-                              handleUpdateAttendance(student, "Present");
-                            }}
-                          >
-                            <XCircle className="w-full h-full text-red-600" />
-                          </Button>
-                        </span>
-                        <span className="col-span-5">{student.name}</span>
-                      </React.Fragment>
-                    );
-                  } else {
-                    return (
-                      <React.Fragment key={student._id}>
-                        <span className="flex items-center justify-end">
-                          <Button
-                            variant={"ghost"}
-                            className="p-1 rounded-full w-7 h-7"
-                            onClick={() => {
-                              handleUpdateAttendance(student, "Not Present");
-                            }}
-                          >
-                            <CheckCircle className="w-full h-full text-green-600" />
-                          </Button>
-                        </span>
-                        <span className="col-span-5">{student.name}</span>
-                      </React.Fragment>
-                    );
-                  }
-                })}
-              </>
-            ) : (
-              <span className="col-span-6 text-center">No Participants</span>
-            )}
-          </div>
+                      if (!found) {
+                        return (
+                          <React.Fragment key={student._id}>
+                            <span className="flex items-center justify-end">
+                              <Button
+                                variant={"ghost"}
+                                className="p-1 rounded-full w-7 h-7"
+                                onClick={() => {
+                                  handleUpdateAttendance(student, "Present");
+                                }}
+                              >
+                                <XCircle className="w-full h-full text-red-600" />
+                              </Button>
+                            </span>
+                            <span className="col-span-5">{student.name}</span>
+                          </React.Fragment>
+                        );
+                      } else {
+                        return (
+                          <React.Fragment key={student._id}>
+                            <span className="flex items-center justify-end">
+                              <Button
+                                variant={"ghost"}
+                                className="p-1 rounded-full w-7 h-7"
+                                onClick={() => {
+                                  handleUpdateAttendance(
+                                    student,
+                                    "Not Present"
+                                  );
+                                }}
+                              >
+                                <CheckCircle className="w-full h-full text-green-600" />
+                              </Button>
+                            </span>
+                            <span className="col-span-5">{student.name}</span>
+                          </React.Fragment>
+                        );
+                      }
+                    })}
+                  </>
+                ) : (
+                  <span className="col-span-6 text-center">
+                    No Participants
+                  </span>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>

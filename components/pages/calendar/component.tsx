@@ -51,7 +51,7 @@ const CalendarComponent = ({
       ) : (
         <>
           {calendarType === "Month" ? (
-            <MonthlyView attendance={ATTENDANCES.data as AttendanceType[]} />
+            <MonthlyView userInfo={userInfo} attendance={ATTENDANCES.data as AttendanceType[]} />
           ) : (
             <WeeklyView />
           )}

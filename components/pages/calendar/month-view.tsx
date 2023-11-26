@@ -13,8 +13,17 @@ import { useCalendarContext } from "@/components/providers/CalendarProvider";
 import { convertTime } from "@/utils/helpers/convertTime";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSingleAttendanceById } from "@/lib/actions/attendance.action";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { isParent } from "@/utils/helpers/isParent";
 
-const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
+const MonthlyView = ({
+  attendance,
+  userInfo,
+}: {
+  attendance: AttendanceType[];
+  userInfo: UserType | ParentType;
+}) => {
   const [sheetTrigger, setSheetTrigger] = useState(false);
   const [selectedAttendance, setSelectedAttendance] =
     useState<AttendanceType | null>(null);
@@ -58,6 +67,7 @@ const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
         sheetTrigger &&
         selectedAttendance && (
           <CalendarSheet
+            isParent={isParent(userInfo)}
             trigger={sheetTrigger}
             setTrigger={closeSheet}
             selectedAttendance={singleAttendance.data}
