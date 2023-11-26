@@ -28,7 +28,6 @@ const CalendarTopBar = () => {
         <h1 className="text-4xl font-bold">Calendar</h1>
         <div className="flex items-center justify-center gap-1 px-2 py-1 rounded-lg bg-slate-200">
           <Button
-            disabled
             className={`w-24 py-2 h-fit ${
               calendarType === "Week"
                 ? "bg-white text-black hover:bg-white border font-semibold"

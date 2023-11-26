@@ -1,6 +1,11 @@
 "use client";
 import React from "react";
 
+// DAYS
+import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import isoWeek from "dayjs/plugin/isoWeek";
+
 // UI
 import {
   Table,
@@ -11,80 +16,77 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TIMESLOTS } from "@/utils/constants";
-import { getDayOfWeek } from "@/utils/calendar";
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { ParentType } from "@/lib/interfaces/parent.interface";
 
-const WeeklyView = () => {
+const WeeklyView = ({
+  attendance,
+  userInfo,
+}: {
+  attendance: AttendanceType[];
+  userInfo: UserType | ParentType;
+}) => {
+  dayjs.extend(weekOfYear);
+  dayjs.extend(isoWeek);
+
+  const week = dayjs().week();
+  const year = dayjs().year();
+
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const day = dayjs()
+      .year(year)
+      .isoWeek(week - 1)
+      .day(i);
+    days.push(day);
+  }
+
   return (
-    <div className="flex flex-col flex-1 h-[35.2rem]">
-      <Table className="relative bg-white">
-        <TableHeader className="sticky top-0 z-10 w-full">
-          <TableRow className="h-[4.5rem] w-full bg-white">
-            <TableHead className="w-[3rem]"></TableHead>
-            {/* {month.map((week, id) => {
-              const today = new Date();
-              const isTodayInArray = week.some((date) => {
-                return date.toDateString() === today.toDateString();
-              });
-              if (isTodayInArray)
+    <div className="relative w-full h-full bg-white">
+      <div className="relative flex flex-col w-full -mt-4">
+        <div className="sticky top-0 w-full h-20 bg-white">
+          <div className="flex w-full py-2">
+            <div className="flex items-center justify-center w-20" />
+            <ul className="grid w-full grid-cols-7 grid-rows-1">
+              {days.map((d) => {
+                const selectedClassName =
+                  d.format("DD/MM/YYYY") === dayjs().format("DD/MM/YYYY") &&
+                  "bg-main-500 text-white";
+
                 return (
-                  <React.Fragment key={id}>
-                    {Array(7)
-                      .fill([])
-                      .map((_, idx1) => {
-                        if (idx1 < week.length) {
-                          const day = week[idx1];
-                          const dayOfTheWeek = getDayOfWeek(day);
-                          const today = new Date();
-                          const dateTodayClass =
-                            day.toDateString() === today.toDateString()
-                              ? "bg-main-100 w-7 h-7 flex justify-center items-center rounded-full font-semibold"
-                              : "font-normal";
-                          return (
-                            <TableHead className="w-32 text-center" key={idx1}>
-                              <div className="flex flex-col items-center justify-center">
-                                <span className="text-xs font-semibold">
-                                  {dayOfTheWeek}
-                                </span>
-                                <span className={`${dateTodayClass} text-base`}>
-                                  {day.getDate()}
-                                </span>
-                              </div>
-                            </TableHead>
-                          );
-                        } else {
-                          return (
-                            <TableHead
-                              className="w-32 text-center"
-                              key={idx1}
-                            ></TableHead>
-                          );
-                        }
-                      })}
-                  </React.Fragment>
+                  <li className="flex flex-col items-center justify-center h-18">
+                    <p className="">{d.format("dd")}</p>
+                    <div
+                      className={`w-9 h-9 p-2 flex justify-center items-center rounded-full text-lg ${selectedClassName}`}
+                    >
+                      <span className="">{d.format("DD")}</span>
+                    </div>
+                  </li>
                 );
-            })} */}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {TIMESLOTS.map((timeslot, idx1) => {
+              })}
+            </ul>
+          </div>
+        </div>
+        <ul className="flex flex-col w-full h-full">
+          {TIMESLOTS.map((timeslot, i) => {
             return (
-              <TableRow key={idx1} className="h-[10rem]">
-                <TableCell className="font-medium">{timeslot}</TableCell>
-                {Array(7)
-                  .fill([])
-                  .map((day, idx2) => {
-                    return (
-                      <TableCell
-                        className="w-32 font-medium border-x"
-                        key={idx2}
-                      ></TableCell>
-                    );
-                  })}
-              </TableRow>
+              <li className="flex w-full min-h-[4rem] border-t" key={i}>
+                <p className="flex flex-col w-20 min-h-[4rem] p-2 border-r text-sm">
+                  {timeslot}
+                </p>
+                <div className="grid w-full min-h-[4rem] grid-cols-7 grid-rows-1">
+                  {Array(7)
+                    .fill([])
+                    .map((_, index) => {
+                      return <div className="p-2 border-r" key={index}></div>;
+                    })}
+                </div>
+              </li>
             );
           })}
-        </TableBody>
-      </Table>
+        </ul>
+      </div>
     </div>
   );
 };

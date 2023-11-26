@@ -30,15 +30,17 @@ const CalendarComponent = ({
     ATTENDANCES = useTeacherAttendance(currDate.toDate());
   }
 
-  console.log(ATTENDANCES?.data);
-
-  if (
-    selectedChild?.status === "Not Paid" ||
-    selectedChild?.status === "Enrolling"
-  )
+  if (selectedChild?.status === "Not Paid")
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-white">
         <p className="">Waiting for Payment</p>
+      </div>
+    );
+
+  if (selectedChild?.status === "Enrolling")
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-white">
+        <p className="">Please Enroll first</p>
       </div>
     );
 
@@ -51,9 +53,15 @@ const CalendarComponent = ({
       ) : (
         <>
           {calendarType === "Month" ? (
-            <MonthlyView userInfo={userInfo} attendance={ATTENDANCES.data as AttendanceType[]} />
+            <MonthlyView
+              userInfo={userInfo}
+              attendance={ATTENDANCES.data as AttendanceType[]}
+            />
           ) : (
-            <WeeklyView />
+            <WeeklyView
+              userInfo={userInfo}
+              attendance={ATTENDANCES.data as AttendanceType[]}
+            />
           )}
         </>
       )}
