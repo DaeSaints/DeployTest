@@ -1,9 +1,9 @@
 "use client";
 
+import { fetchTeacherAttendances } from "@/lib/actions/attendance.action";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTeacherAttendances } from "../actions/attendance.action";
 
-const useAttendance = (currDate: Date) => {
+const useTeacherAttendance = (currDate: Date) => {
   const { data, isLoading } = useQuery({
     queryKey: [
       `attendance:${currDate.getFullYear()}:${currDate.getMonth()}`,
@@ -20,4 +20,4 @@ const useAttendance = (currDate: Date) => {
   return { data, isLoading };
 };
 
-export default useAttendance;
+export default useTeacherAttendance;

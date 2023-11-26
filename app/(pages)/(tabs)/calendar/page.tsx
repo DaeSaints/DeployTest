@@ -1,10 +1,19 @@
 import CalendarComponent from "@/components/pages/calendar/component";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { authOptions } from "@/utils/authOptions";
 import { Loader2 } from "lucide-react";
+import { getServerSession } from "next-auth";
 import React, { Suspense } from "react";
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+  const userInfo = session?.user as UserType | ParentType;
+
+  if (!userInfo) return null;
+
   return (
-    <div className="flex flex-1 w-full p-4">
+    <div className="w-full h-full p-4">
       <Suspense
         fallback={
           <div className="flex items-center justify-center w-full h-full">
@@ -12,7 +21,7 @@ const page = () => {
           </div>
         }
       >
-        <CalendarComponent />
+        <CalendarComponent userInfo={userInfo} />
       </Suspense>
     </div>
   );

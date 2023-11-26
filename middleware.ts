@@ -2,20 +2,19 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import { UserType } from "./lib/interfaces/user.interface";
+import { ParentType } from "./lib/interfaces/parent.interface";
+import { isParent } from "./utils/helpers/isParent";
 
 export default withAuth(
   function middleware(req) {
     const { pathname, origin } = req.nextUrl;
     const { token } = req.nextauth;
 
-    const user: UserType = token?.user as UserType;
-    console.log(user);
-    // if (
-    //   (pathname.startsWith("/calendar") || pathname.startsWith("/courses")) &&
-    //   user?.role === undefined
-    // ) {
-    //   return NextResponse.redirect("http://localhost:3000/dashboard");
-    // }
+    const user = token?.user as UserType | ParentType;
+
+    if (pathname.startsWith("/transactions") && !isParent(user)) {
+      return NextResponse.redirect("http://localhost:3000/dashboard");
+    }
   },
   {
     callbacks: {

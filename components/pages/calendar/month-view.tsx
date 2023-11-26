@@ -6,6 +6,12 @@ import { CalendarSheet } from "@/components/global/CalendarSideSheet";
 import { getMatrixMonth } from "@/utils/calendar/helpers";
 import dayjs from "dayjs";
 import { useCalendarContext } from "@/components/providers/CalendarProvider";
+import { useSession } from "next-auth/react";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { ParentType } from "@/lib/interfaces/parent.interface";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
+import { convertTime } from "@/utils/helpers/convertTime";
+import useStudentAttendances from "./hooks/useStudentAttendances";
 
 const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
   const [sheetTrigger, setSheetTrigger] = useState(false);
@@ -24,10 +30,10 @@ const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
   }
 
   const AGEGROUP_COLORS = {
-    N1: "bg-violet-300",
-    N2: "bg-red-300",
-    K1: "bg-green-300",
-    K2: "bg-orange-300",
+    N1: "bg-violet-200",
+    N2: "bg-red-200",
+    K1: "bg-green-200",
+    K2: "bg-orange-200",
   };
 
   return (
@@ -39,13 +45,13 @@ const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
           selectedAttendance={selectedAttendance}
         />
       )}
-      <div className="flex flex-col flex-1 bg-white">
+      <div className="flex flex-col flex-1 w-full h-full bg-white">
         <div className="grid grid-cols-7 grid-rows-1">
           {monthMatrix[0].map((day, i) => {
             return (
               <div
                 key={i}
-                className="flex items-start justify-center w-full pt-2 text-xl font-semibold text-center border-r"
+                className="flex items-start justify-center w-full pt-2 text-sm font-semibold text-center border-r"
               >
                 <div className="">
                   {day.format("dd").charAt(0)}
@@ -64,23 +70,53 @@ const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
                   const dayClass =
                     today === currDay && "bg-main-500 text-white";
 
+                  const dayAttendances = attendance?.filter((d) => {
+                    if (dayjs(d.date).format(format) === currDay) {
+                      return d;
+                    }
+                  });
+
                   return (
                     <div
                       key={idx}
-                      className="flex flex-col items-center justify-center w-full h-full p-2 border-b border-r"
+                      className="flex flex-col items-center justify-start w-full h-full p-2 border-b border-r"
                     >
                       <button
-                        className={`${dayClass} w-8 h-8 hover:bg-main-200 rounded-full transition-colors`}
+                        className={`${dayClass} w-8 h-8 hover:bg-main-200 rounded-full transition-colors mb-1`}
                       >
                         <span className="text-base">{day.format("D")}</span>
                       </button>
-                      <div className="flex flex-wrap items-center flex-1 w-full justify-evenly">
-                        {/* {repeatedDaysIndex.includes(day.day()) && (
-                          <>
-                            <div className="w-[6px] h-[6px] rounded-full bg-main-500"></div>
-                          </>
-                        )} */}
-                      </div>
+                      {dayAttendances && dayAttendances.length > 0 ? (
+                        <>
+                          {dayAttendances.map((dayAttendance) => {
+                            const colorClass =
+                              AGEGROUP_COLORS[dayAttendance.ageGroup];
+                            return (
+                              <button
+                                onClick={() => {
+                                  setSheetTrigger(true);
+                                  setSelectedAttendance(dayAttendance);
+                                }}
+                                className="flex flex-col items-start justify-start flex-1 w-full"
+                              >
+                                <div
+                                  className={`w-full flex justify-between ${colorClass} my-1 p-1`}
+                                >
+                                  <div className="text-xs font-medium">
+                                    {dayAttendance.class.class}
+                                  </div>
+                                  <p className="text-xs">
+                                    {convertTime(
+                                      dayAttendance.startTime,
+                                      dayAttendance.endTime
+                                    )}
+                                  </p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </>
+                      ) : null}
                     </div>
                   );
                 })}

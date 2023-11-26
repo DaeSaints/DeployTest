@@ -62,8 +62,8 @@ export function CalendarSheet({
             <span className="col-span-5" />
 
             {selectedAttendance &&
-            selectedAttendance.class.participants &&
-            selectedAttendance.class.participants.length > 0 ? (
+            selectedAttendance?.classParticipants?.length &&
+            selectedAttendance?.classParticipants?.length > 0 ? (
               <>
                 {selectedAttendance?.class.participants?.map(
                   (student, index) => {

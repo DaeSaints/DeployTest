@@ -34,55 +34,177 @@ export async function fetchAttendances({
       // .limit(pageSize)
       .lean()
       .select(
-        "_id startTime endTime date isClassCancelled classAttendanceType classAttendanceStatus"
+        "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
       )
       .populate({
-        path: "class",
-        model: Classes,
-        select: "_id class zoomLink ageGroup",
-        populate: {
-          path: "participants",
-          model: Student,
-          select: "_id name",
-        },
-      })
-      .populate({
-        path: "studentsPresent",
-        model: Student,
-        select: "_id name age",
-      })
-      .populate({
-        path: "studentsNotPresent",
-        model: Student,
-        select: "_id name age",
-      })
-      .populate({
-        path: "specialClassParticipants",
-        model: Student,
-        select: "_id name age",
-      })
-      .populate({
-        path: "materials",
-        model: Material,
+        path: "classParticipants",
         select: "_id name",
+        model: Student,
+      })
+      .populate({
+        path: "class",
+        select: "_id class",
+        model: Classes,
       })
       .exec();
 
     const totalCount = await Attendance.countDocuments({});
-    const data = await query;
+    const data: any[] = await query;
 
     console.log(data);
 
     // Convert _id to string in the results
-    const arrToIdString: AttendanceType[] = data.map((d: any) => ({
-      ...d,
-      _id: d._id.toString(),
-      class: {
-        ...d.class,
-        _id: d._id.toString(),
-      },
-    }));
+    const arrToIdString: AttendanceType[] = data.map((d: AttendanceType) => {
+      return {
+        ...d,
+        _id: d._id?.toString(),
+        classParticipants: d?.classParticipants?.map((single) => {
+          return {
+            ...single,
+            _id: single._id?.toString(),
+          };
+        }),
+        class: {
+          ...d.class,
+          _id: d.class._id?.toString(),
+        },
+      };
+    });
+
     return { attendances: arrToIdString, totalCount };
+  } catch (error: any) {
+    throw new Error("Error in fetching attendances", error.message);
+  }
+}
+
+export async function fetchTeacherAttendances({
+  year,
+  month,
+}: {
+  year: number;
+  month: number;
+}) {
+  try {
+    connectDB();
+
+    // const skipAmount = (pageNumber - 1) * pageSize;
+
+    const startDate = new Date(year, month - 1, 1); // Note: Month is 0-indexed
+    const endDate = new Date(year, month + 2, 1); // This gives the first day of the next month
+    endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Subtract one millisecond to get the last millisecond of the last day
+
+    const query = Attendance.find({
+      date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
+    })
+      .sort({ date: "asc" })
+      // .limit(pageSize)
+      .lean()
+      .select(
+        "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
+      )
+      .populate({
+        path: "classParticipants",
+        select: "_id name",
+        model: Student,
+      })
+      .populate({
+        path: "class",
+        select: "_id class",
+        model: Classes,
+      })
+      .exec();
+
+    const totalCount = await Attendance.countDocuments({});
+    const data: any[] = await query;
+
+    console.log(data);
+
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType[] = data.map((d: AttendanceType) => {
+      return {
+        ...d,
+        _id: d._id?.toString(),
+        classParticipants: d?.classParticipants?.map((single) => {
+          return {
+            ...single,
+            _id: single._id?.toString(),
+          };
+        }),
+        class: {
+          ...d.class,
+          _id: d.class._id?.toString(),
+        },
+      };
+    });
+
+    return { attendances: arrToIdString, totalCount };
+  } catch (error: any) {
+    throw new Error("Error in fetching attendances", error.message);
+  }
+}
+
+export async function fetchStudentAttendances({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  try {
+    connectDB();
+
+    const query = Student.findById(studentId)
+      .lean()
+      .select("_id classSchedule")
+      .exec();
+
+    const data: any = await query;
+
+    const attendancePromises: any[] = data.classSchedule.map(
+      (attendanceId: string) => {
+        return Attendance.findById(attendanceId)
+          .select(
+            "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
+          )
+          .populate({
+            path: "classParticipants",
+            select: "_id name",
+            model: Student,
+          })
+          .populate({
+            path: "class",
+            select: "_id class",
+            model: Classes,
+          })
+          .lean()
+          .exec();
+      }
+    );
+
+    const attendanceData: any[] = await Promise.all(attendancePromises);
+
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType[] = attendanceData.map(
+      (d: AttendanceType) => {
+        return {
+          ...d,
+          _id: d._id?.toString(),
+          classParticipants: d?.classParticipants?.map((single) => {
+            return {
+              ...single,
+              _id: single._id?.toString(),
+            };
+          }),
+          class: {
+            ...d.class,
+            _id: d.class._id?.toString(),
+          },
+        };
+      }
+    );
+
+    console.log(arrToIdString);
+    // const arrToIdString: any[] = [];
+
+    return arrToIdString;
   } catch (error: any) {
     throw new Error("Error in fetching attendances", error.message);
   }
