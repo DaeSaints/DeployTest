@@ -77,6 +77,54 @@ export async function fetchAttendances({
   }
 }
 
+export async function fetchSingleAttendanceById({
+  attendanceId,
+}: {
+  attendanceId: string;
+}) {
+  try {
+    connectDB();
+    const query = Attendance.findById(attendanceId)
+      .lean()
+      .select(
+        "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
+      )
+      .populate({
+        path: "classParticipants",
+        select: "_id name",
+        model: Student,
+      })
+      .populate({
+        path: "class",
+        select: "_id class",
+        model: Classes,
+      })
+      .exec();
+
+    const d: any = await query;
+
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType = {
+      ...d,
+      _id: d._id?.toString(),
+      classParticipants: d?.classParticipants?.map((single: any) => {
+        return {
+          ...single,
+          _id: single._id?.toString(),
+        };
+      }),
+      class: {
+        ...d.class,
+        _id: d.class._id?.toString(),
+      },
+    };
+
+    return { attendances: arrToIdString };
+  } catch (error: any) {
+    throw new Error("Error in fetching attendances", error.message);
+  }
+}
+
 export async function fetchTeacherAttendances({
   year,
   month,
@@ -161,11 +209,14 @@ export async function fetchStudentAttendances({
     const attendancePromises: any[] = data.classSchedule.map(
       (attendanceId: string) => {
         return Attendance.findById(attendanceId)
-          .select(
-            "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
-          )
+          .select("_id date ageGroup startTime endTime link studentsPresent")
           .populate({
             path: "classParticipants",
+            select: "_id name",
+            model: Student,
+          })
+          .populate({
+            path: "studentsPresent",
             select: "_id name",
             model: Student,
           })
@@ -188,6 +239,12 @@ export async function fetchStudentAttendances({
           ...d,
           _id: d._id?.toString(),
           classParticipants: d?.classParticipants?.map((single) => {
+            return {
+              ...single,
+              _id: single._id?.toString(),
+            };
+          }),
+          studentsPresent: d?.studentsPresent?.map((single) => {
             return {
               ...single,
               _id: single._id?.toString(),
@@ -402,7 +459,7 @@ export async function updateStudentYes({
       throw new Error("No Attendance Found");
     }
 
-    return { message: "Student Confirmed Successfully", data: newData };
+    return { message: "Student Confirmed Successfully" };
   } catch (error: any) {
     throw new Error("Error in updating student attendance", error.message);
   }
@@ -427,7 +484,7 @@ export async function updateStudentNo({
       throw new Error("No Attendance Found");
     }
 
-    return { message: "Student Confirmed Successfully", data: newData };
+    return { message: "Student Confirmed Successfully" };
   } catch (error: any) {
     throw new Error("Error in updating student attendance", error.message);
   }

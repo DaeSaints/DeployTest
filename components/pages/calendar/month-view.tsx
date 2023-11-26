@@ -1,17 +1,18 @@
 "use client";
-
 import React, { useState } from "react";
-import { AttendanceType } from "@/lib/interfaces/attendance.interface";
+
+// UI
 import { CalendarSheet } from "@/components/global/CalendarSideSheet";
+
+import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import { getMatrixMonth } from "@/utils/calendar/helpers";
 import dayjs from "dayjs";
+
+// BACKEND
 import { useCalendarContext } from "@/components/providers/CalendarProvider";
-import { useSession } from "next-auth/react";
-import { UserType } from "@/lib/interfaces/user.interface";
-import { ParentType } from "@/lib/interfaces/parent.interface";
-import { useSelectedChild } from "@/components/global/context/useSelectedChild";
 import { convertTime } from "@/utils/helpers/convertTime";
-import useStudentAttendances from "./hooks/useStudentAttendances";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSingleAttendanceById } from "@/lib/actions/attendance.action";
 
 const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
   const [sheetTrigger, setSheetTrigger] = useState(false);
@@ -36,15 +37,32 @@ const MonthlyView = ({ attendance }: { attendance: AttendanceType[] }) => {
     K2: "bg-orange-200",
   };
 
+  // useQUERY
+  const singleAttendance = useQuery({
+    queryKey: [
+      `attendance:selected-${selectedAttendance?._id}`,
+      selectedAttendance?._id,
+    ],
+    queryFn: async () => {
+      const { attendances } = await fetchSingleAttendanceById({
+        attendanceId: selectedAttendance?._id as string,
+      });
+      return attendances;
+    },
+    enabled: selectedAttendance !== null,
+  });
+
   return (
     <>
-      {sheetTrigger && selectedAttendance && (
-        <CalendarSheet
-          trigger={sheetTrigger}
-          setTrigger={closeSheet}
-          selectedAttendance={selectedAttendance}
-        />
-      )}
+      {singleAttendance.status === "success" &&
+        sheetTrigger &&
+        selectedAttendance && (
+          <CalendarSheet
+            trigger={sheetTrigger}
+            setTrigger={closeSheet}
+            selectedAttendance={singleAttendance.data}
+          />
+        )}
       <div className="flex flex-col flex-1 w-full h-full bg-white">
         <div className="grid grid-cols-7 grid-rows-1">
           {monthMatrix[0].map((day, i) => {

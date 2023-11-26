@@ -30,6 +30,8 @@ const CalendarComponent = ({
     ATTENDANCES = useTeacherAttendance(currDate.toDate());
   }
 
+  console.log(ATTENDANCES?.data);
+
   if (
     selectedChild?.status === "Not Paid" ||
     selectedChild?.status === "Enrolling"
