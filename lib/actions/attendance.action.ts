@@ -144,7 +144,7 @@ export async function fetchTeacherAttendances({
     const query = Attendance.find({
       date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
     })
-      .sort({ date: "asc" })
+      .sort({ date: "asc", startTime: "asc" })
       // .limit(pageSize)
       .lean()
       .select(

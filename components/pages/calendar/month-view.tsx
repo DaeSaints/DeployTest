@@ -40,10 +40,10 @@ const MonthlyView = ({
   }
 
   const AGEGROUP_COLORS = {
-    N1: "bg-violet-200",
-    N2: "bg-red-200",
-    K1: "bg-green-200",
-    K2: "bg-orange-200",
+    N1: "bg-violet-200 hover:bg-violet-100",
+    N2: "bg-red-200 hover:bg-red-100",
+    K1: "bg-green-200 hover:bg-green-100",
+    K2: "bg-orange-200 hover:bg-orange-100",
   };
 
   // useQUERY
@@ -107,7 +107,7 @@ const MonthlyView = ({
                   return (
                     <div
                       key={idx}
-                      className="flex flex-col items-center justify-start w-full h-full p-2 border-b border-r"
+                      className="relative flex flex-col items-center justify-start w-full h-full p-2 border-b border-r"
                     >
                       <button
                         className={`${dayClass} w-8 h-8 hover:bg-main-200 rounded-full transition-colors mb-1`}
@@ -119,16 +119,35 @@ const MonthlyView = ({
                           {dayAttendances.map((dayAttendance) => {
                             const colorClass =
                               AGEGROUP_COLORS[dayAttendance.ageGroup];
+                            const currDate = dayjs();
+                            const endTimeArr = dayAttendance.endTime.split(":");
+                            const startTimeArr =
+                              dayAttendance.startTime.split(":");
+
+                            const startTime = dayjs(dayAttendance.date)
+                              .set("hour", Number(startTimeArr[0]))
+                              .set("minute", Number(startTimeArr[1]) - 15);
+                            const endTime = dayjs(dayAttendance.date)
+                              .set("hour", Number(endTimeArr[0]))
+                              .set("minute", Number(endTimeArr[1]));
+
+                            const within =
+                              currDate.isAfter(startTime) &&
+                              currDate.isBefore(endTime);
+
                             return (
                               <button
                                 onClick={() => {
                                   setSheetTrigger(true);
                                   setSelectedAttendance(dayAttendance);
                                 }}
-                                className="flex flex-col items-start justify-start flex-1 w-full"
+                                className="relative w-full"
                               >
+                                {today === currDay && within && (
+                                  <div className="absolute z-10 w-5 h-2 -translate-y-1/2 -left-2 top-1/2 rounded-e-full bg-main-500/90" />
+                                )}
                                 <div
-                                  className={`w-full flex justify-between ${colorClass} my-1 p-1`}
+                                  className={`w-full flex justify-between ${colorClass} mb-1 p-1 transition-colors`}
                                 >
                                   <div className="text-xs font-medium">
                                     {dayAttendance.class.class}
