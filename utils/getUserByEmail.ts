@@ -19,19 +19,31 @@ export async function getUserByEmail({
     if (!user && !userparent) {
       console.log("No email found");
       throw new Error("Email does not exist!");
-    } else if (userparent) {
-      console.log("User is parent");
-      return {
-        ...userparent._doc,
+    }
+
+    if (user && !userparent && user.role === "teacher") {
+      console.log("User is Teacher");
+
+      const info = {
+        _id: user._id.toString(),
+        name: user._doc.name,
+        email: user._doc.email,
+      };
+      return info;
+    } else if (!user && userparent) {
+      console.log("User is Parent");
+      const info = {
         _id: userparent._id.toString(),
+        name: userparent._doc.name,
+        email: userparent._doc.email,
         children: userparent?.children.map((s: any) => {
           return { ...s, _id: s._id.toString() };
         }),
+        transactions: userparent?.transactions.map((s: any) => {
+          return { ...s, _id: s._id.toString() };
+        }),
       };
-    } else {
-      console.log("User is not parent");
-
-      return { ...user._doc, _id: user._id.toString() };
+      return info;
     }
   } catch (error: any) {
     throw new Error(`Error getting User by Email: ${error.message}`);

@@ -8,7 +8,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { isParent } from "./helpers/isParent";
 
-
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -24,19 +23,20 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         console.log(credentials?.email, credentials?.password);
         if (credentials) {
-
           const user = await authUser({
             email: credentials?.email as string,
             password: credentials?.password as string,
           });
 
-
           if (!user) {
             return null;
           }
-          
+
           if (credentials?.password !== "") {
-            const match = await bcrypt.compare(credentials?.password, user.password);
+            const match = await bcrypt.compare(
+              credentials?.password,
+              user.password
+            );
             if (!match) {
               console.log("password incorrect");
               return null;
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           return user;
-        }  
+        }
       },
     }),
   ],
@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, trigger, session }) {
       if (trigger == "update") {
-        console.log("YOU ARE HERE")
+        console.log("YOU ARE HERE");
 
         if (token?.user) {
           const user: UserType = token.user as UserType;
@@ -71,18 +71,14 @@ export const authOptions: NextAuthOptions = {
         }
       } else {
         const user = await getUserByEmail({ email: token.email });
-        console.log(user)
-        token.uid = user._id
-        if(user.isAccepted && isParent(user)){
-          user.role ="parent"
-          token.role = "parent"
-        }
+        console.log(user);
+        token.uid = user?._id;
         token.user = user;
         // session.user = user;
       }
       return token;
     },
-    async session({ session, token, }) {
+    async session({ session, token }) {
       session.user = token.user as {
         id?: string;
         name?: string;

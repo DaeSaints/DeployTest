@@ -119,11 +119,11 @@ const NavButtons = ({ user }: { user: ParentType | UserType }) => {
           >
             <DropdownMenuLabel className="flex items-center justify-start">
               <div className="flex flex-col">
+                <span className="text-lg font-semibold">{user.name}</span>
                 <span className="font-semibold">{user.email}</span>
-                <span className="font-normal text-slate-600">{user.role}</span>
+                <span className="font-normal text-slate-600">Teacher</span>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
