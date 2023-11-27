@@ -14,6 +14,7 @@ import {
   Check,
   ChevronDownIcon,
   CircleIcon,
+  Loader2,
   Lock,
   Replace,
 } from "lucide-react";
@@ -21,6 +22,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,12 +39,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // BACKEND
 import { AttendanceType } from "@/lib/interfaces/attendance.interface";
 import { convertTime } from "@/utils/helpers/convertTime";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useMemo } from "react";
+import useWeeklyAttendance from "../hooks/useWeeklyAttendance";
+import { useSelectedChild } from "@/components/global/context/useSelectedChild";
+import {
+  updateClassSchedule,
+  updateClassScheduleIndex,
+} from "@/lib/actions/attendance.action";
 
 export function NextClassCard({
   attendance,
@@ -52,17 +68,50 @@ export function NextClassCard({
   attendance: AttendanceType;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
+  const [show, setShow] = React.useState(false);
 
+  const WeekAttendance = useWeeklyAttendance(index);
+  const [selectedAttendance, setSelectedAttendance] =
+    React.useState<string>("");
+
+  const format = "MM/DD";
   const today = dayjs();
   const time = attendance.endTime.split(":");
-  const ThreeDaysBefore = dayjs(attendance.date)
-    .set("day", dayjs(attendance.date).day() - 3)
+  const attDate = dayjs(attendance.date)
     .set("hour", Number(time[0]))
     .set("minute", Number(time[1]));
 
   const closed =
-    today.isBefore(ThreeDaysBefore) || today.isAfter(ThreeDaysBefore);
+    today.isAfter(attDate.set("date", attDate.date() + 3)) ||
+    today.isAfter(attDate);
+
+  const { selectedChild } = useSelectedChild();
+  async function handleAddClassSchedule() {
+    if (selectedAttendance === "" && !selectedChild) return null;
+
+    const res = await updateClassScheduleIndex({
+      childId: (selectedChild?._id as string) || "",
+      newAttendanceId: selectedAttendance,
+      pastAttendanceId: attendance._id as string,
+    });
+
+    if (res) {
+      setShow(false);
+      window.location.reload();
+    }
+  }
+
+  if (WeekAttendance.isLoading)
+    return (
+      <div className="fixed inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-white">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <h1 className="text-4xl font-bold">Loading</h1>
+      </div>
+    );
+
+  const filtered = WeekAttendance?.data?.filter(
+    (d) => d._id !== attendance._id
+  );
 
   return (
     <Card className="w-full max-w-xs">
@@ -82,7 +131,7 @@ export function NextClassCard({
             <span className="text-xs">Going?</span>
           </Button>
           <Separator orientation="vertical" className="h-[20px]" />
-          <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
+          <Dialog open={show} onOpenChange={setShow}>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button variant="secondary" className="px-2 shadow-none">
@@ -91,15 +140,13 @@ export function NextClassCard({
               </PopoverTrigger>
               <PopoverContent className="w-[250px] p-0">
                 <Command>
-                  {/* <CommandList></CommandList>
-                  <CommandSeparator /> */}
                   <CommandList>
                     <CommandGroup>
                       <DialogTrigger asChild>
                         <CommandItem
                           onSelect={() => {
                             setOpen(false);
-                            setShowNewTeamDialog(true);
+                            setShow(true);
                           }}
                           disabled={closed}
                         >
@@ -130,7 +177,43 @@ export function NextClassCard({
                   You can only change class 3 day before the actual class.
                 </DialogDescription>
               </DialogHeader>
-              <div></div>
+              <div className="flex flex-col gap-2 mb-4">
+                <Label>Class</Label>
+                <Select onValueChange={setSelectedAttendance}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="New Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filtered && filtered?.length > 0 ? (
+                      <>
+                        {filtered.map((a) => {
+                          return (
+                            <SelectItem key={a._id} value={a._id as string}>
+                              {dayjs(a.date).format("dddd")} -{" "}
+                              {dayjs(a.date).format(format)} - {a.class.class} -{" "}
+                              {convertTime(a.startTime, a.endTime)}
+                            </SelectItem>
+                          );
+                        })}
+                      </>
+                    ) : (
+                      <>No other available classes for the week</>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant={"outline"}
+                  type="button"
+                  onClick={() => setShow(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="button" onClick={handleAddClassSchedule}>
+                  Save changes
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>

@@ -35,7 +35,9 @@ const useWeeklyAttendance = (indexMonth: number) => {
     queryFn: async () => {
       const attendances = await fetchWeeklyAttendances({
         StartOfWeek: StartOfWeek.toDate().toDateString(),
-        EndOfWeek: EndOfWeek.toDate().toDateString(),
+        EndOfWeek: EndOfWeek.set("date", EndOfWeek.date() + 1)
+          .toDate()
+          .toDateString(),
         ageGroup: selectedChild?.gradeLevel as AgeGroupType,
       });
 
@@ -44,7 +46,11 @@ const useWeeklyAttendance = (indexMonth: number) => {
       const filtered = attendances.attendances.filter((a) => {
         const attDate = dayjs(a.date);
 
-        if (today.isBefore(attDate.set("date", attDate.date() + 3))) {
+        const closed =
+          today.isAfter(attDate.set("date", attDate.date() + 3)) ||
+          today.isAfter(attDate);
+
+        if (!closed) {
           return a;
         }
       });

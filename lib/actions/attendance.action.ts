@@ -612,3 +612,49 @@ export async function updateClassSchedule({
     throw new Error("Error in updating student schedule", error.message);
   }
 }
+
+export async function updateClassScheduleIndex({
+  childId,
+  newAttendanceId,
+  pastAttendanceId,
+}: {
+  childId: string;
+  newAttendanceId: string;
+  pastAttendanceId: string;
+}) {
+  try {
+    connectDB();
+
+    const session = await getServerSession(authOptions);
+    const userInfo = session?.user as ParentType;
+
+    if (!userInfo) {
+      throw new Error("Unauthorized");
+    }
+
+    const student: any = await Student.findById(childId)
+      .select("_id classSchedule")
+      .lean()
+      .exec();
+
+    if (!student) {
+      throw new Error("No Student");
+    }
+
+    const temp = student.classSchedule.filter((a: AttendanceType) => {
+      return a._id?.toString() !== pastAttendanceId;
+    });
+    console.log(temp);
+    const classSchedule = [...temp, newAttendanceId];
+
+    console.log(classSchedule);
+
+    await Student.findByIdAndUpdate(childId, {
+      classSchedule,
+    });
+
+    return { message: "Student updated schedule" };
+  } catch (error: any) {
+    throw new Error("Error in updating student schedule", error.message);
+  }
+}

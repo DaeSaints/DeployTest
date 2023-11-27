@@ -10,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -37,7 +36,7 @@ export function AddClassScheduleModal({
   open: boolean;
   setOpen: (bol: boolean) => void;
 }) {
-  const format = "MM/DD/YYYY";
+  const format = "MM/DD";
 
   const WeekAttendance = useWeeklyAttendance(indexMonth);
   const [selectedAttendance, setSelectedAttendance] = useState<string>("");
@@ -87,7 +86,7 @@ export function AddClassScheduleModal({
                   {WeekAttendance.data.map((a) => {
                     return (
                       <SelectItem key={a._id} value={a._id as string}>
-                        {dayjs(a.date).format(format)} - {a.class.class} -{" "}
+                        {dayjs(a.date).format("dddd")} - {dayjs(a.date).format(format)} - {a.class.class} -{" "}
                         {convertTime(a.startTime, a.endTime)}
                       </SelectItem>
                     );
