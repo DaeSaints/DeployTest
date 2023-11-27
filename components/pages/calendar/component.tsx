@@ -12,6 +12,7 @@ import { UserType } from "@/lib/interfaces/user.interface";
 import useStudentAttendances from "./hooks/useStudentAttendances";
 import useTeacherAttendance from "./hooks/useTeachersAttendance";
 import { ParentType } from "@/lib/interfaces/parent.interface";
+import CalendarSideBar from "./sidebar";
 
 const CalendarComponent = ({
   userInfo,
@@ -44,26 +45,26 @@ const CalendarComponent = ({
       </div>
     );
 
+  if (ATTENDANCES.isLoading)
+    return (
+      <div className="flex items-center justify-center w-full h-full">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    );
+
   return (
     <>
-      {ATTENDANCES.isLoading ? (
-        <div className="flex items-center justify-center w-full h-full">
-          <Loader2 className="w-6 h-6 animate-spin" />
-        </div>
+      <CalendarSideBar userInfo={userInfo} ATTENDANCES={ATTENDANCES.data} />
+      {calendarType === "Month" ? (
+        <MonthlyView
+          userInfo={userInfo}
+          attendance={ATTENDANCES.data as AttendanceType[]}
+        />
       ) : (
-        <>
-          {calendarType === "Month" ? (
-            <MonthlyView
-              userInfo={userInfo}
-              attendance={ATTENDANCES.data as AttendanceType[]}
-            />
-          ) : (
-            <WeeklyView
-              userInfo={userInfo}
-              attendance={ATTENDANCES.data as AttendanceType[]}
-            />
-          )}
-        </>
+        <WeeklyView
+          userInfo={userInfo}
+          attendance={ATTENDANCES.data as AttendanceType[]}
+        />
       )}
     </>
   );

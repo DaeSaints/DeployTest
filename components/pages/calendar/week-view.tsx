@@ -31,7 +31,7 @@ const WeeklyView = ({
   for (let i = 0; i < 7; i++) {
     const day = dayjs()
       .year(year)
-      .isoWeek(week - 1)
+      .isoWeek(week)
       .day(i);
     days.push(day);
   }
