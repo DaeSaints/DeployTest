@@ -1,5 +1,6 @@
 "use server";
 
+import { Dayjs } from "dayjs";
 import { AttendanceType } from "../interfaces/attendance.interface";
 import { AgeGroupType } from "../interfaces/class.interface";
 import { StudentType } from "../interfaces/student.interface";
@@ -8,6 +9,9 @@ import Classes from "../models/class.model";
 import Material from "../models/material.model";
 import Student from "../models/student.model";
 import connectDB from "../mongodb";
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
+import { ParentType } from "../interfaces/parent.interface";
 
 export async function fetchAttendances({
   year,
@@ -142,6 +146,88 @@ export async function fetchTeacherAttendances({
     endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Subtract one millisecond to get the last millisecond of the last day
 
     const query = Attendance.find({
+      date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
+    })
+      .sort({ date: "asc", startTime: "asc" })
+      // .limit(pageSize)
+      .lean()
+      .select(
+        "_id date ageGroup startTime endTime link studentsPresent studentsNotPresent"
+      )
+      .populate({
+        path: "classParticipants",
+        select: "_id name",
+        model: Student,
+      })
+      .populate({
+        path: "class",
+        select: "_id class",
+        model: Classes,
+      })
+      .exec();
+
+    const totalCount = await Attendance.countDocuments({});
+    const data: any[] = await query;
+
+    console.log(data);
+
+    // Convert _id to string in the results
+    const arrToIdString: AttendanceType[] = data.map((d: AttendanceType) => {
+      return {
+        ...d,
+        _id: d._id?.toString(),
+        classParticipants: d?.classParticipants?.map((single) => {
+          return {
+            ...single,
+            _id: single._id?.toString(),
+          };
+        }),
+        class: {
+          ...d.class,
+          _id: d.class._id?.toString(),
+        },
+      };
+    });
+
+    return { attendances: arrToIdString, totalCount };
+  } catch (error: any) {
+    throw new Error("Error in fetching attendances", error.message);
+  }
+}
+
+export async function fetchWeeklyAttendances({
+  StartOfWeek,
+  EndOfWeek,
+  ageGroup,
+}: {
+  StartOfWeek: string;
+  EndOfWeek: string;
+  ageGroup: AgeGroupType;
+}) {
+  try {
+    connectDB();
+
+    const session = await getServerSession(authOptions);
+    const userInfo = session?.user as ParentType;
+
+    if (!userInfo) {
+      throw new Error("Unauthorized");
+    }
+
+    console.log(StartOfWeek);
+    console.log(EndOfWeek);
+
+    // const skipAmount = (pageNumber - 1) * pageSize;
+
+    const startDate = new Date(StartOfWeek); // Note: Month is 0-indexed
+    const endDate = new Date(EndOfWeek); // This gives the first day of the next month
+    endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Subtract one millisecond to get the last millisecond of the last day
+
+    console.log(StartOfWeek);
+    console.log(endDate);
+
+    const query = Attendance.find({
+      ageGroup,
       date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
     })
       .sort({ date: "asc", startTime: "asc" })
@@ -487,5 +573,42 @@ export async function updateStudentNo({
     return { message: "Student Confirmed Successfully" };
   } catch (error: any) {
     throw new Error("Error in updating student attendance", error.message);
+  }
+}
+
+export async function updateClassSchedule({
+  childId,
+  newAttendanceId,
+}: {
+  childId: string;
+  newAttendanceId: string;
+}) {
+  try {
+    connectDB();
+
+    const session = await getServerSession(authOptions);
+    const userInfo = session?.user as ParentType;
+
+    if (!userInfo) {
+      throw new Error("Unauthorized");
+    }
+
+    const student = await Student.findById(childId)
+      .select("_id classSchedule")
+      .exec();
+
+    if (!student) {
+      throw new Error("No Student");
+    }
+
+    const classSchedule = [...student.classSchedule, newAttendanceId];
+
+    await Student.findByIdAndUpdate(childId, {
+      classSchedule,
+    });
+
+    return { message: "Student updated schedule" };
+  } catch (error: any) {
+    throw new Error("Error in updating student schedule", error.message);
   }
 }
