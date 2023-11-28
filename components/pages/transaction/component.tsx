@@ -8,8 +8,12 @@ import { userId } from "@/utils/constants";
 import { fetchTransactionId } from "@/lib/actions/parent.action";
 import { TransactionsType } from "@/lib/interfaces/transaction.interface";
 import { useTabContext } from "./tabcontext";
+import { UserType } from "@/lib/interfaces/user.interface";
+import { useSession } from "next-auth/react";
 
 const TransactionComponent = () => {
+  const {data:session} = useSession();
+  const userInfo = session?.user as UserType
   const { selectedTab } = useTabContext();
   const [transactions, setTransactionData] = useState<TransactionsType[]>([]);
   const mapSelectedTabToStatus = (selectedTab: string) => {
@@ -29,7 +33,7 @@ const TransactionComponent = () => {
   useEffect(() => {
     const getParentData = async () => {
       try {
-        const data = await fetchTransactionId({ _id: userId });
+        const data = await fetchTransactionId({ _id: userInfo._id || ''  });
         const status = mapSelectedTabToStatus(selectedTab);
 
         const filteredTransactions = (status === "All")

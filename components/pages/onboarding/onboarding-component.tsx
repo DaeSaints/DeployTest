@@ -13,11 +13,6 @@ import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
 import { useUploadThing } from "@/lib/uploadthing";
 import { Loader2 } from "lucide-react";
 
-// UPLOADTHING
-import { ourFileRouter } from "@/app/(routes)/api/uploadthing/core";
-import { useUploadThing } from "@/lib/uploadthing";
-import { Loader2 } from "lucide-react";
-
 type ProfilePictureParams = {
   _id: string;
   name: string;

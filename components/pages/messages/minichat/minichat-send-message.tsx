@@ -102,7 +102,7 @@ const MiniChatSendMessage = ({
   // FILE UPLOAD
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const { startUpload, isUploading } = useUploadThing("message", {
-    onClientUploadComplete: (url) => {
+    onClientUploadComplete: (url: any) => {
       return url;
     },
   });
