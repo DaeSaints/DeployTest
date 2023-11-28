@@ -1,4 +1,4 @@
-import MessagesDrawer from "@/components/pages/messages/messages-drawer";
+import MessagesDrawer from "@/components/pages/messages/drawer";
 import MessageTabs from "@/components/pages/messages/messages-tabs";
 import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
