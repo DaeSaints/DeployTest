@@ -223,7 +223,7 @@ export async function fetchTransactionId({ _id }: { _id: string }) {
           {
             path: "classSchedule",
             model: Attendance,
-            select: "date ageGroup startTime endTime"
+            select: "_id date ageGroup startTime endTime"
           }
         ],
       })
