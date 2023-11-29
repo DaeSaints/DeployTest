@@ -9,6 +9,7 @@ import { ParentType } from "../interfaces/parent.interface";
 import { StudentType } from "../interfaces/student.interface";
 import * as bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import Attendance from "../models/attendance.model";
 
 async function isParentExists(email: string) {
   const existingParent = await Parent.findOne({ email }); // Assuming 'email' is a unique identifier
@@ -212,18 +213,18 @@ export async function fetchTransactionId({ _id }: { _id: string }) {
       .populate({
         path: "transactions",
         model: Transaction,
-        select: "_id price duration status paidDate expiryDate",
+        select: "_id price package status createdAt",
         populate: [
-          {
-            path: "class",
-            model: Classes,
-            select: "_id class",
-          },
           {
             path: "student",
             model: Student,
             select: "_id name age",
           },
+          {
+            path: "classSchedule",
+            model: Attendance,
+            select: "date ageGroup startTime endTime"
+          }
         ],
       })
       .exec();
@@ -239,10 +240,7 @@ export async function fetchTransactionId({ _id }: { _id: string }) {
         return {
           ...transaction,
           _id: transaction._id.toString(),
-          class: {
-            ...transaction.class,
-            _id: transaction.class._id.toString(),
-          },
+          
         };
       }),
     };

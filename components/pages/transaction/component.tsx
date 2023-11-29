@@ -46,8 +46,7 @@ const TransactionComponent = () => {
     };
 
     getParentData();
-  }, [selectedTab]);
-  console.log(transactions)
+  }, [userInfo, selectedTab]);
   return (
     <div className="flex flex-1 w-full p-4 pt-14">
       <ScrollArea className="w-full h-[31rem]">
