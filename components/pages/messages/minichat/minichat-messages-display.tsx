@@ -62,21 +62,7 @@ const MiniChatMessagesDisplay = ({
         <div>
           <ScrollArea className="w-full h-[16rem] p-2">
             <div className="flex flex-col-reverse gap-2">
-              {/* <div className="flex flex-col-reverse gap-2">
-                {incomingMessages.map((message) => {
-                  const side = message.sender._id === userId ? "Me" : "Other";
 
-                  return (
-                    <MiniSingleMessage
-                      key={message._id as string}
-                      side={side}
-                      date={message.createdAt}
-                      today={new Date()}
-                      content={message.content}
-                    />
-                  );
-                })}
-              </div> */}
               {initialMessages?.map((message) => {
                 const side = message.sender._id === userId ? "Me" : "Other";
 

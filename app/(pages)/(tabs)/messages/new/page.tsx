@@ -12,7 +12,7 @@ const page = async ({}: PageProps) => {
   return (
     <>
     
-      <NewMessagesBox userId={user._id} />
+      <NewMessagesBox user={user} />
     </>
   );
 };

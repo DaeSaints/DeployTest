@@ -23,9 +23,10 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/global/Loader";
 import { useQuery } from "@tanstack/react-query";
 import { fetchbyRole, fetchUsersSearch } from "@/lib/actions/user.action";
+import { isParent } from "@/utils/helpers/isParent";
 
 
-const NewMessagesBox = ({ userId }: { userId: string }) => {
+const NewMessagesBox = ({ user }: { user: UserType }) => {
   
 
 
@@ -49,7 +50,6 @@ const NewMessagesBox = ({ userId }: { userId: string }) => {
     console.log(email);
     return email;
   }
-  
   const { data: session } = useSession();
   const userInfo: UserType = session?.user as UserType;
 
@@ -60,6 +60,7 @@ const NewMessagesBox = ({ userId }: { userId: string }) => {
       <header className="flex items-center justify-start w-full h-24 gap-2 p-4 mt-2 border-b border-slate-300">
         <span className="mr-2 text-lg">To: </span>
         <div className="relative w-full">
+          if()
         <Select onValueChange={(e) => {setSelectedRole(e);
                                         fetchRecipientEmailByRole(e).then((recipientEmail) => {
                                           setValue(recipientEmail);

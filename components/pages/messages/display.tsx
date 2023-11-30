@@ -41,7 +41,7 @@ const ChatMessagesDisplay = ({
 
     pusherClient.bind("incoming-message", (newMessage: MessageType) => {
       queryClient.invalidateQueries({
-        queryKey: [`chats-messages:${chatId}`],
+        queryKey: [`chats-messages:${chatId}:messages`],
       });
       queryClient.invalidateQueries({
         queryKey: [`chats`],
