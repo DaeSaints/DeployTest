@@ -108,6 +108,30 @@ export async function fetchUsersSearch(
   }
 }
 
+export async function fetchbyRole({ role }: { role: string }) {
+  try {
+    connectDB();
+    
+    const query = User.findOne({ role }) // Change from findById to findOne
+      .sort({ createdAt: "desc" })
+      .lean()
+      .select("_id name email profileURL role")
+      .exec();
+
+    const single: any = await query;
+
+    if (!single) {
+      throw new Error("User not Found");
+    }
+
+    const plainData = { ...single, _id: single._id.toString() };
+    console.log(plainData.email);
+    return plainData.email;
+  } catch (error) {
+    throw new Error(`Error in fetching single user`);
+  }
+}
+
 export async function fetchSingleUserById({ _id }: { _id: string }) {
   try {
     connectDB();
@@ -131,6 +155,8 @@ export async function fetchSingleUserById({ _id }: { _id: string }) {
     throw new Error(`Error in fetching single user`);
   }
 }
+
+
 
 export async function updateUserRoleByID({
   _id,

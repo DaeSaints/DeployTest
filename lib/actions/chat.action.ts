@@ -407,3 +407,45 @@ export async function searchChatsAll({
     throw new Error("Error in fetching chats", error.message);
   }
 }
+
+export async function fetchChatById({ chatId }: { chatId: string }) {
+  try {
+    connectDB();
+
+    // Fetch users with pagination
+    const data: any = await Chat.findById(chatId)
+      .sort({ updatedAt: "desc" })
+      .select("_id users")
+      .lean()
+      .exec();
+
+    const totalCount = await User.countDocuments({});
+
+    for (let i = 0; i < data?.users.length; i++) {
+      let user = await User.findById(data?.users[i])
+        .select("_id name email role profileURL")
+        .lean();
+      if (!user)
+        user = await Parent.findById(data?.users[i])
+          .select("_id name email profileURL phone")
+          .lean();
+      data.users[i] = user;
+    }
+
+    const plainData = {
+      ...data,
+      _id: data._id?.toString(),
+      users: data.users.map((user: any) => {
+        return {
+          ...user,
+          _id: user._id.toString(),
+        };
+      }),
+    };
+
+    return { chat: plainData };
+  } catch (error: any) {
+    throw new Error("Error in fetching chat", error.message);
+  }
+}
+
