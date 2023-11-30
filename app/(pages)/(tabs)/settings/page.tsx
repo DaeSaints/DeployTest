@@ -10,7 +10,9 @@ import { Toaster } from "@/components/ui/toaster";
 const page = async ({ searchParams }: PageProps) => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
-  console.log("USER ROLE",user.role)
+  user.role = 'parent'
+
+  // console.log("USER ROLE",user.role)
   console.log(session?.user)
 console.log(isParent(user));
   if (!user) return null;

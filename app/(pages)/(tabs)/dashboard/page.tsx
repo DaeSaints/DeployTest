@@ -10,6 +10,7 @@ import React from "react";
 const page = async ({ searchParams }: PageProps) => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
+  console.log(user._id);
   if (!user) return null;
 
   return (

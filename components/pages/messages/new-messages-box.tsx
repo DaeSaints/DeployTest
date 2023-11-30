@@ -21,32 +21,28 @@ import { UserType } from "@/lib/interfaces/user.interface";
 import NewSendBox from "./new-send-box";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/global/Loader";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUsersSearch } from "@/lib/actions/user.action";
 
 
-const NewMessagesBox = () => {
+const NewMessagesBox = ({ userId }: { userId: string }) => {
+  const [roleFilter, setRoleFilter] = useState<string>("All");
   const [openSearchOptions, setOpenSearchOptions] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("");
-
-  // //   TEMPS
-  // const isLoading = false;
-  // const data: any[] = [];
-  // const ACCESSABLE_ROLES = [
-  //   "Teacher",
-  //   "Parent",
-  //   "General Manager",
-  //   "Customer Support",
-  // ];
+  
   const debouncedSearch = useDebounce(value, 500);
 
   const ACCESSABLE_ROLES = [
     "Teacher",
-    "Parent",
-    "General Manager",
-    "Customer Support",
   ];
-
-  const { data, isLoading } = useFetchNewChats(debouncedSearch);
+  const { data, isLoading } = useQuery({
+    queryKey: ["search:chat", debouncedSearch, roleFilter],
+    queryFn: async () => {
+      const { users } = await fetchUsersSearch(value, userId, 'teacher');
+      return users;
+    },
+  });
   const { data: session } = useSession();
   const userInfo: UserType = session?.user as UserType;
 
@@ -95,7 +91,7 @@ const NewMessagesBox = () => {
                             key={res._id}
                             onClick={() => {
                               setValue(res.email);
-                              //   getChat(res._id as string, res);
+                              // getChat(res._id as string, res);
                               setOpenSearchOptions(false);
                             }}
                           >
@@ -120,7 +116,7 @@ const NewMessagesBox = () => {
         <div className="">
           <Select onValueChange={(e) => setSelectedRole(e)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Recipient Role" />
+              <SelectValue placeholder="Teacher" />
             </SelectTrigger>
             <SelectContent>
               {ACCESSABLE_ROLES.map((role) => {

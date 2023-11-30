@@ -9,7 +9,9 @@ import React, { Suspense } from "react";
 const page = async () => {
   const session = await getServerSession(authOptions);
   const user: UserType = session?.user as UserType;
-  console.log(user.role)
+  console.log(user);
+  user.role = 'parent'
+  // console.log(user.role)
 
   if (!user) return null;
   return (
