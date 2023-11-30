@@ -10,14 +10,18 @@ import { StudentType } from "../interfaces/student.interface";
 import * as bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import Attendance from "../models/attendance.model";
+import User from "../models/user.model";
 
 async function isParentExists(email: string) {
-  const existingParent = await Parent.findOne({ email }); // Assuming 'email' is a unique identifier
+  const existingParent = await Parent.findOne({ email }); 
+  const existingUser = await User.findOne({email });
 
   if (existingParent) return existingParent;
-
+  if(existingUser) return existingUser;
   return false;
+
 }
+
 
 export async function createNewParent({
   newDataParent,

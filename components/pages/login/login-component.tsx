@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 //ISONBOARDED
 import { isOnboarded } from "@/lib/actions/user.action";
 import Link from "next/link";
+import { toast } from "@/components/ui/use-toast";
 
 const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   const router = useRouter();
@@ -48,18 +49,34 @@ const LoginComponent = ({ callbackUrl }: { callbackUrl: string }) => {
   });
 
   async function onSubmit(values: z.infer<typeof loginValidation>) {
-    console.log(values);
     setisLoading(true);
+  
     const email = values.email;
     const password = values.password;
-
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    if (res) {
-      router.push("/dashboard");
+  
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+  
+      if (res?.error) {
+        toast({
+          variant: "destructive",
+          title: "Incorrect email or password",
+        });
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "An error occurred. Please try again.",
+      });
+    } finally {
+      // Regardless of success or failure, stop the loading state
+      setisLoading(false);
     }
   }
 
