@@ -5,20 +5,16 @@ import { StudentType } from "@/lib/interfaces/student.interface";
 import { useSelected } from "./non-accepted/context/useSelected";
 
 // UI
-import AcceptedSection from "./accepted";
 import ChildSwitcher from "./child-switcher";
 import NotAcceptedComponent from "./non-accepted/component";
 import { useSelectedChild } from "@/components/global/context/useSelectedChild";
+import StudentAcceptedScetion from "./accepted/main";
 
 const ParentMain = ({ parent }: { parent: ParentType }) => {
   if (parent?.children?.length === 0 && parent?.children) return null;
 
   const { clear } = useSelected();
   const { setSelectedChild, selectedChild } = useSelectedChild();
-
-  useEffect(() => {
-    setSelectedChild((parent?.children as StudentType[])[0] as StudentType);
-  }, []);
 
   if (!selectedChild) return null;
 
@@ -41,7 +37,10 @@ const ParentMain = ({ parent }: { parent: ParentType }) => {
       </div>
       {selectedChild?.status !== "Enrolling" ? (
         <>
-          <AcceptedSection userInfo={parent} selectedChild={selectedChild} />
+          <StudentAcceptedScetion
+            userInfo={parent}
+            selectedChild={selectedChild}
+          />
         </>
       ) : (
         <>

@@ -295,6 +295,7 @@ export async function fetchStudentAttendances({
     const attendancePromises: any[] = data.classSchedule.map(
       (attendanceId: string) => {
         return Attendance.findById(attendanceId)
+          .sort({ date: "asc", startTime: "asc" })
           .select("_id date ageGroup startTime endTime link studentsPresent")
           .populate({
             path: "classParticipants",
@@ -317,6 +318,15 @@ export async function fetchStudentAttendances({
     );
 
     const attendanceData: any[] = await Promise.all(attendancePromises);
+    attendanceData.sort((a, b) => {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      if (a.startTime < b.startTime) return -1;
+      if (a.startTime > b.startTime) return 1;
+      return 0;
+    });
+
+    console.log(attendanceData);
 
     // Convert _id to string in the results
     const arrToIdString: AttendanceType[] = attendanceData.map(
@@ -377,7 +387,7 @@ export async function fetchForYouAttendances({
       ageGroup,
       date: { $gte: startDate, $lte: endDate }, // Filter by date within the specified month
     })
-      .sort({ date: "asc" })
+      .sort({ date: "asc", startTime: "asc" })
       .lean()
       .select("_id date startTime endTime ageGroup zoomLink")
       .populate({
