@@ -162,6 +162,32 @@ export async function fetchSingleParentId({ _id }: { _id: string }) {
   }
 }
 
+export async function fetchSingleChildId({ _id }: { _id: string }) {
+  try {
+    connectDB();
+
+    const query = Student.findById({ _id })
+      .lean()
+      .select("_id name age status profileURL package gradeLevel")
+      .exec();
+
+    const single: any = await query;
+
+    if (!single) {
+      throw new Error("Student not Found");
+    }
+
+    const plainData = {
+      ...single,
+      _id: single._id.toString(),
+    };
+
+    return plainData;
+  } catch (error) {
+    throw new Error(`Error in fetching single Student`);
+  }
+}
+
 export async function fetchChildrenId({ _id }: { _id: string }) {
   try {
     connectDB();
@@ -223,8 +249,8 @@ export async function fetchTransactionId({ _id }: { _id: string }) {
           {
             path: "classSchedule",
             model: Attendance,
-            select: "_id date ageGroup startTime endTime"
-          }
+            select: "_id date ageGroup startTime endTime",
+          },
         ],
       })
       .exec();
@@ -240,7 +266,6 @@ export async function fetchTransactionId({ _id }: { _id: string }) {
         return {
           ...transaction,
           _id: transaction._id.toString(),
-          
         };
       }),
     };

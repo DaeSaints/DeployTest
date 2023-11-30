@@ -1,5 +1,5 @@
 import ParentComponent from "@/components/pages/dashboard/parent-component";
-import TeacherComponent from "@/components/pages/dashboard/teacher-component";
+import TeacherSection from "@/components/pages/dashboard/teacher/main";
 import { PageProps } from "@/lib/interfaces/page.props";
 import { UserType } from "@/lib/interfaces/user.interface";
 import { authOptions } from "@/utils/authOptions";
@@ -20,7 +20,7 @@ const page = async ({ searchParams }: PageProps) => {
         </>
       ) : (
         <>
-          <TeacherComponent userInfo={user} />
+          <TeacherSection userInfo={user} />
         </>
       )}
     </>
