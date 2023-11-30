@@ -13,20 +13,7 @@ const TransactionCard = ({
 }: {
   transactions: TransactionsType;
 }) => {
-  useEffect(() => {
-    const checkAndExpireTransaction = async () => {
-      if (transactions._id) {
-        try {
-          const response = await expireTransactionById(transactions._id);
-          console.log(response.message); // Log success message
-        } catch (error) {
-          console.error("Error expiring transaction");
-        }
-      }
-    };
 
-    checkAndExpireTransaction();
-  }, [transactions]);
   return (
     <div className="relative flex flex-col w-full h-56 p-6 bg-white rounded-lg shadow">
       <div className="flex items-center justify-between w-full text-2xl">
