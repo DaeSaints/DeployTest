@@ -108,10 +108,42 @@ export async function fetchUsersSearch(
   }
 }
 
+export async function fetchParentsSearch(
+  search: string,
+  userId: string,
+) {
+  try {
+    connectDB();
+
+    // Fetch parents with pagination
+    const parentsQuery = Parent.find({
+      email: { $regex: search, $options: "i" },
+      _id: { $ne: userId },
+    })
+      .sort({ createdAt: "desc" })
+      .lean()
+      .select("_id name email photoURL")
+      .exec();
+
+    const parentsData = await parentsQuery;
+
+    const parentsPlainData: ParentType[] = parentsData.map((d: any) => ({
+      ...d,
+      _id: d._id?.toString(),
+    }));
+
+    return { users: parentsPlainData };
+  } catch (error: any) {
+    throw new Error("Error in fetching parents", error.message);
+  }
+}
+
+
+
 export async function fetchbyRole({ role }: { role: string }) {
   try {
     connectDB();
-    
+
     const query = User.findOne({ role }) // Change from findById to findOne
       .sort({ createdAt: "desc" })
       .lean()
