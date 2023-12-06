@@ -72,7 +72,7 @@ const NewMessagesBox = () => {
             // variant={"transparent"}
             className="text-lg bg-transparent border-transparent"
             value={value}
-            placeholder="Who you want to chat with?"
+            placeholder="Who do you want to chat with?"
             onChange={(e) => setValue(e.target.value)}
             onClick={() => {
               setOpenSearchOptions((prev) => !prev);
