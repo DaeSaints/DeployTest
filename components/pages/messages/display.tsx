@@ -31,7 +31,6 @@ const ChatMessagesDisplay = ({
     useFetchSelectedChat(chatId);
   const recipient = selectedChat?.users?.find((d) => d._id !== userId);
 
-  // const [incomingMessages, setIncomingMessages] = useState<MessageType[]>([]);
   React.useEffect(() => {
     if (MessagesEndRef.current) {
       MessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
